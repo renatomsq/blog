@@ -1,0 +1,129 @@
+---
+layout: post
+title: Copiar resultado do SSMS no Excel sem quebra
+date: 2015-01-05 11:20:56.000000000 -03:00
+type: post
+parent_id: '0'
+published: true
+password: ''
+status: publish
+categories:
+- BI/ETL
+- T-SQL
+tags:
+- copiar
+- copy
+- excel
+- formatação
+- management studio
+- paste
+- sqlserver
+- tratamento
+- utilidade
+meta:
+  _oembed_f140abc1ede89af049535175a76ff282: "{{unknown}}"
+  _generate-sidebar-layout-meta: ''
+  _generate-footer-widget-meta: ''
+  _edit_last: '2'
+  dsq_thread_id: '3391937143'
+author:
+  login: Renato Siqueira
+  email: ''
+  display_name: Renato Siqueira
+  first_name: ''
+  last_name: ''
+permalink: "/copiar-resultado-do-ssms-no-excel-sem-quebra/"
+---
+<p><!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN" "http://www.w3.org/TR/REC-html40/loose.dtd"><br />
+<html><body></p>
+<p>Já copiou o resultado de determinada consulta no SSMS (SQL Server Management Studio), colou em uma planilha do Excel e se surpreendeu com a bagunça?<br />
+O que era pra ser uma solução rápida e prática acabou virando uma zona?</p>
+<p>Eis o cenário:</p>
+<p>[caption id="attachment_2304" align="alignnone" width="1024"]<a href="http://renatomsiqueira.com.br/wp-content/uploads/2015/01/Img01.png"><img class="wp-image-2304 size-large" src="{{site.baseurl}}/assets/2015/01/Img01-1024x200.png" alt="Consulta exemplo" width="1024" height="200"></a> Gerando um resultset pra teste[/caption]</p>
+<p>[caption id="attachment_2305" align="alignnone" width="1024"]<a href="http://renatomsiqueira.com.br/wp-content/uploads/2015/01/Img02.png"><img class="wp-image-2305 size-large" src="{{site.baseurl}}/assets/2015/01/Img02-1024x266.png" alt="Pense na cópia mal sucedida" width="1024" height="266"></a> Copiando o resultset no Management Studio e copiando no Excel. Olha a bagunça![/caption]</p>
+<p>O intuito deste post é explicar o que causa o problema e como resolver.</p>
+<p><strong>Problema</strong></p>
+<p>O problema acontece quando o resultado copiado possui caracteres como quebra de linha, tab, etc. Estes caracteres são interpretados no Excel, se copiados diretamente, como comandos e acabam por desconfigurar no momento de colar.<br />
+Vamos simular o problema:</p>
+<p>1) Criando uma massa pra testes. Existe um propósito em manter os textos no INSERT com espaço. Deixe-os desta forma caso use o código abaixo.</p>
+<pre class="">USE TEMPDB
+GO
+
+CREATE TABLE dbo.Posts
+(
+	ID INT IDENTITY (1,1) NOT NULL,
+	DATA DATE,
+	RESUMO VARCHAR(500)
+);
+
+
+INSERT INTO DBO.POSTS (DATA, RESUMO)
+VALUES ('2014-01-05','O intuito do post é relacionar:
+
+O reino animal, o perigo da extinção e o mercado de TI.
+');
+
+INSERT INTO DBO.POSTS (DATA, RESUMO)
+VALUES ('2014-01-12','O intuito do post é relacionar:
+
+SQL Server e seus diferentes tipos de buffer
+');
+
+INSERT INTO DBO.POSTS (DATA, RESUMO) 
+VALUES ('2014-01-19', 'O intuito do post é simplesmente:
+
+Compartilhar uma novidade de uma feature que existe aqui só na minha máquina
+
+');
+
+</pre>
+<p>2) Consultando a tabela recém-criada, gerando um <em>resultset </em>com caracteres de controle:</p>
+<p>[caption id="attachment_2306" align="alignnone" width="709"]<a href="http://renatomsiqueira.com.br/wp-content/uploads/2015/01/Img03.png"><img class="wp-image-2306 size-full" src="{{site.baseurl}}/assets/2015/01/Img03.png" alt="Gerando um resultset problemático de novo" width="709" height="217"></a> Mesmo caso do exemplo que abriu o post.[/caption]</p>
+<p>3)  Copie o <em>resultset</em> (de preferência com o cabeçalho, botão direito no resultado da consulta, opção "<em>Copy with Headers</em>", e cole no Excel:</p>
+<p>[caption id="attachment_2307" align="alignnone" width="833"]<a href="http://renatomsiqueira.com.br/wp-content/uploads/2015/01/Img04.png"><img class="size-full wp-image-2307" src="{{site.baseurl}}/assets/2015/01/Img04.png" alt="Formatação quebrada" width="833" height="212"></a> Olha a bagunça![/caption]</p>
+<p><strong> Solução</strong></p>
+<p>Alguns usuários do SQL Server já abriram chamado na Microsoft para relatar o problema, que aparentemente não possui soluções definitivas, mas existe um <em>workaround </em>(aqui no Brasil usa-se o termo solução de contorno, alguns dizem gambiarra, etc).</p>
+<p>Sabendo que o problema acontece quando o <em>resultset</em> possui caracteres como quebra de linha, tab, dentre outros (conhecidos como caracteres de controle), que são interpretados como comandos no Excel, podemos converter esses caracteres em espaço, podendo assim sacrificar a formatação original do campo em prol da realização da tarefa.</p>
+<p>Na tabela ASCII, vamos identificar quais caracteres devem ser primariamente localizados:</p>
+<p><a href="http://renatomsiqueira.com.br/wp-content/uploads/2015/01/Codes.png"><img class="alignnone size-full wp-image-2312" src="{{site.baseurl}}/assets/2015/01/Codes.png" alt="Codes" width="206" height="318"></a></p>
+<p>Abaixo, segue dentro dos parênteses os códigos ASCII do que pretendemos remover:</p>
+<ul>
+<li>CHAR(9) = Tab</li>
+<li>CHAR(10) = Line Feed (LF)</li>
+<li>CHAR(13) = Carriage Return (CR)</li>
+</ul>
+<p>Tab é tab é dispensa explicações. Já <em>Carriage Return</em> e <em>Line Feed</em> são dois caracteres de controle que com frequência caminham de mãos dadas quando uma quebra de linha acontece. Em outras palavras, um ENTER, por exemplo, faz a quebra utilizando estes dois caracteres.</p>
+<p>Pra facilitar o entendimento:</p>
+<p><a href="http://renatomsiqueira.com.br/wp-content/uploads/2015/01/NaPratica.png"><img class="alignnone size-full wp-image-2313" src="{{site.baseurl}}/assets/2015/01/NaPratica.png" alt="NaPratica" width="515" height="74"></a></p>
+<p>Podemos usar os códigos destes caracteres de controle dentro da função REPLACE e substituí-los por espaço, de modo que nossa cópia não fique desconfigurada. Note que você pode fazer o mesmo sem passar espaço, pode passar entre aspas vazias também.</p>
+<pre class="">SELECT 
+id, 
+data, 
+REPLACE(REPLACE(REPLACE(CAST(Resumo AS CHAR(150)), CHAR(10), ''), CHAR(13), ''),CHAR(9),'')as [Resumo]
+
+FROM dbo.Posts
+
+</pre>
+<p>Agora, vamos colar o resultado sem quebrar o <em>resultset</em>:</p>
+<p>[caption id="attachment_2308" align="alignnone" width="402"]<a href="http://renatomsiqueira.com.br/wp-content/uploads/2015/01/Img05.png"><img class="size-full wp-image-2308" src="{{site.baseurl}}/assets/2015/01/Img05.png" alt="Gerando agora um resultset com o workaround" width="402" height="122"></a> Gerando agora um resultset com o workaround[/caption]</p>
+<p>Copiando e colando no excel:</p>
+<p>[caption id="attachment_2309" align="alignnone" width="956"]<a href="http://renatomsiqueira.com.br/wp-content/uploads/2015/01/Img06.png"><img class="size-full wp-image-2309" src="{{site.baseurl}}/assets/2015/01/Img06.png" alt="Agora foi!" width="956" height="87"></a> Cópia bem sucedida.[/caption]</p>
+<p>O workaround, assim como mais informações a respeito do problema, foram postados nos dois links abaixo no connect:</p>
+<p><a href="https://connect.microsoft.com/SQLServer/feedback/details/788463/copy-and-paste-from-sql-2012-to-excel-breaks-rows-if-an-address-is-included">https://connect.microsoft.com/SQLServer/feedback/details/788463/copy-and-paste-from-sql-2012-to-excel-breaks-rows-if-an-address-is-included</a></p>
+<p><strong>Conclusão</strong></p>
+<p>A solução apresentada permite a cópia sem maiores problemas sacrificando a formatação original de textos que possuem caracteres de controle. Caso seja realmente necessário manter a formatação, é possível realizar a importação de dados para o Excel de forma direta utilizando outros métodos, que não estão descritos neste post.</p>
+<p>[]'s</p>
+<p><strong>Referências</strong></p>
+<ol>
+<li>CHAR Function - <a href="http://msdn.microsoft.com/pt-br/library/ms187323.aspx">http://msdn.microsoft.com/pt-br/library/ms187323.aspx</a>
+</li>
+<li>REPLACE Function  - <a href="http://msdn.microsoft.com/pt-br/library/ms186862.aspx">http://msdn.microsoft.com/pt-br/library/ms186862.aspx</a>
+</li>
+<li>Carriage Return (CR)- <a href="http://pt.wikipedia.org/wiki/Carriage_return">http://pt.wikipedia.org/wiki/Carriage_return</a>
+</li>
+<li>Line Feed (LF) - <a href="http://en.wikipedia.org/wiki/Newline">http://en.wikipedia.org/wiki/Newline</a>
+</li>
+<li>Tabela ASCII - <a href="http://www.theasciicode.com.ar/ascii-control-characters/horizontal-tab-ascii-code-9.html">http://www.theasciicode.com.ar/ascii-control-characters/horizontal-tab-ascii-code-9.html</a>
+</li>
+</ol>
+<p> </body></html></p>

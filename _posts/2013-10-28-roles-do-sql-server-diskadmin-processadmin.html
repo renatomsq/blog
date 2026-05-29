@@ -1,0 +1,67 @@
+---
+layout: post
+title: Roles do SQL Server - Diskadmin e Processadmin
+date: 2013-10-28 05:26:37.000000000 -03:00
+type: post
+parent_id: '0'
+published: true
+password: ''
+status: publish
+categories:
+- Microsoft SQL Server
+- Roles
+- Security
+tags: []
+meta:
+  _likes: '0'
+  original_post_id: '1385'
+  _wp_old_slug: '1385'
+  _syntaxhighlighter_encoded: '1'
+  dsq_thread_id: '3437946279'
+  _publicize_pending: '1'
+author:
+  login: Renato Siqueira
+  email: ''
+  display_name: Renato Siqueira
+  first_name: ''
+  last_name: ''
+permalink: "/roles-do-sql-server-diskadmin-processadmin/"
+---
+<p><!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN" "http://www.w3.org/TR/REC-html40/loose.dtd"><br />
+<html><body><br />
+<a href="http://renatomsiqueira.com.br/wp-content/uploads/2014/04/hard-drive-inside1.jpg"><img class="alignleft size-full wp-image-1576" src="{{site.baseurl}}/assets/2013/10/hard-drive-inside1.jpg" alt="hard-drive-inside" width="500" height="355"></a><a href="http://renatomsiqueira.com.br/wp-content/uploads/2013/10/greeneEye.png"><br />
+</a></p>
+<p> </p>
+<p> </p>
+<p> </p>
+<p> </p>
+<p> </p>
+<p> </p>
+<p> </p>
+<p> </p>
+<p> </p>
+<p> </p>
+<p> </p>
+<p>Olá.</p>
+<p>Depois de algum tempo sem postar (falta de tempo mas por motivos profissionais, graças à Deus) aqui estamos. Pra abreviar um pouco a série sobre as roles de servidor, não seguirei a mesma linha dos posts anteriores se não for extremamente necessário.</p>
+<p>Vamos falar um pouco agora sobre duas roles em específico (até porque não temos muito o que falar sobre: DiskAdmin e ProcessAdmin)</p>
+<p><strong>Diskadmin</strong></p>
+<p>Administra dispositivos de backup (obs: dispositivos, não o backup). Hoje em dia, esta role foi pro museu. Um motivo forte pra isso é caiu no desuso o uso de dispositivos para backup em fita (antigamente era comum fazer backup diretamente na fita, e hoje, é algo raro, pois, o desempenho de uma fita é ligeiramente inferior à backup no disco.</p>
+<p>Funcionalidades:</p>
+<ul>
+<li>sp_addumpdevice/sp_dropdevice = Adiciona/deleta um dispositivo de backup novo  à instância.</li>
+<li>sp_diskdefault  e DISK INIT = Deprecated desde o SQL Server 2000. Fora do escopo (adorei essa frase).</li>
+<li>Add member to diskadmin = Milagre da multiplicação, o famoso "passa a corrente pra frente", etc. Dispensa explicações se você está acompanhando a série do começo =)</li>
+</ul>
+<p>É interessante notar que um Disdkadmin não equivale a um backup operator ou algo do tipo (fazendo aqui referência à outros SGBD's) pois por padrão, ele não possui direito de backup, a menos que seja dado tal direito explicitamente por outras formas.  Isso é um tanto quanto engraçado, poder gerenciar pra onde o backup vai mas não poder fazer backup. É muita falta de moral (risos).</p>
+<p><strong>ProcessAdmin</strong></p>
+<p>Possui o poder de matar conexões. Mas não só isso. Literalmente, ele é um administrador de processos, logo, com certeza, consegue enxergar todos eles. Em suma, ele consegue verificar todas as conexões da instância de várias formas, como por exemplo: a procedure <em>sp_who2</em> e a dmv <em>dm_exec_connections</em>.</p>
+<p>Funcionalidades:</p>
+<ul>
+<li>Add member to processadmin = Milagre da multiplicação...</li>
+<li>KILL = Possibilita utilizar o comando KILL, que encerra uma conexão. Leia-se: pode desconectar quem quiser.</li>
+</ul>
+<p>Apesar de parecer pouca coisa, tal role possui um poder de fogo considerável. Matar conexões é um tanto quanto perigoso e pode trazer problemas se tal permissão for concedida à pessoas inexperientes/mal-intencionadas.</p>
+<p>Geralmente quem tem o poder de matar conexões é um sa (sysadmin), então, é muito mais interessante deixar tal tarefa para algum membro desta role do que "granular" o fato de administrar conexões com o ProcessAdmin.</p>
+<p><strong> ----</strong></p>
+<p>Em breve, continuo o post sobre as server roles. Obrigado pela leitura e sinta-se à vontade para comentar.</body></html></p>

@@ -1,0 +1,62 @@
+---
+layout: post
+title: 'Impressões sobre o exame 70-433: Database Development'
+date: 2013-05-15 23:11:26.000000000 -03:00
+type: post
+parent_id: '0'
+published: true
+password: ''
+status: publish
+categories:
+- Certificação
+- Microsoft SQL Server
+- SQL Server 2008
+tags:
+- 70-433
+- certificações
+- Developer
+- MCTS
+- SQL Server
+- SQL Server 2008
+- SQL Server 2008 R2
+meta:
+  _publicize_pending: '1'
+  original_post_id: '25'
+  _wp_old_slug: '25'
+  dsq_thread_id: '3646182544'
+author:
+  login: Renato Siqueira
+  email: ''
+  display_name: Renato Siqueira
+  first_name: ''
+  last_name: ''
+permalink: "/impressoes-sobre-o-exame-70-433-database-development/"
+---
+<p><!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN" "http://www.w3.org/TR/REC-html40/loose.dtd"><br />
+<html><body><br />
+<a href="http://renatomsiqueira.com.br/wp-content/uploads/2013/05/deve1.png"><img class="aligncenter size-full wp-image-385" alt="Imagem que remete ao binário" src="{{site.baseurl}}/assets/2013/05/deve1.png" width="470" height="203"></a></p>
+<p>Boa tarde!</p>
+<p>Hoje vou falar sobre impressões e dicas que tive da 70-433, exame que credencia o profissional como Database Developer.<br />
+Para maiores informações, veja as referências ou a própria página do exame  <a href="https://www.microsoft.com/learning/en/us/exam.aspx?id=70-433">clicando aqui!</a><br />
+Enfim, é um exame de 55 Questões (100% da prova), sendo necessário atingir pelo menos menos 70% de acerto na prova (Arredondando, 39 questões).<br />
+Comecemos com um relato. Eu inicialmente seguiria a trilha apenas de Administração da linha SQL Server 2008 (onde deveria tirar a 70-432 e 70-450), mas como os exames do SQL Server 2008 vão expirar no final de Julho, resolvi dar um tempo pra, além de ver conceitos relacionados à administração,  dar uma revisitada à temática de desenvolvimento.</p>
+<p>Marquei a prova pra duas semanas depois do agendamento (o que  foi um erro) e não tive tempo de estudar o quando deveria (principalmente XML). Não passei. Chateação deixada de lado, peguei XML e o que não dominava muito bem e estudei/pratiquei bem mais, e remarquei sem custo (valeu <strong>second shot</strong>!) novamente, obtendo êxito dessa segunda vez graças à Deus o/</p>
+<p><strong>Sobre o exame</strong></p>
+<p>É uma prova que pode vencer pelo cansaço. Mais de 20% da prova é sobre confecção de consultas. 50% da prova (ou mais) são compostas de questões que te fazem rolar DEMAIS o scroll do mouse. Quem não tem paciência vai sofrer um bocado, se brincar até querendo pular as questões. Queries enormes e questões serão imensas. A boa notícia é que a maioria das questões, pra quem está realmente (disse, realmente) acostumado a fazer consultas, vai achar a questão certa só olhando sintaxe. Tem muita questão anulada por erros de sintaxes bem bola fora (alias em GROUP BY e JOINS loucos, daquele naipe cartesiano, sendo que consulta era bem específica quanto à filtros, por exemplo).</p>
+<p>Bem, comentando agora algumas questões rapido e superficialmente (Pra falar a verdade, o que consigo lembrar agora):</p>
+<p><strong>XML:</strong> Na primeira vez caiu no final da prova. Na segunda vez, no meio. Consultar e gerar XML através do XML PATH é importantíssimo. Aprenda conceitos de XML, principalmente XSD, XPATH e XQUERY. <a href="http://www.mdssistemas.inf.br/arquivos/Compendio_XML-Gustavo_Maia.pdf">Tem um compilado interessante do Gustavo Maia </a>sobre o assunto.</p>
+<p><strong>Service Broker:</strong> Uma questão. A pegadinha foi sintática. Trata-se de um envio de mensagem por e-mail. Simule algo do tipo se der tempo;</p>
+<p><strong>Powershell:</strong> Duas questões. Sintaxe novamente era o segredo da questão;</p>
+<p><strong>Queries :</strong> Caiu muito sobre MERGE, umas quatro questões. CTE's e subqueries em geral cairam bastante. Muita questão aqui é ganha por sintaxe. O que vai acontecer com frequência é ter duas questões praticamente idênticas e só um detalhe de diferença (por exemplo, tinham duas respostas iguais, script de criação de função, uma com schema dbo e outra sem. As duas estavam certas, porém a que tinha esquema era mais 'completa', logo, correta);</p>
+<p><strong>Data Tuning Advisor/ Profile</strong> : DTA, saber apenas pra que serve já basta para acertar as questões que a prova oferece. Profiler, saber o que pode extrair dele (principalmente os formatos de saída) podem salvar mais de duas questões da prova.</p>
+<p><strong>DMV's: </strong>Saber quais DMV's podem ajudar a detectar índices que podem ser criados ou taxa de fragmentação é um diferencial (dica).</p>
+<p><strong>Outras: </strong>O uso da função ROUND(), para que tabela vão os e-mails não enviados do Database Mail e saber como funciona o modo de isolamento SERIALIZABLE renderão alguns pontos.</p>
+<p><strong>Trigger: </strong>Cai muita questão! Estude muito essa parte. Teste. Erre. Aprenda, mas dominar o assunto garante uma boa quantia na nota.</p>
+<p><strong>Paciência: </strong>Primordial, principalmente pra quem tem preguiça de depurar consultas :)</p>
+<p>Se você ainda vai fazer as provas da linha SQL Server 2008, boa prova e principalmente, o mais importante, bons estudos!</p>
+<p><strong>Dicas de Estudo</strong></p>
+<p>Além do Training Kit (é claro) do exame, poderia compilar vários links interessantes e de profissionais que trabalham com SQL Server.</p>
+<p>Dessa lista, uma que me ajudou bastante foi o <a href="http://gustavomaiaaguiar.wordpress.com/2010/05/02/simulado-para-o-exame-70-433-mcts-microsoft-sql-server-2008-database-development-%E2%80%93-parte-01/">simulado que o Gustavo Maia montou</a>. Questões realmente fantásticas. Recomendo fortemente.</p>
+<p>E é isso. Agora vamos estudar pra 70-450 e aperfeiçoar o conteúdo obtido estudando o 70-432 (que é muita coisa por sinal).</p>
+<p>Pouco tempo mas muita vontade.  E muita coisa pra aprender e revisar.</p>
+<p>[]'</body></html></p>

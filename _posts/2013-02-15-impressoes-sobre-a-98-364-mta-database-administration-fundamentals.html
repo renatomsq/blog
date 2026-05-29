@@ -1,0 +1,67 @@
+---
+layout: post
+title: 'Impressões sobre o exame 98-364: MTA: Database Administration Fundamentals'
+date: 2013-02-15 04:21:52.000000000 -03:00
+type: post
+parent_id: '0'
+published: true
+password: ''
+status: publish
+categories:
+- Certificação
+- Microsoft SQL Server
+tags:
+- 98-364
+- Associate
+- MTA
+- SENAI
+- Student
+meta:
+  original_post_id: '25'
+  _publicize_pending: '1'
+  _wp_old_slug: '1385'
+  dsq_thread_id: '3229491228'
+  _wpas_skip_facebook: '1'
+  _wpas_skip_google_plus: '1'
+  _wpas_skip_twitter: '1'
+  _wpas_skip_linkedin: '1'
+  _wpas_skip_tumblr: '1'
+  _wpas_skip_path: '1'
+author:
+  login: Renato Siqueira
+  email: ''
+  display_name: Renato Siqueira
+  first_name: ''
+  last_name: ''
+permalink: "/impressoes-sobre-a-98-364-mta-database-administration-fundamentals/"
+---
+<p><!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN" "http://www.w3.org/TR/REC-html40/loose.dtd"><br />
+<html><body><br />
+<a href="http://renatomsiqueira.com.br/wp-content/uploads/2013/02/dados1.jpg"><img class="size-full wp-image-261" src="{{site.baseurl}}/assets/2013/02/dados1.jpg" alt="Era pra lembrar dados" width="580" height="389"></a></p>
+<p>O Senai MIC de Brasília deu uma oportunidade bacana pra tirar certificações MTA de graça por tempo limitado. Em suma, divulgaram, liberaram o link de inscrição e quem conseguiu se inscrever, voalá, deixou de pagar 69$ pra fazer a prova. Quem sabe eles resolvam abrir de novo, fiquemos de olho. Eu fiz a prova e queria falar um pouco sobre ela, sobre minhas percepções acerca da prova.</p>
+<p>A MTA (Microsoft Technology Associate) é uma categoria de certificação que foi idealizada para estudantes e pessoas que desejam entrar no mercado de TI. Mais especificamente, ela diz o seguinte "Fulano possui os requisitos básicos sobre determinado assunto" e pronto. No site da MS, é explicado o nível em que se situa o MTA no plano de certificações, confira mais informações sobre <a href="http://www.microsoft.com/learning/en/us/mta-certification.aspx">aqui</a>.</p>
+<p>No caso dessa prova em específico (Database Administration), ela testa seus fundamentos em banco de dados, então, independente de se conhecer SQL Server, Oracle, MySQL, a prova apresenta o mesmo nível de dificuldade, embora a sintaxe seja levemente puxada para o T-SQL do SQL Server. Sem querer ser chato, mas vi alguns profissionais dizendo que "é uma vergonha tirar uma prova de nível tão básico se já trabalha na área". Eu penso diferente. Penso que ainda é uma certificação sendo fácil ou não, o que quer dizer muita coisa, e não digo o papel (ou pdf) em si, mas sim sobre o preparo, a consolidação do que se conhece, a atestação disto mediante um desafio e do incentivo que ela tráz pra correr atrás de maiores patamares.</p>
+<p>Para quem já trabalha na área, como eu, tirá-la tráz outras experiências bacanas. A primeira dela é que pude consolidar fundamentos (mesmo o conteúdo sendo relativamente tranquilo pra quem já trabalha com BD's, a ocasião me fez rever alguns conceitos que vi na faculdade um século atraz e me trouxe informação extra no processo. E fortalecer conceitos nunca é demais), a segunda é que tive a experiência de tirar minha primeira certificação em TI (então pude sentir ao vivo o clima de fazer a prova em outro idioma e com perguntas interpretativas) e a terceira é que me motivou bastante a correr atrás de níveis maiores (estou estudando pra 70-432 MCTS Implementation and Maintenance) e consequentemente, de estudar mais.</p>
+<p>Agora, de fato, falarei sobre o exame:</p>
+<p>O mundo dos bancos de dados relacionais é um tanto quanto amplo. Envolve diversos tipos de conhecimento/áreas, que são: modelagem, administração, desenvolvimento, por exemplo. Essa MTA divide as questões nas seguintes categorias (segundo critério da Microsoft) ao longo de 35 questões (sendo necessários 70 pontos pra passar na média, cada questão vale +- 2.8 pts):</p>
+<blockquote><p>Understanding Core Database Concepts - 23%<br />
+Creating Database Objects - 23%<br />
+Manipulating Data - 26%<br />
+Understanding Data Storage - 17%<br />
+Administering a Database - 11%</p></blockquote>
+<p>As questões são de múltipla escolha. Daquele modelo mesmo: Te dá um problema e você seleciona a opção correspondente.</p>
+<p>O que eu lembro que caiu na prova, e vou falar aqui levianamente pra vocês terem uma ideia (não posso reproduzir as questões por motivo de contrato) do que é importante saber:</p>
+<blockquote><p>- Qual a diferença entre um Clustered Index e um Non-Clustered Index?</p>
+<p>- Qual a diferença entre uma Stored Procedure e uma Function?</p>
+<p>- Diversas questões sobre comandos DML (UPDATE, INSERT, DELETE) geralmente com peguinhas de sintaxe. Muita atenção nisso caso você não tenha o hábito de construir queries;</p>
+<p>- Duas questões sobre normalização (Uma pergunta sobre a vantagem da Desnormalização e outra sobre a característica da 2FN);</p>
+<p>- Diferença entre DROP e DELETE (Que ainda pega muita gente, acredito);</p>
+<p>- Uma questão sobre GROUP BY (Pra evitar aquele erro clássico de esquecer de agrupar quem tá por fora das funções de agregação);</p>
+<p>- Algumas questões com comandos inseridos fora de ordem. Tipo um SELECT seguido de ORDER BY e depois WHERE. Isso vai contra a lógica de execução de consulta e eles embutiram essa pegadinha em várias questões;</p>
+<p>- Comandos DML, DCL e DDL (Dado um comando, definir de qual categoria ele é. Por exemplo, o CREATE é um DDL).</p>
+<p>- Uso do operador LIKE (especificamente a famosa sintaxe da pegadinha do %malandro%. É, os percents, que chamamos no SQL de Wilcard);</p>
+<p>- Etc (aka não me lembro do restante);</p></blockquote>
+<p>Pra quem já trabalha com banco de dados a prova foi tranquila. Pra quem desenvolve e tem pouco contato, ela possivelmente foi um pouco tensa e pra quem não tem os fundamentos, ou só tem os de faculdade/cursos sem experiência prática, ela pode ser muito difícil principalmente pela média de aprovação. Portanto, nessa última situação, recomendo instalar o SQL Server na máquina (ou o seu RDBMS amigo de fé, colega, amante, tanto faz), instalar um banco de exemplo(Adventure Works sempre é muito recomendado caso vá instalar no SQL Server, o que eu recomendo) e ir desbravando criando consultas, errando bastante e acertando muito mais (o que é totalmente válido quando NÃO SE ESTÁ EM AMBIENTE DE PRODUÇÃO, kkk) e dando uma lida ou outra em alguns conceitos.</p>
+<p>Pra todos os efeitos, uma dica pessoal que dou é procurar ler material em inglês, e sem querer assustar, saber inglês mais pra frente não vai se tornar um diferencial, e sim requisito, então quanto antes houver esse hábito durante os estudos melhor.</p>
+<p>Enfim, desejo boa sorte caso você esteja interessado nessa certificação e espero que as informações acima ajudem de alguma forma.</p>
+<p>[]'s</body></html></p>

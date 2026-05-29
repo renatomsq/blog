@@ -1,0 +1,75 @@
+---
+layout: post
+title: Script - Relatório dos Últimos Backups
+date: 2016-04-18 17:48:12.000000000 -03:00
+type: post
+parent_id: '0'
+published: true
+password: ''
+status: publish
+categories:
+- Script
+tags:
+- Backup
+- k
+- script
+meta:
+  _edit_last: '2'
+author:
+  login: Renato Siqueira
+  email: ''
+  display_name: Renato Siqueira
+  first_name: ''
+  last_name: ''
+permalink: "/script-relatorio-dos-ultimos-backups/"
+---
+<p><!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN" "http://www.w3.org/TR/REC-html40/loose.dtd"><br />
+<html><body>
+<p>Olá,</p>
+<p>Script para visualização dos últimos backups de banco de dados.</p>
+<p>Baseado e adaptado do script: <a href="http://timradney.com/2014/02/17/how-to-check-for-last-sql-server-backup/">http://timradney.com/2014/02/17/how-to-check-for-last-sql-server-backup/</a><br />
+<code language="sql"></p>
+<p>/***********************************************************</p>
+<p>	Script: Verifica backup<br />
+	Descrição:<br />
+				Retorna, para cada base de dados, as últimas datas para os backups FULL, Diferencial (Diff) e também retorna a data dos dois<br />
+				últimos backups de log.<br />
+	Compatibilidade: SQL Server 2005 e versões superiores</p>
+<p>************************************************************/</p>
+<p>SELECT<br />
+  DISTINCT</p>
+<p>	@@servername as  [Servidor],<br />
+        a.Name AS [Banco de Dados] ,<br />
+        CONVERT(SYSNAME, DATABASEPROPERTYEX(a.name, 'Recovery')) [Recovery Model] ,<br />
+        COALESCE((SELECT   CONVERT(VARCHAR(50), MAX(backup_finish_date), 121)<br />
+                   FROM     msdb.dbo.backupset<br />
+                   WHERE    database_name = a.name<br />
+                            AND type = 'D'<br />
+                            AND is_copy_only = '0'<br />
+                 ), '-') AS 'Full' ,<br />
+        COALESCE((SELECT   CONVERT(VARCHAR(50), MAX(backup_finish_date), 121)<br />
+                   FROM     msdb.dbo.backupset<br />
+                   WHERE    database_name = a.name<br />
+                            AND type = 'I'<br />
+                            AND is_copy_only = '0'<br />
+                 ), '-') AS 'Diferencial' ,<br />
+        COALESCE((SELECT   CONVERT(VARCHAR(20), MAX(backup_finish_date), 121)<br />
+                   FROM     msdb.dbo.backupset<br />
+                   WHERE    database_name = a.name<br />
+                            AND type = 'L'<br />
+                 ), '-') AS 'Log (Último)' ,<br />
+        COALESCE((SELECT   CONVERT(VARCHAR(20), backup_finish_date, 120)<br />
+                   FROM     ( SELECT    ROW_NUMBER() OVER ( ORDER BY backup_finish_date DESC ) AS 'rownum' ,<br />
+                                        backup_finish_date<br />
+                              FROM      msdb.dbo.backupset<br />
+                              WHERE     database_name = a.name<br />
+                                        AND type = 'L'<br />
+                            ) withrownum<br />
+                   WHERE    rownum = 2<br />
+                 ), '-') AS 'Log (penúltimo)'<br />
+FROM    sys.databases a<br />
+        LEFT OUTER JOIN msdb.dbo.backupset b ON b.database_name = a.name<br />
+WHERE   a.name &lt;&gt; 'TEMPDB'<br />
+GROUP BY a.Name </p>
+<p></code></p>
+<p></body></html></p>

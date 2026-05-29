@@ -1,0 +1,79 @@
+---
+layout: post
+title: Conversa sobre a cláusula GO
+date: 2013-09-08 22:14:32.000000000 -03:00
+type: post
+parent_id: '0'
+published: true
+password: ''
+status: publish
+categories:
+- Microsoft SQL Server
+- T-SQL
+tags:
+- batch
+- BATCH SEPARATOR
+- GO
+- lote
+meta:
+  original_post_id: '814'
+  _publicize_pending: '1'
+  _wp_old_slug: '1385'
+  dsq_thread_id: '3229491356'
+author:
+  login: Renato Siqueira
+  email: ''
+  display_name: Renato Siqueira
+  first_name: ''
+  last_name: ''
+permalink: "/conversa-sobre-a-clausula-go/"
+---
+<p><!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN" "http://www.w3.org/TR/REC-html40/loose.dtd"><br />
+<html><body><br />
+<a href="http://renatomsiqueira.com.br/wp-content/uploads/2013/09/s101.png"><img class="aligncenter size-full wp-image-888" alt="Cláusula GO, funcionamento básico e seus conceitos" src="{{site.baseurl}}/assets/2013/09/s101.png" width="470" height="147"></a><br />
+Vamos falar um pouco sobre o comando GO?<br />
+Duas pequenas observações antes de começar o artigo:</p>
+<p>1) Nada nessa vida, nem uma cláusula de programação, é por acaso;</p>
+<p>2) GO não é um comando T-SQL, muito menos SQL padronizado...É um comando usado pelo client para separação de batch (lote).</p>
+<p><b>Introdução</b></p>
+<p>O GO não é um comando T-SQL e também não é reconhecido como padrão na linguagem SQL. É um comando usado pelos aplicativos ‘clients’ que se conectam à instâncias do  SQL Server, como, por exemplo, o  <b>sqlcmd</b> e o <b>Management Studio</b>, que entendem o GO como um separador de instruções, e por isso enviam o código  de modo organizado, por sequência, usando GO como um separador. Se você usar o GO em qualquer client que não tenha suporte à cláusula, o seu código dará erro.</p>
+<p>Pra ilustrar o que é batch e como o GO age no SQL Server, vamos a um exemplo básico:</p>
+<p><a href="http://renatomsiqueira.com.br/wp-content/uploads/2013/09/go11.png"><img class="size-full wp-image-891 aligncenter" alt="Cláusula Go 1" src="{{site.baseurl}}/assets/2013/09/go11.png" width="470" height="206"></a></p>
+<p>O segundo SELECT dará erro por motivos óbvios. Alguns pensam “mas esse erro não tem lógica! Eu já declarei a variável na janelinha do Management Studio e a janelinha representa uma sessão aberta (até aqui correto), então, a variável, já que foi declarada na sessão, deveria ser reconhecida em qualquer parte da sessão (e aqui mora o erro). Engano clássico.</p>
+<p>É justamente este pensamento  que possibilita a ocorrência de uma quantidade assustadora de erros em programação T-SQL, simplesmente por ignorar que existem escopos e escopos.</p>
+<p>Ilustrando da melhor forma possível como funciona a separação de lotes a mesma consulta acima:</p>
+<p><a href="http://renatomsiqueira.com.br/wp-content/uploads/2013/09/go21.png"><img class="aligncenter size-full wp-image-893" alt="go2" src="{{site.baseurl}}/assets/2013/09/go21.png" width="470" height="170"></a></p>
+<p>Perceba que o GO delimita um lote de código de acordo com sua declaração, considerando qualquer código até que haja outro GO, que é a delimitação deste comando.O Management Studio, nesse caso, diz pra cada lote até onde ele deve executar. Em declarações de variáveis com o uso de GO, o Management Studio limita o escopo (alcance) da variável @data.</p>
+<p>Outro detalhe, o comando GO precisa estar sozinho na linha, caso contrário, dará erro. Se quiser pode testar deixando um GO mesmo antecedido com ponto e vírgula (;) e notará que dará erro. Só comprova que ele é um comando com característica procedural, daqueles da moda antiga, que gostam realmente de separar instruções por lote de código (lote =  batch):</p>
+<p><b>E pra que eu uso o GO afinal sendo que ele pode me levar à erros?</b></p>
+<p>O comando tem uma propriedade de contador (inteiro). Isso pode ser usado em nosso favor quando usamos um client com suporte à cláusula. Segue um exemplo fantasioso que preenche uma tabela com registros totalmente aleatórios. Agora, vamos trabalhar com o modo de separação que é nativo do GO além do atributo de repetição.</p>
+<p><a href="http://renatomsiqueira.com.br/wp-content/uploads/2013/09/go31.png"><img class="size-full wp-image-894 alignleft" alt="go3" src="{{site.baseurl}}/assets/2013/09/go31.png" width="382" height="281"></a></p>
+<p>Basicamente, o GO vai executar 1000 vezes as instruções que foram declaradas desde o último GO.  Agora, uma pergunta. Se você der um F5, CTRL+E, PLAY, o que seja, pra executar o código, o que acontece?</p>
+<p>a)      Um erro;</p>
+<p>b)      O SQL Server cria a tabela #serial e insere mil vezes nessa tabela através do comando INSERT INTO;</p>
+<p>c)       Vai  executar MIL VEZES o comando SELECT * from #serial;</p>
+<p>d)      Vai dar USE no banco MASTER mil vezes;</p>
+<p>Imagine mentalmente o GO dizendo assim: "Quero executar TUDO que tá emcima de mim. Tudo é meu, ATÉ QUE EU ENCONTRE OUTRO GO, aí o lote de código não é meu. Irmão não invade território de irmão!".</p>
+<p>Aliás, de curiosidade,  saiba  que o comando GO possui implícitamente a forma<strong> GO 1</strong>, pois ele só executa aquela instrução de código uma vez. Resumindo o que acontece na questão...</p>
+<p>- O primeiro GO vai executar uma vez  o comando USE máster</p>
+<p>-  O segundo GO vai executar o comando CREATE TABLE #serial e o INSERT mil vezes e...</p>
+<p>Isso mesmo. A opção correta era a A. Ele vai criar a tabela, inserir uma vez e vai voltar de novo no loop, só que na segunda vez, ele vai voltar pro primeiro comando do lote que é um CREATE TABLE, porém como a tabela já existe, vai dar erro.</p>
+<blockquote><p>Msg 2714, Level 16, State 6, Line 3</p>
+<p>There is already an object named '#serial' in the database.</p>
+<p>** An error was encountered during execution of batch. Continuing.</p></blockquote>
+<p>Batch deu erro e foi abortado. Simples assim. Então, imagine que você não tem essa tabela #serial. Drope-a:</p>
+<blockquote><p>DROP TABLE #serial</p></blockquote>
+<p>Repare a diferença testando o código abaixo (Não liga para os rabiscos paint-fast-like):</p>
+<p><a href="http://renatomsiqueira.com.br/wp-content/uploads/2013/09/go41.png"><img alt="go4" src="{{site.baseurl}}/assets/2013/09/go41.png" width="432" height="346"></a></p>
+<p>O código acima irá funcionar. Vai executar <strong>apenas</strong> o INSERT (e não o CREATE) mil vezes. Simples assim.</p>
+<p><b>FAQ (Recapitulando)</b></p>
+<p><strong>É certo dizer que GO é um comando?</strong></p>
+<p>Reposta: É sim.</p>
+<p><strong>Mas você disse que ele não é um comando..</strong></p>
+<p>Resposta: De novo, é um comando sim, relaxa. Do <i>client</i>, e não do SQL  ANSI ou T-SQL. Tanto que se você tentar executar uma procedure com GO, dará erro, porque o SQL Server é um Server e não sabe o que significa a cláusula GO.</p>
+<p><strong>Posso executar código por código então, sem usar o GO, uma porção de cada vez, no mouse, sabe, na mão?</strong></p>
+<p>Claro que pode. E isso, inclusive, é execução em "batch" também (teoricamente). A diferença é que você está fazendo sua própria separação de lotes, mas repare que o conceito é o mesmo.</p>
+<p><b>Para maiores dúvidas:</b></p>
+<p><b>GO:</b> <a href="http://msdn.microsoft.com/en-US/library/ms188037%28v=SQL.90%29.aspx">Documentação do próprio MSDN </a></p>
+<p><b>Batch:</b><a href="http://msdn.microsoft.com/en-US/library/ms175502(v=sql.90).aspx"> Documentação do próprio MSDN</a></p>
+<p>Qualquer dúvida, feedback, sugestão, sinta-se à vontade para comentar.</body></html></p>

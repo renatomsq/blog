@@ -1,0 +1,103 @@
+---
+layout: post
+title: Delete em lotes no SQL Server e Postgres
+date: 2025-08-15 14:45:58.000000000 -03:00
+type: post
+parent_id: '0'
+published: true
+password: ''
+status: publish
+categories: []
+tags: []
+meta:
+  _edit_last: '1'
+  _aioseo_title: ''
+  _aioseo_description: ''
+  _aioseo_keywords: a:0:{}
+  _aioseo_og_title: ''
+  _aioseo_og_description: ''
+  _aioseo_og_article_section: ''
+  _aioseo_og_article_tags: a:0:{}
+  _aioseo_twitter_title: ''
+  _aioseo_twitter_description: ''
+author:
+  login: renatomsiq@gmail.com
+  email: renatomsiq@gmail.com
+  display_name: renatomsiq@gmail.com
+  first_name: ''
+  last_name: ''
+permalink: "/delete-em-lotes-no-sql-server-e-postgres/"
+---
+<p><!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN" "http://www.w3.org/TR/REC-html40/loose.dtd"><br />
+<!-- wp:image {"id":3178,"sizeSlug":"full","linkDestination":"none"} --><html><body></p>
+<figure class="wp-block-image size-full"><img src="{{site.baseurl}}/assets/2025/08/borracha_apagando_banco_de_dados.png" alt="" class="wp-image-3178"></figure>
+<p><!-- /wp:image --></p>
+<p><!-- wp:paragraph --></p>
+<p>Olá! Sextou com dica.</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --></p>
+<p>Tem horas que deletar um grande volume de dados é necessário e deve ficar no radar de toda empresa, já que dados tem ciclo de vida e muitas vezes não faz sentido ficar disponível em produção. Portanto o post de hoje é uma dica de como realizar este tipo de técnica (expurgo).</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --></p>
+<p>Pode ser que a tabela que você precise expurgar seja extremamente concorrida e rodar aquele DELETE "pesado" pode ser uma má ideia, não só pela possibilidade de bloqueios mas também por abrir uma transação grande (que pode reter log e gerar outros problemas, dependendo do banco envolvido).</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --></p>
+<p>O código abaixo é um exemplo de como deletar em lotes em uma tabela específica no MSDB mas você pode aplicar em qualquer outra coisa, basta adaptar o código.</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:code --></p>
+<pre class="wp-block-code"><code>USE msdb;
+GO
+
+DECLARE @Batch INT = 1000; -- vai deletar de quanto em quanto
+DECLARE @DataCorte INT = 30;   -- data de corte do expurgo
+
+WHILE 1=1
+BEGIN
+    DELETE TOP (@Batch)
+    FROM sysmail_mailitems
+    WHERE send_request_date &lt; DATEADD(DAY, -@DataCorte, GETDATE());
+
+    IF @@ROWCOUNT = 0 BREAK;
+
+    WAITFOR DELAY '00:00:01'; -- Break para aliviar carga
+END</code></pre>
+<p><!-- /wp:code --></p>
+<p><!-- wp:paragraph --></p>
+<p>Esse é um bom exemplo pois MSDB que faz muito uso de envio de e-mail geralmente é um bom candidato para acrescentar em rotina de expurgo, mas ele traz uma outra técnica que pode funcionar bem em alguns cenário de deleção que é DELEÇÃO EM VIEW, que por vezes é uma boa ideia para realizar a deleção em mais de uma tabela e manter integridade referencial se tiver.</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --></p>
+<p>No Postgres uma implementação de delete em lote similar (ajuste as colunas e o intervalo, no script abaixo está 3 dias):</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:code --></p>
+<pre class="wp-block-code"><code>DECLARE
+    v_deletadas BIGINT;
+    v_total BIGINT := 0;
+    v_lote INTEGER := 5000; -- tamanho do lote
+BEGIN
+    LOOP
+        DELETE FROM public.tabela_qualquer
+        WHERE ctid IN (
+            SELECT ctid
+            FROM public.tabela_qualquer
+            WHERE dt_validade &lt; CURRENT_DATE - INTERVAL '3 days'
+            ORDER BY dt_validade
+            LIMIT v_lote
+        );
+
+        GET DIAGNOSTICS v_deletadas = ROW_COUNT;
+        v_total := v_total + v_deletadas;
+
+        EXIT WHEN v_deletadas = 0;
+        COMMIT;
+    END LOOP;
+
+    RAISE NOTICE 'Total de linhas deletadas: %', v_total;
+</code></pre>
+<p><!-- /wp:code --></p>
+<p><!-- wp:paragraph --></p>
+<p>Existem várias formas e estratégias de expurgo (incluindo arquivamento). O objetivo deste post foi ser bem simples para compartilhar o conceito e que pode ajudar no dia a dia de um DBA.</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --></p>
+<p>[]s</p>
+<p><!-- /wp:paragraph --><br />
+</body></html></p>

@@ -1,0 +1,194 @@
+---
+layout: post
+title: Script - Coleta de Waits por Snapshot.
+date: 2015-03-02 16:56:09.000000000 -03:00
+type: post
+parent_id: '0'
+published: true
+password: ''
+status: publish
+categories:
+- T-SQL
+tags: []
+meta:
+  _edit_last: '2'
+  dsq_thread_id: '3561117997'
+author:
+  login: Renato Siqueira
+  email: ''
+  display_name: Renato Siqueira
+  first_name: ''
+  last_name: ''
+permalink: "/script-coleta-de-waits-por-snapshot/"
+---
+<p><!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN" "http://www.w3.org/TR/REC-html40/loose.dtd"><br />
+<html><body></p>
+<p>Olá,</p>
+<p>Postando aqui um script de uso pessoal, segue um exemplo de coleta de waitstats baseada em <em>snapshot</em>:  ideia antiga porém efetiva: realiza a coleta das esperas de determinado servidor em momento A e momento B e retorna a diferença.</p>
+<p>A ideia é que, pelo fato da DMV ser cumulativa, uma consulta direta não responde muita coisa além de dar uma ideia geral (e bem abstrata) de quais waits possuem maior número de ocorrências. O problema é que estes dados isolados são difíceis de interpretar. </p>
+<p>Já com <em>snapshots</em>, é possível verificar a contagem das esperas por intervalo de tempo de modo e isso auxilia demais análises de troubleshooting (muito mais efetivo se isso é feito no início de qualquer análise), sendo a diferença um número mais factível tendo algum contexto temporal.  </p>
+<p>Esperas são eventos normais e a maioria delas podem ser ignoradas em análises de troubleshooting e elas estão retratadas nos filtros via NOT IN.</p>
+<p>O script abaixo pede apenas um parâmetro em segundos e processa as coletas.</p>
+<pre>
+
+/****************************************************************************************
+
+Nome: sp_waitstats
+Descrição: Tira a diferença entre Snapshot de esperas do servidor.
+Existe apenas um único parâmetro de entrada, em segundos, que representa o intervalo que deve ser coletado (valor padrão: 60 segundos).
+
+*****************************************************************************************/
+ 
+CREATE PROCEDURE dbo.sp_waitstats
+(
+	@Segundos SMALLINT = 60
+)
+AS
+BEGIN
+
+IF @Segundos &lt;= 0  
+BEGIN
+		PRINT 'Insira um intervalo de coleta, em segundos, maior e diferente de zero.';
+		
+END
+		PRINT 'Aguarde a coleta :  '+CAST(@Segundos AS CHAR(3))+' segundos';	
+ 
+-- As amostras serão coletadas e jogadas em duas tabelas temporárias diferentes
+
+IF EXISTS (select * from tempdb.sys.tables where name LIKE '%#SnapshotWaitstats1%')
+BEGIN 
+		DROP TABLE TEMPDB..#SnapshotWaitstats1;
+END
+
+IF EXISTS (select * from tempdb.sys.tables where name LIKE '%#SnapshotWaitstats2%')
+BEGIN 
+		DROP TABLE TEMPDB..#SnapshotWaitstats2;
+END
+
+-- Primeira coleta 
+ 
+PRINT 'Primeira coleta realizada às '+CONVERT(CHAR,GETDATE(),108);
+ 
+DECLARE @DataInicio DATETIME = GETDATE();
+
+SELECT 
+		wait_type, 
+		waiting_tasks_count, 
+		CAST(wait_time_ms AS DECIMAL(18,2)) AS wait_time_ms ,
+		CAST(max_wait_time_ms AS DECIMAL(18,2)) AS max_wait_time_ms, 
+		CAST(signal_wait_time_ms AS DECIMAL(18,2)) AS signal_wait_time_ms,
+		CAST(wait_time_ms - signal_wait_time_ms AS DECIMAL(18,2)) AS Resource_wait_time_ms
+INTO  #SnapshotWaitstats1
+FROM sys.dm_os_wait_stats (nolock)
+WHERE wait_type NOT IN ( 
+		N'BROKER_EVENTHANDLER',             N'BROKER_RECEIVE_WAITFOR',
+        N'BROKER_TASK_STOP',                N'BROKER_TO_FLUSH',
+        N'BROKER_TRANSMITTER',              N'CHECKPOINT_QUEUE',
+        N'CHKPT',                           N'CLR_AUTO_EVENT',
+        N'CLR_MANUAL_EVENT',                N'CLR_SEMAPHORE',
+        N'DBMIRROR_DBM_EVENT',              N'DBMIRROR_EVENTS_QUEUE',
+        N'DBMIRROR_WORKER_QUEUE',           N'DBMIRRORING_CMD',
+        N'DIRTY_PAGE_POLL',                 N'DISPATCHER_QUEUE_SEMAPHORE',
+        N'EXECSYNC',                        N'FSAGENT',
+        N'FT_IFTS_SCHEDULER_IDLE_WAIT',     N'FT_IFTSHC_MUTEX',
+ N'HADR_CLUSAPI_CALL',                 N'HADR_FILESTREAM_IOMGR_IOCOMPLETION',
+        N'HADR_LOGCAPTURE_WAIT',            N'HADR_NOTIFICATION_DEQUEUE',
+        N'HADR_TIMER_TASK',                 N'HADR_WORK_QUEUE',
+        N'KSOURCE_WAKEUP',          N'LOGMGR_QUEUE',                    N'ONDEMAND_TASK_QUEUE',
+        N'PWAIT_ALL_COMPONENTS_INITIALIZED',
+        N'QDS_PERSIST_TASK_MAIN_LOOP_SLEEP',
+        N'QDS_CLEANUP_STALE_QUERIES_TASK_MAIN_LOOP_SLEEP',
+        N'REQUEST_FOR_DEADLOCK_SEARCH',     N'RESOURCE_QUEUE',
+        N'SERVER_IDLE_CHECK',               N'SLEEP_BPOOL_FLUSH',
+        N'SLEEP_DBSTARTUP',                 N'SLEEP_DCOMSTARTUP',
+        N'SLEEP_MASTERDBREADY',             N'SLEEP_MASTERMDREADY',
+        N'SLEEP_MASTERUPGRADED',            N'SLEEP_MSDBSTARTUP',
+        N'SLEEP_SYSTEMTASK',                N'SLEEP_TASK',
+        N'SLEEP_TEMPDBSTARTUP',             N'SNI_HTTP_ACCEPT',
+        N'SP_SERVER_DIAGNOSTICS_SLEEP',     N'SQLTRACE_BUFFER_FLUSH',
+        N'SQLTRACE_INCREMENTAL_FLUSH_SLEEP',
+        N'SQLTRACE_WAIT_ENTRIES',           N'WAIT_FOR_RESULTS',
+        N'WAITFOR',                         N'WAITFOR_TASKSHUTDOWN',
+        N'WAIT_XTP_HOST_WAIT',              N'WAIT_XTP_OFFLINE_CKPT_NEW_LOG',
+        N'WAIT_XTP_CKPT_CLOSE',             N'XE_DISPATCHER_JOIN',
+        N'XE_DISPATCHER_WAIT',              N'XE_TIMER_EVENT')
+AND waiting_tasks_count &gt; 0
+ 
+/**********************************************************************************************
+-- Simula o delay em segundos (de acordo com parâmetro) para realizar a segunda coleta 
+***********************************************************************************************/
+
+
+DECLARE @DataFim  AS DATETIME = DATEADD(s,@Segundos,GETDATE())
+WAITFOR TIME @DataFim
+
+-- Segunda Coleta
+
+PRINT 'Segunda coleta realizada às '+CONVERT(CHAR,@DataFim,108);
+
+SELECT  
+		wait_type, 
+		waiting_tasks_count, 
+		CAST(wait_time_ms AS DECIMAL(18,2)) AS wait_time_ms ,
+		CAST(max_wait_time_ms AS DECIMAL(18,2)) AS max_wait_time_ms, 
+		CAST(signal_wait_time_ms AS DECIMAL(18,2)) AS signal_wait_time_ms,
+		CAST(wait_time_ms - signal_wait_time_ms AS DECIMAL(18,2)) AS Resource_wait_time_ms
+INTO  #SnapshotWaitstats2
+FROM sys.dm_os_wait_stats (nolock)
+WHERE wait_type NOT IN ( 
+		N'BROKER_EVENTHANDLER',             N'BROKER_RECEIVE_WAITFOR',
+        N'BROKER_TASK_STOP',                N'BROKER_TO_FLUSH',
+        N'BROKER_TRANSMITTER',              N'CHECKPOINT_QUEUE',
+        N'CHKPT',                           N'CLR_AUTO_EVENT',
+        N'CLR_MANUAL_EVENT',                N'CLR_SEMAPHORE',
+        N'DBMIRROR_DBM_EVENT',              N'DBMIRROR_EVENTS_QUEUE',
+        N'DBMIRROR_WORKER_QUEUE',           N'DBMIRRORING_CMD',
+        N'DIRTY_PAGE_POLL',                 N'DISPATCHER_QUEUE_SEMAPHORE',
+        N'EXECSYNC',                        N'FSAGENT',
+        N'FT_IFTS_SCHEDULER_IDLE_WAIT',     N'FT_IFTSHC_MUTEX',
+ N'HADR_CLUSAPI_CALL',                 N'HADR_FILESTREAM_IOMGR_IOCOMPLETION',
+        N'HADR_LOGCAPTURE_WAIT',            N'HADR_NOTIFICATION_DEQUEUE',
+        N'HADR_TIMER_TASK',                 N'HADR_WORK_QUEUE',
+        N'KSOURCE_WAKEUP',          N'LOGMGR_QUEUE',                    N'ONDEMAND_TASK_QUEUE',
+        N'PWAIT_ALL_COMPONENTS_INITIALIZED',
+        N'QDS_PERSIST_TASK_MAIN_LOOP_SLEEP',
+        N'QDS_CLEANUP_STALE_QUERIES_TASK_MAIN_LOOP_SLEEP',
+        N'REQUEST_FOR_DEADLOCK_SEARCH',     N'RESOURCE_QUEUE',
+        N'SERVER_IDLE_CHECK',               N'SLEEP_BPOOL_FLUSH',
+        N'SLEEP_DBSTARTUP',                 N'SLEEP_DCOMSTARTUP',
+        N'SLEEP_MASTERDBREADY',             N'SLEEP_MASTERMDREADY',
+        N'SLEEP_MASTERUPGRADED',            N'SLEEP_MSDBSTARTUP',
+        N'SLEEP_SYSTEMTASK',                N'SLEEP_TASK',
+        N'SLEEP_TEMPDBSTARTUP',             N'SNI_HTTP_ACCEPT',
+        N'SP_SERVER_DIAGNOSTICS_SLEEP',     N'SQLTRACE_BUFFER_FLUSH',
+        N'SQLTRACE_INCREMENTAL_FLUSH_SLEEP',
+        N'SQLTRACE_WAIT_ENTRIES',           N'WAIT_FOR_RESULTS',
+        N'WAITFOR',                         N'WAITFOR_TASKSHUTDOWN',
+        N'WAIT_XTP_HOST_WAIT',              N'WAIT_XTP_OFFLINE_CKPT_NEW_LOG',
+        N'WAIT_XTP_CKPT_CLOSE',             N'XE_DISPATCHER_JOIN',
+        N'XE_DISPATCHER_WAIT',              N'XE_TIMER_EVENT')
+AND waiting_tasks_count &gt; 0;
+
+-- Calculando diferença entre as duas coletas:..
+
+SELECT TOP 20
+
+	c1.wait_type as [Wait], 
+	c2.waiting_tasks_count - c1.waiting_tasks_count  as [Quantidade],
+	CAST((c2.wait_time_ms - c1.wait_time_ms)/1000. AS DECIMAL (18,2)) AS [Total (seg)],
+	CAST((C2.Resource_wait_time_ms - C1.Resource_wait_time_ms)/1000.  AS DECIMAL(18,2)) AS [Recurso (seg)],
+	CAST((C2.signal_wait_time_ms - C1.signal_wait_time_ms)/1000.  AS DECIMAL(18,2)) AS [Signal (seg)],
+	@DataInicio as DataInício,
+	@DataFim as DataFim
+FROM #SnapshotWaitstats1 c1 INNER JOIN #SnapshotWaitstats2 c2 ON C2.wait_type = C1.wait_type
+ORDER BY  [Quantidade] DESC, [Total (seg)] DESC
+		
+
+END
+ 
+</pre>
+<p>[]'s</p>
+<p><strong>Referências </strong><br />
+MSDN - <a href="https://msdn.microsoft.com/pt-br/library/ms179984.aspx">sys.dm_os_wait_stats</a><br />
+Script Paul Randal: <a href="http://www.sqlskills.com/blogs/paul/capturing-wait-statistics-period-time/">Script Paul Randal</a>:<br />
+</body></html></p>

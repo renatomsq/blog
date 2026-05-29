@@ -1,0 +1,58 @@
+---
+layout: post
+title: BACKUP TO NUL - Enviando seus backups pro além
+date: 2015-01-26 19:22:48.000000000 -03:00
+type: post
+parent_id: '0'
+published: true
+password: ''
+status: publish
+categories:
+- Backup
+tags:
+- Backup
+- device
+- nul
+meta:
+  _edit_last: '2'
+  dsq_thread_id: '3457579351'
+author:
+  login: Renato Siqueira
+  email: ''
+  display_name: Renato Siqueira
+  first_name: ''
+  last_name: ''
+permalink: "/backup-to-nul-enviando-seus-backups-pro-alem/"
+---
+<p><!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN" "http://www.w3.org/TR/REC-html40/loose.dtd"><br />
+<html><body></p>
+<p>[caption id="attachment_2358" align="alignnone" width="840"]<a href="http://renatomsiqueira.com.br/wp-content/uploads/2015/01/Voiddddd.jpg"><img class="size-large wp-image-2358" src="{{site.baseurl}}/assets/2015/01/Voiddddd-1024x640.jpg" alt="Puro void!" width="840" height="525"></a> Puro void![/caption]</p>
+<p>Olá,</p>
+<p>Em vários locais (livros, blogs, etc) você pode encontrar backups que são feitos para o dispositivo NUL conforme o exemplo abaixo:</p>
+<pre> BACKUP DATABASE [Adventureworks] TO DISK = 'NUL'</pre>
+<p>Que caminho estranho... O que é esse NUL? E o mais importante: o que aconteceu com esse backup?</p>
+<p>A explicação curta e grossa: Você fez um backup só que não.<br />
+A explicação convencional e correta: Você acabou de fazer um backup mas jogou ele pro "nada".</p>
+<p><strong>Sobre o NUL</strong></p>
+<p>Em poucas palavras:</p>
+<p>- É um <em>device</em> bastante antigo do Sistema Operacional (device no contexto de SO em geral assume característica de arquivos especiais, então você também pode chamar NUL de arquivo) e se algo é gravado nele, o destino final é o limbo :)</p>
+<p>É interessante pontuar que NUL device é equivalente ao dispositivo <strong>/dev/nul</strong> do UNIX e que é NUL e não NULL. . É um arquivo especial com nome reservado. Maiores informações nas referências do post.</p>
+<p>Você pode confirmar que mesmo o SQL Server escrevendo no NUL, a operação de backup é realizada sem erros e é inclusive logada  nas tabelas do msdb.dbo.backupset e similares (backupfile, etc).</p>
+<p><strong>Qual a utilidade disto?</strong></p>
+<p>- Realizar <em>benchmarking </em>de backup (<a href="http://www.edvaldocastro.com/sql-server-backup-internals-backup-full/">cujo alguns parâmetros são configuráveis e você pode ler sobre o assunto neste post do Edvaldo Castro</a>), mensurar performance de leitura do mdf, etc;</p>
+<p>- Você está testando algo que gere porém não precise de backups;</p>
+<p>- Simular o antigo comando WITH TRUNCATE ONLY  que  foi descontinuado no SQL Server 2008 ou superior com um comportamento parecido: a maior diferença é que o backup pro limbo não quebra explicitamente a cadeia de log em teoria, já que tecnicamente o backup foi feito pelo SQL Server e entregue em algum <em>device. </em>Mas na prática, aquele backup enviado pro limbo furou a cadeira de log e se algum restore for realizado e precisar daquele intervalo furado, já era. E aí é reiniciar a cadeira com um backup FULL (ou Diff).</p>
+<p><strong>Conclusão</strong></p>
+<p>O uso do NUL como caminho de backup deve ser compreendido pois, como o arquivo não é persistido, não sem tem backup no final das contas. Também reforço ser de extrema importância compreender a aplicabilidade desta opção de caminho assim como suas vantagens e consequências.</p>
+<p>[]'s</p>
+<hr>
+<p> </p>
+<p><strong>Referências</strong></p>
+<ol>
+<li>
+<strong>Devices, Arquivos Especiais e outros padrões do Windows -</strong> <a href="https://msdn.microsoft.com/en-us/library/aa365247(VS.85).aspx">https://msdn.microsoft.com/en-us/library/aa365247(VS.85).aspx</a>
+</li>
+<li>
+<strong>/dev/null</strong> - <a href="http://pt.wikipedia.org/?title=/dev/null">http://pt.wikipedia.org/?title=/dev/null</a>]</li>
+</ol>
+<p></body></html></p>

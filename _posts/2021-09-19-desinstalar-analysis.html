@@ -1,0 +1,95 @@
+---
+layout: post
+title: Como desinstalar o Analysis Services (AS)
+date: 2021-09-19 18:23:47.000000000 -03:00
+type: post
+parent_id: '0'
+published: true
+password: ''
+status: publish
+categories:
+- Analysis Services
+- Microsoft SQL Server
+tags:
+- analysis
+- as
+- default
+- desinstalar
+meta:
+  _yoast_wpseo_metadesc: Procedimento para desinstalar o Analysis Services, sendo
+    um dos principais motivos possibilitar a reinstalação default.
+  _yoast_wpseo_primary_category: '20'
+  _thumbnail_id: '2924'
+  _yoast_wpseo_content_score: '30'
+  _edit_last: '1'
+  _last_editor_used_jetpack: block-editor
+  _aioseo_title: ''
+  _aioseo_description: ''
+  _aioseo_keywords: ''
+  _aioseo_og_title: ''
+  _aioseo_og_description: ''
+  _aioseo_og_article_section: ''
+  _aioseo_og_article_tags: ''
+  _aioseo_twitter_title: ''
+  _aioseo_twitter_description: ''
+author:
+  login: renatomsiq@gmail.com
+  email: renatomsiq@gmail.com
+  display_name: renatomsiq@gmail.com
+  first_name: ''
+  last_name: ''
+permalink: "/desinstalar-analysis/"
+excerpt: Procedimento para desinstalar o Analysis Service
+---
+<p><!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN" "http://www.w3.org/TR/REC-html40/loose.dtd"><br />
+<!-- wp:paragraph --><html><body></p>
+<p>Olá pessoal, dica ligeira sobre como você pode desinstalar o Analysis Services (AS) por quaisquer motivos, algo que deveria ser algo intuitivo e prático na própria interface gráfica do instalador porém não é que o acontece. </p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --></p>
+<p>Basta montar a mídia de instalação do SQL  e executar o seguinte comando, no local do setup do instalador:</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --></p>
+<p><strong>X</strong>:\setup.exe /ACTION=uninstall /FEATURES=AS /INSTANCENAME=MSSQLSERVER</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --></p>
+<p>Onde X é o local do setup da mídia de instalação.  O meu instalador não está montado mas a ideia é a mesma, dali basta abrir  um prompt de comando com permissão elevada:</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --></p>
+<p>No exemplo abaixo montei uma mídia de instalação na unidade G: e quero remover de uma instância chamada TESTE_BI:</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:image {"id":3067,"sizeSlug":"large","linkDestination":"none"} --></p>
+<figure class="wp-block-image size-large"><img src="{{site.baseurl}}/assets/2021/09/image-3-1024x137.png" alt="" class="wp-image-3067"></figure>
+<p><!-- /wp:image --></p>
+<p><!-- wp:image {"id":3068,"sizeSlug":"large","linkDestination":"none"} --></p>
+<figure class="wp-block-image size-large"><img src="{{site.baseurl}}/assets/2021/09/image-4-1024x715.png" alt="" class="wp-image-3068"><br />
+<figcaption class="wp-element-caption">Selecione a instância que contém o Analysis Services que você deseja remover</figcaption>
+</figure>
+<p><!-- /wp:image --></p>
+<p><!-- wp:image {"id":3069,"sizeSlug":"full","linkDestination":"none"} --></p>
+<figure class="wp-block-image size-full"><img src="{{site.baseurl}}/assets/2021/09/image-5.png" alt="" class="wp-image-3069"><br />
+<figcaption class="wp-element-caption">Confirme se a feature está selecionada</figcaption>
+</figure>
+<p><!-- /wp:image --></p>
+<p><!-- wp:image {"id":3070,"sizeSlug":"full","linkDestination":"none"} --></p>
+<figure class="wp-block-image size-full"><img src="{{site.baseurl}}/assets/2021/09/image-6.png" alt="" class="wp-image-3070"><br />
+<figcaption class="wp-element-caption">Confirme mais uma vez por desencargo de consciência e porque o seguro morreu de velho e clique em Remove</figcaption>
+</figure>
+<p><!-- /wp:image --></p>
+<p><!-- wp:image {"id":3072,"sizeSlug":"full","linkDestination":"none"} --></p>
+<figure class="wp-block-image size-full"><img src="{{site.baseurl}}/assets/2021/09/image-8.png" alt="" class="wp-image-3072"><br />
+<figcaption class="wp-element-caption">Feito! Printe para evidênciar se quiser.</figcaption>
+</figure>
+<p><!-- /wp:image --></p>
+<p><!-- wp:paragraph --></p>
+<p>Procedimento simples, não?</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --></p>
+<p>Resolvi documentar pois pode ajudar alguém, já não é a primeira vez que uma reinstalação da instância default (Database Engine) do SQL Server é necessária e acaba que a instalação do AS impede o uso da default pelo banco. </p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --></p>
+<p>Até a próxima!</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --></p>
+<p>[]'s</p>
+<p><!-- /wp:paragraph --><br />
+</body></html></p>

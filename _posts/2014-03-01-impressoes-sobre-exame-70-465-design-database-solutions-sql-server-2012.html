@@ -1,0 +1,84 @@
+---
+layout: post
+title: Impressões sobre o exame 70-465 - Design database solutions for SQL Server
+  2012
+date: 2014-03-01 21:56:36.000000000 -03:00
+type: post
+parent_id: '0'
+published: true
+password: ''
+status: publish
+categories:
+- Certificação
+- Microsoft SQL Server
+- SQL Server 2012
+tags:
+- 70-465
+- certificacao
+- DATABASE
+- Design
+- mcse
+- SQL Server
+meta:
+  _publicize_pending: '1'
+  _su_rich_snippet_type: none
+  _likes: '0'
+  original_post_id: '1385'
+  _wp_old_slug: '1385'
+  dsq_thread_id: '3520489229'
+author:
+  login: Renato Siqueira
+  email: ''
+  display_name: Renato Siqueira
+  first_name: ''
+  last_name: ''
+permalink: "/impressoes-sobre-exame-70-465-design-database-solutions-sql-server-2012/"
+---
+<p><!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN" "http://www.w3.org/TR/REC-html40/loose.dtd"><br />
+<html><body><br />
+<a href="http://renatomsiqueira.com.br/wp-content/uploads/2014/04/exam641.png"><img class="aligncenter size-full wp-image-1459" src="{{site.baseurl}}/assets/2014/03/exam641.png" alt="Imagem totalmente random para representar o post" width="600" height="345"></a></p>
+<p>Olá,</p>
+<p>Gostei bastante da prova e cá estou aqui pra compartilhar alguns pontos sobre a mesma..</p>
+<p><strong>Coisas legais</strong></p>
+<ul>
+<li>
+<strong>Casos de estudo</strong>: Questões baseadas em casos de estudos são bem interessantes pois como você recebe um cenário as questões são melhor contextualizadas, diminuindo questões de dupla interpretação e calando um pouco nosso amigo "depende". Melhor ainda quando alguns cenários já foram, em outros momentos, presenciados, seja na vida real ou lidos via blogs e livros, e isso ajuda (me ajudou) bastante na hora de diagnosticar o problema da questão.</li>
+</ul>
+<ul>
+<li>
+<strong>Features</strong>: A prova cobra de modo pesado conhecimento em praticamente todas as ferramentas do produto. Você não precisa dominar cada uma: é suficiente saber apenas o que cada uma faz e o que não faz e isso será cobrado em várias questões (bem mais de 15, no meu sorteio). Algumas questões vem praticamente de graça (por exemplo, quando a questão pede "a melhor opção para criação de políticas" e marcar PBM é quase que automático, e esse tipo de situação ocorreu em diversas questões). O que eu lembro que cai na prova: audit, agent alert, policy based management, resource governor, activity monitor, maintenance plain (...), Profiler, Xtended Events, DTC...</li>
+</ul>
+<ul>
+<li>
+<strong> Melhor escolha</strong>: Essas questões são bem legais, porque geralmente apresentam uma cilada com duas ou mais respostas certas. Por exemplo, se você precisar listar as 10 maiores ocorrências de WAITS da sua instância, você usaria uma DMV ou um DBCC? Pro primeiro, você ordenaria e limitava o resultado. No segundo, você precisaria jogar em uma tabela, variável, etc pra depois fazer o mesmo que você faria no primeiro caso. Por isso, geralmente eu digo e repito: se você tiver 10 opções e dentre elas tiver alguma DMV, considere-a com carinho.</li>
+</ul>
+<ul>
+<li>
+<strong>Alta Disponibilidade VS Disaster Recovery:</strong> Muitas questões muito bem orquestradas no sentido de separar uma coisa da outra e outras muito bem feitas. Saber os tipos de backup e qual o papel de cada um em um disaster recovery é muito importante. Sabendo o que cada um faz, e o TEMPO relativo que cada um demora, algumas questões são praticamente de graça. Backup de log é coisa de bonita de  Deus sempre, mas nem sempre é a melhor opção em uma operação de risco (previamente agendada) onde alguma cagada acontece e a recuperação precisa ser rápida. Talvez um Database Snapshot cairia melhor neste cenário de DR, por exemplo...</li>
+</ul>
+<ul>
+<li>
+<strong>Indexação: </strong>Cai bastante coisa atrelado com os estudos de caso. Não são questões fáceis então recomendo dar uma lida antes sobre o assunto.</li>
+</ul>
+<p><strong>Coisas que eu não gostei</strong></p>
+<ul>
+<li>Mais questão de Mirroring, menos de Always-On. A funcionalidade de Mirroring será descontinuada pela MS nas futuras versões, então, esperava que os exames também fizessem isso, de alguma forma.</li>
+<li>Algo já pontuado pelo Luti, é sobre as questões que possuem mais de uma resposta correta mas não possuem limites (por exemplo, cinco opções, e você pode marcar todas, ou uma). Se tiverem 4 corretas, e eu marcar 3, perco a questão inteira ou ganho proporcional ao valor da questão? Seria legal a Microsoft indicar isso nas questões ou nas instruções do exame, pra dissipar incerteza que no meu caso me fez gastar um tempo extra nessas questões.</li>
+</ul>
+<p><strong>Próximo passo (pessoal)<br />
+</strong></p>
+<p>Exame 70-464! Destinei um tempo maior de revisão pra essa prova, já desenvolvimento não é minha praia e confesso que não tenho boa experiência com esse segmento (depois da 70-433) além de não ser atualmente minha atuação. Espero ter êxito nessa prova e compartilhar algumas dicas sobre ela também.</p>
+<p><strong>Referências</strong></p>
+<p>Recomendo fortemente a leitura dos posts abaixo (em ordem):</p>
+<ul>
+<li>
+<strong>Luti</strong> - http://luticm.blogspot.com.br/2012/04/impressoes-da-prova-70-465.html</li>
+</ul>
+<ul>
+<li>
+<strong>Alex Rosa</strong> - http://alexrosadba.wordpress.com/2012/11/01/70-465-designing-database-solutions-for-sql-server-2012-pass/</li>
+</ul>
+<p>Considero as leituras acima bastante importantes caso você vá realizar o exame.</p>
+<p> </p>
+<p>Bons estudos!</p>
+<p>[]'s</body></html></p>

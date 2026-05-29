@@ -1,0 +1,220 @@
+---
+layout: post
+title: 'Exercício SQL #1 - Ajuda minha lojinha'
+date: 2025-03-11 18:58:15.000000000 -03:00
+type: post
+parent_id: '0'
+published: true
+password: ''
+status: publish
+categories: []
+tags:
+- exercicio
+- pratica
+- SQL
+- TSQL
+meta:
+  _edit_last: '1'
+  _aioseo_title: ''
+  _aioseo_description: ''
+  _aioseo_keywords: a:0:{}
+  _aioseo_og_title: ''
+  _aioseo_og_description: ''
+  _aioseo_og_article_section: ''
+  _aioseo_og_article_tags: a:0:{}
+  _aioseo_twitter_title: ''
+  _aioseo_twitter_description: ''
+author:
+  login: renatomsiq@gmail.com
+  email: renatomsiq@gmail.com
+  display_name: renatomsiq@gmail.com
+  first_name: ''
+  last_name: ''
+permalink: "/exercicio-sql-1-ajuda-minha-lojinha/"
+---
+<p><!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN" "http://www.w3.org/TR/REC-html40/loose.dtd"><br />
+<!-- wp:image {"id":3157,"sizeSlug":"large","linkDestination":"none"} --><html><body></p>
+<figure class="wp-block-image size-large"><img src="{{site.baseurl}}/assets/2025/03/wexor-tmg-L-2p8fapOA8-unsplash-1024x640.jpg" alt="" class="wp-image-3157"></figure>
+<p><!-- /wp:image --></p>
+<p><!-- wp:paragraph --></p>
+<p>Olá! Carnaval passou e o ano começou daquele jeitão, certo? Aproveitei a oportunidade então para tirar as teias do blog e postar exercícios que eu tenho certeza que vão te ajudar a praticar não somente SQL mas também um pouco de lógica. Então sendo direto ao ponto, este post é para quem: </p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:list --></p>
+<ul class="wp-block-list">
+<!-- wp:list-item --></p>
+<li>Está aprendendo SQL;</li>
+<p><!-- /wp:list-item --></p>
+<p><!-- wp:list-item --></p>
+<li>Quer um exercício com dados de negócio real e que fazem algum sentido;</li>
+<p><!-- /wp:list-item --></p>
+<p><!-- wp:list-item --></p>
+<li>Quer se divertir sei lá porque motivos além dos citados acima;</li>
+<p><!-- /wp:list-item -->
+</ul>
+<p><!-- /wp:list --></p>
+<p><!-- wp:paragraph --></p>
+<p>Caso você já seja sinistro(a) em SQL mas ainda assim quer dar uma brincada, além de responder as perguntas de negócio, você pode responder as perguntas com gráficos (quanto mais simples, melhor!) ou pode fazer a ingestão dessa tabela em outras tecnologias e brincar por lá também adaptando o que for necessário (lembrando que o script abaixo e os exercícios foram feitos no SQL Server).</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --></p>
+<p><strong>INTRODUÇÃO</strong></p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --></p>
+<p>Você é o(a) analista de dados que contratei para me ajudar em análises de uma loja virtual  que abri tem pouco tempo. Estou vendendo igual uma "metralhadora do rambo" e não quero perder meu tempo analisando dados, prefiro focar no negócio e contratar alguém (VOCÊ) para fazer isso por mim. Sem mais delongas, aqui está uma amostra da minha tabela:</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:code --></p>
+<pre class="wp-block-code"><code>/* Tabela para a gente brincar */
+CREATE TABLE [dbo].[Sales](
+	[SalesId] smallint identity (1,1) Primary key,
+	[SalesDate] DATE NULL,
+	[FreightType] VARCHAR(100),
+	[Freight] DECIMAL(12,2) NULL,
+	[Total] DECIMAL(12,2) NULL,
+	[Buyer] varchar(100) NULL,
+	[City] varchar(100) NULL,
+	[State] CHAR(2) NULL,
+	[Status] VARCHAR(20) NULL
+) ON [PRIMARY]
+GO
+
+/* Os dados obviamente, sem eles nada acontece feijoada */ 
+ 
+INSERT [dbo].[Sales] ([SalesDate], FreightType, [Freight], [Total], [Buyer], City, [State], [Status]) VALUES ('2025/02/20', 'Frete combinado com o vendedor', '0.01', '48.01', 'Samurai', 'João Pessoa - PB', 'PB', 'Recebido')
+GO
+INSERT [dbo].[Sales] ([SalesDate], FreightType, [Freight], [Total], [Buyer], City, [State], [Status]) VALUES ('2025/02/19', 'Frete Fixo com rastreio', '12', '50', 'ExDeath', 'Batatais - SP', 'SP', 'Cancelado')
+GO
+INSERT [dbo].[Sales] ([SalesDate], FreightType, [Freight], [Total], [Buyer], City, [State], [Status]) VALUES ('2025/02/14', 'Frete combinado com o vendedor', '0.1', '85', 'Dante', 'João Pessoa - PB', 'PB', 'Recebido')
+GO
+INSERT [dbo].[Sales] ([SalesDate], FreightType, [Freight], [Total], [Buyer], City, [State], [Status]) VALUES ('2025/02/11', 'Frete Fixo com rastreio', '12', '63', 'Lenna', 'Niterói - RJ', 'RJ', 'Recebido')
+GO
+INSERT [dbo].[Sales] ([SalesDate], FreightType, [Freight], [Total], [Buyer], City, [State], [Status]) VALUES ('2025/02/09', 'Frete Fixo com rastreio', '12', '56.7', 'Samus', 'Belo Horizonte - MG', 'MG', 'Recebido')
+GO
+INSERT [dbo].[Sales] ([SalesDate], FreightType, [Freight], [Total], [Buyer], City, [State], [Status]) VALUES ('2025/02/09', 'Frete Fixo com rastreio', '12', '52', 'Geralt', 'Petrolina - PE', 'PE', 'Recebido')
+GO
+INSERT [dbo].[Sales] ([SalesDate], FreightType, [Freight], [Total], [Buyer], City, [State], [Status]) VALUES ('2025/02/06', 'Frete Fixo com rastreio', '12', '50', 'Aloy', 'Vila Velha - ES', 'ES', 'Recebido')
+GO
+INSERT [dbo].[Sales] ([SalesDate], FreightType, [Freight], [Total], [Buyer], City, [State], [Status]) VALUES ('2025/02/06', 'Frete Fixo com rastreio', '12', '102', 'Ryu', 'Rio de Janeiro - RJ', 'RJ', 'Recebido')
+GO
+INSERT [dbo].[Sales] ([SalesDate], FreightType, [Freight], [Total], [Buyer], City, [State], [Status]) VALUES ('2025/02/04', 'Frete Fixo com rastreio', '12', '183.89', 'Scorpion', 'Brasília - DF', 'DF', 'Recebido')
+GO
+INSERT [dbo].[Sales] ([SalesDate], FreightType, [Freight], [Total], [Buyer], City, [State], [Status]) VALUES ('2025/02/03', 'Frete Fixo com rastreio', '12', '42', 'Sonic', 'Monte Alto - SP', 'SP', 'Recebido')
+GO
+INSERT [dbo].[Sales] ([SalesDate], FreightType, [Freight], [Total], [Buyer], City, [State], [Status]) VALUES ('2025/02/03', 'Frete Fixo com rastreio', '12', '86.9', 'Neo', 'Porto Alegre - RS', 'RS', 'Recebido')
+GO
+INSERT [dbo].[Sales] ([SalesDate], FreightType, [Freight], [Total], [Buyer], City, [State], [Status]) VALUES ('2025/02/02', 'Frete Fixo com rastreio', '12', '47', 'Yoda', 'João Pessoa - PB', 'PB', 'Recebido')
+GO
+INSERT [dbo].[Sales] ([SalesDate], FreightType, [Freight], [Total], [Buyer], City, [State], [Status]) VALUES ('2025/02/02', 'Frete Fixo com rastreio', '12', '36', 'Spock', 'Jundiaí - SP', 'SP', 'Recebido')
+GO
+INSERT [dbo].[Sales] ([SalesDate], FreightType, [Freight], [Total], [Buyer], City, [State], [Status]) VALUES ('2025/02/01', 'Frete combinado com o vendedor', '0.01', '54', 'Gandalf', 'Joo Pessoa - PB', 'PB', 'Recebido')
+GO
+INSERT [dbo].[Sales] ([SalesDate], FreightType, [Freight], [Total], [Buyer], City, [State], [Status]) VALUES ('2025/01/30', 'Frete Fixo com rastreio', '12', '94', 'Shanks', 'Fortaleza - CE', 'CE', 'Recebido')
+GO
+INSERT [dbo].[Sales] ([SalesDate], FreightType, [Freight], [Total], [Buyer], City, [State], [Status]) VALUES ('2025/01/29', 'Frete combinado com o vendedor', '0.01', '41.01', 'Daneedanee', 'Santa Rita - PB', 'PB', 'Recebido')
+GO
+INSERT [dbo].[Sales] ([SalesDate], FreightType, [Freight], [Total], [Buyer], City, [State], [Status]) VALUES ('2025/01/26', 'Frete Fixo com rastreio', '12', '55.1', 'Aeris', 'São Paulo - SP', 'SP', 'Recebido')
+GO
+INSERT [dbo].[Sales] ([SalesDate], FreightType, [Freight], [Total], [Buyer], City, [State], [Status]) VALUES ('2025/01/24', 'Frete Fixo com rastreio', '12', '74', 'Eleven', 'Itapevi - SP', 'SP', 'Recebido')
+GO
+INSERT [dbo].[Sales] ([SalesDate], FreightType, [Freight], [Total], [Buyer], City, [State], [Status]) VALUES ('2025/01/23', 'Frete Fixo com rastreio', '12', '52', 'Ripley', 'Rio de Janeiro - RJ', 'RJ', 'Recebido')
+GO
+INSERT [dbo].[Sales] ([SalesDate], FreightType, [Freight], [Total], [Buyer], City, [State], [Status]) VALUES ('2025/01/22', 'Frete Fixo com rastreio', '12', '115.3', 'Legolas', 'São João de Meriti - RJ', 'RJ', 'Recebido')
+GO
+INSERT [dbo].[Sales] ([SalesDate], FreightType, [Freight], [Total], [Buyer], City, [State], [Status]) VALUES ('2025/01/22', 'Frete Fixo com rastreio', '12', '47', 'Vader', 'Parambu - CE', 'CE', 'Cancelado')
+GO
+INSERT [dbo].[Sales] ([SalesDate], FreightType, [Freight], [Total], [Buyer], City, [State], [Status]) VALUES ('2025/01/21', 'Frete Fixo com rastreio', '12', '96.8', 'Logan', 'São Paulo - SP', 'SP', 'Recebido')
+GO
+INSERT [dbo].[Sales] ([SalesDate], FreightType, [Freight], [Total], [Buyer], City, [State], [Status]) VALUES ('2025/01/21', 'Frete Fixo com rastreio', '12', '47', 'Thanos', 'Fortaleza - CE', 'CE', 'Cancelado')
+GO
+INSERT [dbo].[Sales] ([SalesDate], FreightType, [Freight], [Total], [Buyer], City, [State], [Status]) VALUES ('2025/01/20', 'Frete Fixo com rastreio', '12', '175', 'Goku', 'Rio de Janeiro - RJ', 'RJ', 'Recebido')
+GO
+INSERT [dbo].[Sales] ([SalesDate], FreightType, [Freight], [Total], [Buyer], City, [State], [Status]) VALUES ('2025/01/13', 'Frete Fixo com rastreio', '12', '112', 'Naruto', 'Fortaleza - CE', 'CE', 'Recebido')
+GO
+INSERT [dbo].[Sales] ([SalesDate], FreightType, [Freight], [Total], [Buyer], City, [State], [Status]) VALUES ('2025/01/13', 'Frete combinado com o vendedor', '0.01', '31.01', 'Vegeta', 'João Pessoa - PB', 'PB', 'Recebido')
+GO
+INSERT [dbo].[Sales] ([SalesDate], FreightType, [Freight], [Total], [Buyer], City, [State], [Status]) VALUES ('2025/01/13', 'Frete combinado com o vendedor', '0.5', '5.5', 'Luffy', 'João Pessoa - PB', 'PB', 'Recebido')
+GO
+INSERT [dbo].[Sales] ([SalesDate], FreightType, [Freight], [Total], [Buyer], City, [State], [Status]) VALUES ('2025/01/13', 'Frete combinado com o vendedor', '0.01', '55.01', 'Gandalf', 'João Pessoa - PB', 'PB', 'Recebido')
+GO
+INSERT [dbo].[Sales] ([SalesDate], FreightType, [Freight], [Total], [Buyer], City, [State], [Status]) VALUES ('2025/01/13', 'Frete Fixo com rastreio', '12', '52', 'Kenshin', 'Teresina - PI', 'PI', 'Recebido')
+GO
+INSERT [dbo].[Sales] ([SalesDate], FreightType, [Freight], [Total], [Buyer], City, [State], [Status]) VALUES ('2025/02/20', 'Frete Fixo com rastreio', '12', '50.5', 'Spawn', 'Teresópolis - RJ', 'RJ', 'Recebido')
+GO
+INSERT [dbo].[Sales] ([SalesDate], FreightType, [Freight], [Total], [Buyer], City, [State], [Status]) VALUES ('2025/02/18', 'Frete Fixo com rastreio', '12', '196.88', 'Magneto', 'Florianópolis - SC', 'SC', 'Recebido')
+GO
+INSERT [dbo].[Sales] ([SalesDate], FreightType, [Freight], [Total], [Buyer], City, [State], [Status]) VALUES ('2025/02/12', 'Frete Fixo com rastreio', '12', '51.9', 'Hellboy', 'Ipojuca - PE', 'PE', 'Recebido')
+GO
+INSERT [dbo].[Sales] ([SalesDate], FreightType, [Freight], [Total], [Buyer], City, [State], [Status]) VALUES ('2025/02/11', 'Frete Fixo com rastreio', '12', '82', 'Mario', 'São Paulo - SP', 'SP', 'Recebido')
+GO
+INSERT [dbo].[Sales] ([SalesDate], FreightType, [Freight], [Total], [Buyer], City, [State], [Status]) VALUES ('2025/02/10', 'Frete combinado com o vendedor', '0.2', '31.2', 'Ash', 'Guarabira - PB', 'PB', 'Recebido')
+GO
+INSERT [dbo].[Sales] ([SalesDate], FreightType, [Freight], [Total], [Buyer], City, [State], [Status]) VALUES ('2025/02/07', 'Grátis', '0', '729', 'Seiya', 'Itajaí - SC', 'SC', 'Recebido')
+GO
+INSERT [dbo].[Sales] ([SalesDate], FreightType, [Freight], [Total], [Buyer], City, [State], [Status]) VALUES ('2025/02/26', 'Frete Fixo com rastreio', '12.00', '84.00', 'Shun', 'Duque de Caxias - RJ', 'RJ', 'Recebido')
+GO
+INSERT [dbo].[Sales] ([SalesDate], FreightType, [Freight], [Total], [Buyer], City, [State], [Status]) VALUES ('2025/02/26', 'Frete Fixo com rastreio', '12.00', '210.50', 'Omega', 'São Paulo - SP', 'SP', 'Recebido')
+GO
+INSERT [dbo].[Sales] ([SalesDate], FreightType, [Freight], [Total], [Buyer], City, [State], [Status]) VALUES ('2025/03/08', 'Frete Fixo com rastreio', '14.00', '48.00', 'Bartz', 'São Paulo - SP', 'SP', 'Recebido')
+GO
+INSERT [dbo].[Sales] ([SalesDate], FreightType, [Freight], [Total], [Buyer], City, [State], [Status]) VALUES ('2025/03/07', 'Grátis', '0.00', '351.49', 'Cloud', 'São Luís - MA', 'MA', 'Recebido')
+GO
+INSERT [dbo].[Sales] ([SalesDate], FreightType, [Freight], [Total], [Buyer], City, [State], [Status]) VALUES ('2025/03/07', 'Frete Fixo com rastreio', '14.00', '75.00', 'Sephiroth', 'Americana - SP', 'SP', 'Recebido')
+GO
+INSERT [dbo].[Sales] ([SalesDate], FreightType, [Freight], [Total], [Buyer], City, [State], [Status]) VALUES ('2025/03/07', 'Frete Fixo com rastreio', '14.00', '69.00', 'Tifa', 'São Paulo - SP', 'SP', 'Recebido')
+GO
+INSERT [dbo].[Sales] ([SalesDate], FreightType, [Freight], [Total], [Buyer], City, [State], [Status]) VALUES ('2025/03/01', 'Frete Fixo com rastreio', '14.00', '160.80', 'Barret', 'São Paulo - SP', 'SP', 'Recebido')
+GO
+INSERT [dbo].[Sales] ([SalesDate], FreightType, [Freight], [Total], [Buyer], City, [State], [Status]) VALUES ('2025/02/27', 'Frete Fixo com rastreio', '14.00', '73.98', 'Eleven', 'Itapevi - SP', 'SP', 'Recebido')
+GO
+INSERT [dbo].[Sales] ([SalesDate], FreightType, [Freight], [Total], [Buyer], City, [State], [Status]) VALUES ('2025/02/23', 'Frete Fixo com rastreio', '12.00', '112.50', 'Hyoga', 'Cachoeiro de Itapemirim - ES', 'ES', 'Recebido')
+GO
+</code></pre>
+<p><!-- /wp:code --></p>
+<p><!-- wp:paragraph --></p>
+<p>O conteúdo da tabela é mais ou menos esse:</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:image {"id":3158,"sizeSlug":"full","linkDestination":"none"} --></p>
+<figure class="wp-block-image size-full"><img src="{{site.baseurl}}/assets/2025/03/image.png" alt="" class="wp-image-3158"></figure>
+<p><!-- /wp:image --></p>
+<p><!-- wp:paragraph --></p>
+<p>ATENÇÃO!!!!! Os dados não têm muito segredo, mas perceba que as únicas vendas que realmente importam para mim foram as que aconteceram de fato (Status = 'Recebido'). Essa informação é MUITO importante, porque se você esquecer de filtrar o status correto, vai considerar nos cálculos vendas que não aconteceram. Portanto, errar isso compromete várias das perguntas. Para fins de cálculo considere sempre a coluna "Total" que é de fato o valor final da venda (somando o frete que nessa modelagem se chama 'Freight' thanks to duolingo).</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:list {"ordered":true} --></p>
+<ol class="wp-block-list">
+<!-- wp:list-item --></p>
+<li>Qual total de dinheiro que eu já faturei nas minhas vendas?</li>
+<p><!-- /wp:list-item --></p>
+<p><!-- wp:list-item --></p>
+<li>Qual total de dinheiro que eu já faturei nas minhas vendas por mês? Me mostre a query.</li>
+<p><!-- /wp:list-item --></p>
+<p><!-- wp:list-item --></p>
+<li>Preciso de uma consulta que mostre a venda com maior valor, a com menor valor e a média dos valores.  </li>
+<p><!-- /wp:list-item --></p>
+<p><!-- wp:list-item --></p>
+<li>Preciso saber quantas vendas por dia de semana aconteceram. A ideia é saber qual dia da semana (WEEKDAY) eu vendi mais vezes. Me mostre a query que traga essa agregação de dia de semana x quantidade de vendas efetuadas e ordene pelo maior número.</li>
+<p><!-- /wp:list-item --></p>
+<p><!-- wp:list-item --></p>
+<li>Tem algum cliente que comprou mais de uma vez comigo? Quais são eles e quantas vezes eles compraram?</li>
+<p><!-- /wp:list-item --></p>
+<p><!-- wp:list-item --></p>
+<li>Qual estado do Brasil que mais compra comigo?</li>
+<p><!-- /wp:list-item --></p>
+<p><!-- wp:list-item --></p>
+<li>Qual valor total das vendas que eu perdi?</li>
+<p><!-- /wp:list-item --></p>
+<p><!-- wp:list-item --></p>
+<li>Qual foi a quantidade de vendas realizadas por mês? Me mostre a query.</li>
+<p><!-- /wp:list-item --></p>
+<p><!-- wp:list-item --></p>
+<li>Esses dados de frete estão zoados. Todo frete grátis sai do bolso de alguém e nesse caso é o meu mesmo. Preciso saber quanto eu realmente gastei de frete como um todo. Onde tiver frete grátis, considere o valor de 15 reais.</li>
+<p><!-- /wp:list-item -->
+</ol>
+<p><!-- /wp:list --></p>
+<p><!-- wp:paragraph --></p>
+<p><strong>AGORA É COM VOCÊ</strong></p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --></p>
+<p>É isso. Dê o seu melhor e brinque com os dados. Se esforce ao máximo para fazer sem ajuda de IA.   Algumas perguntas são bem simples, outras nem tanto, mas a ideia é essa, faz até onde você conseguir e se precisar de alguma dica só avisar. Pode usar os comentários deste post mesmo, postar no git e colocar o link, "your choice".</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --></p>
+<p>Futuramente farei posts parecidos com este porque eu sei que eles podem ajudar pelo menos uma pessoa e com toda certeza, valeu todo o o investimento de tempo. Vamo que vamo. Abraço!</p>
+<p><!-- /wp:paragraph --><br />
+</body></html></p>

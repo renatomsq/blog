@@ -1,0 +1,102 @@
+---
+layout: post
+title: Roles do SQL Server - Dbcreator
+date: 2013-10-09 18:45:35.000000000 -03:00
+type: post
+parent_id: '0'
+published: true
+password: ''
+status: publish
+categories:
+- Microsoft SQL Server
+- Roles
+- Security
+tags:
+- restore
+meta:
+  _edit_last: '2'
+  dsq_thread_id: '3280370137'
+  _wp_old_slug: '1379'
+  _publicize_pending: '1'
+  _syntaxhighlighter_encoded: '1'
+  original_post_id: '1385'
+author:
+  login: Renato Siqueira
+  email: ''
+  display_name: Renato Siqueira
+  first_name: ''
+  last_name: ''
+permalink: "/roles-do-sql-server-dbcreator/"
+---
+<p><!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN" "http://www.w3.org/TR/REC-html40/loose.dtd"><br />
+<html><body><br />
+<a href="http://renatomsiqueira.com.br/wp-content/uploads/2013/08/cc3b3pias1.png"><img class="alignnone size-full wp-image-725" src="{{site.baseurl}}/assets/2013/10/cc3b3pias1.png" alt="DBCREATOR" width="470" height="147"></a></p>
+<p>Mais um post da série <a href="http://radialog.wordpress.com/2013/09/20/roles-do-sql-server-vida-e-obra/">SQL Server Vida e Obra  </a> , dessa vez sobre uma role bem peculiar: dbcreator, também conhecido como filho do sa. Cuidado com essa permissão, beleza?</p>
+<p><strong>O que é o DBCREATOR?</strong></p>
+<p>A <a href="http://technet.microsoft.com/en-us/library/ms176014(v=sql.90).aspx">documentação oficial da Microsoft</a> (meio datada, mas ainda vale), diz:</p>
+<blockquote><p>Members of the <strong>dbcreator</strong> fixed server role can create databases, and can alter and restore their own databases.</p></blockquote>
+<p>Em português simples traduzido no popular:</p>
+<blockquote><p>Membros da função fixa dbcreator podem criar bases de dados, e podem alterar e restaurar suas próprias bases</p></blockquote>
+<p>Bem, vamos explorar um pouco e mostrar que a role vai um pouco além do que o nome sugere (criar bases)...O que pode ser uma benção e uma maldição, dependendo do ambiente.</p>
+<p><strong>Aplicação</strong></p>
+<p>É uma conta com permissões importantíssimas. O primeiro ponto a ser observado é que um dbcreator possui permissão para criar, alterar e dropar qualquer banco, até os que não é de sua criação (sentiu o perigo?) assim como pode utilizar o comando RESTORE tanto pra banco quanto pra LOG (este porém restrito às suas bases e/ou com as permissões adequadas. Tal assunto será abordado futuramente com maiores detalhes).</p>
+<p><strong>Testes</strong></p>
+<p>Primeiramente vamos verificar as permissões que a role possui:</p>
+<pre>EXEC sp_srvrolepermission 'dbcreator'
+</pre>
+<p>Listando (os riscados não serão abordados neste post.):</p>
+<p>- Add member to dbcreator (também conhecido como milagre da multiplicação)<br />
+- ALTER DATABASE<br />
+- CREATE DATABASE<br />
+- DROP DATABASE<br />
+- Extend database (Alterar o tamanho de um arquivo da base)<br />
+<del>- RESTORE DATABASE</del><br />
+<del>- RESTORE LOG</del><br />
+- sp_renamedb  (Procedure que renomeia o banco)</p>
+<p>Bem, vamos começar oficialmente com os testes....</p>
+<p><strong>1) Criação do login </strong></p>
+<pre>
+-- Criação de dois usuários
+
+CREATE LOGIN DbaCriador WITH PASSWORD = '123', CHECK_POLICY = OFF CREATE LOGIN FilhoDoDbaCriador WITH PASSWORD = '123', CHECK_POLICY = OFF
+
+-- DBACriador agora é Dbcreator
+
+EXEC sp_addsrvrolemember 'DbaCriador','dbcreator'
+
+-- Ainda logado com seu login de administrador, crie um banco qualquer
+
+CREATE DATABASE meuBanco
+
+</pre>
+<p>Agora logue como DbaCriador no Management Studio (ou da forma que preferir, contanto que consiga se passar pelo login).</p>
+<p><strong>2) Rename e Drop</strong></p>
+<p>Perceba agora o quanto a role é potente no sentido de permissões:</p>
+<pre>-- Pode criar seu próprio banco
+
+CREATE DATABASE BancoDoCriador
+
+-- Pode renomear o próprio banco
+
+EXEC SP_RENAMEDB 'BancoDoCriador','BancoDoCriadorV2'
+
+-- Pode dropar o banco dos outros (dropando o banco criado por seu usuário maior)
+
+DROP DATABASE meuBanco
+
+</pre>
+<p>Consegue observar o tamanho da possível encrenca? É sempre bom reforçar que, dentro de uma instância, o maior bem é o banco de dados, e sua destruição e criação são sem dúvida uma das permissões mais sagradas que um principal pode ter.</p>
+<p>Não precisamos comentar também a habilidade de repassar a Role para outros membros, e com o poder "milagre da multiplicação" temos mais um problema: um dbcreator criando outro dbcreator!</p>
+<p>Veja ainda logado como dbcreator:</p>
+<pre>
+EXEC sp_addsrvrolemember [FilhoDoDbaCriador],'DBCREATOR'
+
+</pre>
+<p><strong>Considerações finais</strong></p>
+<p>Considere essa role uma das mais próximas do sa propriamente dito (assim como a security admin). Ultimamente caiu um pouco em desuso, pois, geralmente quem tem permissão de criar bases, pelo menos nos ambientes que observei, já possuem permissão de sysadmin, logo, não possuem restrição alguma. Se realmente for necessário que um principal crie bases, existe uma abordagem muito mais esperta:</p>
+<pre>
+GRANT CREATE ANY DATABASE TO login
+
+</pre>
+<p>Privilégio mínimo na prática.</p>
+<p> </body></html></p>

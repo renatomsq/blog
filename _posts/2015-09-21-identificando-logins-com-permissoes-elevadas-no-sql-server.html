@@ -1,0 +1,81 @@
+---
+layout: post
+title: Identificando logins com permissões elevadas no SQL Server
+date: 2015-09-21 20:26:20.000000000 -03:00
+type: post
+parent_id: '0'
+published: true
+password: ''
+status: publish
+categories:
+- Roles
+- Script
+- Security
+tags:
+- control server
+- permissões
+- script
+- Segurança
+- sysadminc
+meta:
+  _edit_last: '2'
+  _oembed_0536c4ac928ea249a4b23bb390870085: "{{unknown}}"
+  _oembed_34a9c78e8bc6e1efcc1481d02bc078e0: "{{unknown}}"
+author:
+  login: Renato Siqueira
+  email: ''
+  display_name: Renato Siqueira
+  first_name: ''
+  last_name: ''
+permalink: "/identificando-logins-com-permissoes-elevadas-no-sql-server/"
+---
+<p><!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN" "http://www.w3.org/TR/REC-html40/loose.dtd"><br />
+<html><body><br />
+<a href="http://renatomsiqueira.com.br/wp-content/uploads/2015/09/REI.jpg"><img class="size-full wp-image-2481 aligncenter" src="{{site.baseurl}}/assets/2015/09/REI.jpg" alt='Outro título: "sabes quem tem poder de fogo no teu servidor?"' width="300" height="400"></a></p>
+<p><strong>Introdução</strong></p>
+<p>É uma informação crítica e vital caso você administre servidores de banco de dados  conhecer quem possui permissões elevadas.</p>
+<p>O que defino aqui como login com permissão elevada é aquele que:</p>
+<p>• Está incluído na role de servidor sysadmin;<br />
+• Está incluído na role de servidor securityadmin<br />
+• Possui a permissão de CONTROL SERVER;</p>
+<p>O post traz um script básico com o intuito de identificar quem são eles:</p>
+<p><strong>Script</strong></p>
+<p>O script se divide em duas partes: a primeira analisa roles de servidor com permissões importantes (nesse caso, <em>sysadmin</em> e <em>securityadmin</em>).  A segunda analisa permissões de servidor (CONTROL SERVER, leia os motivos aqui). Ambas as partes ignoram logins desativados.</p>
+<p>Compatibilidade do script: SQL Server 2005 ou superior.</p>
+<pre>
+
+SELECT DISTINCT Suser_name(member_principal_id)      AS [Login], 
+                Upper(Suser_name(role_principal_id)) AS [Permissão], 
+                Getdate()                            AS [Data Coleta] 
+FROM   sys.server_role_members rm 
+       INNER JOIN sys.server_principals p 
+               ON p.principal_id = rm.member_principal_id 
+       LEFT JOIN sys.server_permissions per 
+              ON per.grantee_principal_id = rm.member_principal_id 
+WHERE  Suser_name(role_principal_id) IN ( 'SYSADMIN', 'SECURITYADMIN' ) 
+       AND Suser_name(member_principal_id) NOT LIKE '%SERVICE\%' 
+       AND P.is_disabled = 0 
+
+UNION ALL 
+
+SELECT NAME             AS [Login], 
+       'CONTROL SERVER' AS [Permissão], 
+       Getdate()        AS [Data Coleta] 
+FROM   sys.server_principals p 
+       INNER JOIN sys.server_permissions per 
+               ON per.grantee_principal_id = p.principal_id 
+WHERE  PER.permission_name = 'CONTROL SERVER ' 
+       AND P.is_disabled = 0 
+
+</pre>
+<p> </p>
+<p>Segue exemplo de resultado:</p>
+<p><a href="http://renatomsiqueira.com.br/wp-content/uploads/2015/09/EvidenciaPermiss.jpg"><img class="alignnone size-full wp-image-2482" src="{{site.baseurl}}/assets/2015/09/EvidenciaPermiss.jpg" alt="EvidenciaPermiss" width="483" height="155"></a></p>
+<p>Customização vai a gosto do freguês: filtrar certificados, outras roles que você pode considerar importante (<em>dbcreator </em>por exemplo), considerar também logins desabilitados...</p>
+<p>Espero que você não tenha surpresas ao localizar algum login de modo inesperado e que o script ajude alguém. Mas se encontrar, espero que você resolva da melhor forma possível antes de ter algum problema chato por causa de falha na segurança.<br />
+[]'s</p>
+<p> </p>
+<p><strong>Sugestões de leitura</strong></p>
+<p><strong>Roles do SQL Server: Sysadmin -</strong> <a href="http://renatomsiqueira.com.br/roles-do-sql-server-sysadmin/">http://renatomsiqueira.com.br/roles-do-sql-server-sysadmin/</a></p>
+<p><strong>Roles do SQL Server: Setupadmin e Securityadmin -</strong> <a href="http://renatomsiqueira.com.br/roles-do-sql-server-setupadmin-e-securityadmin/">http://renatomsiqueira.com.br/roles-do-sql-server-setupadmin-e-securityadmin/</a></p>
+<p>[]'s</body></html></p>

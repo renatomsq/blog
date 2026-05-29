@@ -1,0 +1,53 @@
+---
+layout: post
+title: DBCC CHECKDB em cópias da MASTER - Um caso interessante
+date: 2016-06-02 18:13:13.000000000 -03:00
+type: post
+parent_id: '0'
+published: true
+password: ''
+status: publish
+categories:
+- Corrupção
+- Erros
+tags: []
+meta:
+  _edit_last: '2'
+author:
+  login: Renato Siqueira
+  email: ''
+  display_name: Renato Siqueira
+  first_name: ''
+  last_name: ''
+permalink: "/dbcc-checkdb-em-copias-da-master-um-caso-interessante/"
+---
+<p><!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN" "http://www.w3.org/TR/REC-html40/loose.dtd"><br />
+<html><body><br />
+<img class="alignnone wp-image-2562" src="{{site.baseurl}}/assets/2016/06/master.png" alt="Ilustrando um DB generico a lot" width="143" height="172"></p>
+<p>Olá,</p>
+<p>Executei o CHECKDB em uma base chamada MASTER_SHADOW, que é uma cópia da master de um servidor de produção.</p>
+<p>Erros pipocam na tela conforme ilustrado abaixo (resumido com as partes relevantes, pois os erros abaixo se repetem para diferentes classes):</p>
+<p><em>Msg 8992, Level 16, State 1, Line 1</em><br />
+<em> Check Catalog Msg 3851, State 1: An invalid row (class=12,depid=0,depsubid=0) was found in the system table sys.syssingleobjrefs (class=12).</em><br />
+<em> Msg 8992, Level 16, State 1, Line 1</em><br />
+<em> Check Catalog Msg 3851, State 1: An invalid row (class=13,depid=1,depsubid=0) was found in the system table sys.syssingleobjrefs (class=13).</em><br />
+(...)<br />
+(...)<br />
+<em> CHECKDB found 0 allocation errors and 61 consistency errors not associated with any single object.</em><br />
+<em> DBCC results for 'sys.sysrscols'.</em></p>
+<p><strong><em>Msg 8906, Level 16, State 1, Line 1</em></strong><br />
+<strong><em> Page (1:10) in database ID 7 is allocated in the SGAM (1:3) and PFS (1:1), but was not allocated in any IAM. PFS flags 'MIXED_EXT ALLOCATED 0_PCT_FULL'.</em></strong></p>
+<p><em>CHECKDB found 1 allocation errors and 61 consistency errors in database 'master_shadow'.</em><br />
+<em> DBCC execution completed. If DBCC printed error messages, contact your system administrator.</em></p>
+<hr>
+<p><strong>O que era:</strong></p>
+<p>Assim que analisei o resultado, executei o CHECKDB na master em produção, a mãe desse "backup". Nenhum erro, tudo no grau.</p>
+<p>Suspeitei que fosse particularidade de alguma página da master que perdia referência ao virar uma base de usuário.</p>
+<p>Fiz aquela pesquisa básica e cheguei no seguinte artigo do Paul Randal que elucidou o motivo do erro: <a href="http://sqlmag.com/blog/my-master-database-really-corrupt">Is my master Database really corrupt?</a></p>
+<p>Em suma, realmente era particularidade da master, especificamente a página #10 da master que possui metadados "especiais", que não pode existir em nenhuma outra base de usuário, o que era o caso dessa cópia da MASTER. Pelas mensagens de erro, nota-se que todos os erros de consistência apontavam para a mesma página (#10), então estava lendo sobre o assunto certo pro problema certo.</p>
+<hr>
+<p><strong>Finalizando</strong></p>
+<p>Conclusões do artigo original já supracitados no artigo do <em>sqlmag</em>: É interessante manter a MASTER na sua rotina de checagem de backup/restore mas tire as cópias de testes de integridade pra evitar diversos falso-positivos.</p>
+<p><strong>Conclusão:</strong> MASTER na rotina de RESTORE? Sim. Na rotina de CHECKDB? Só direto em produção.<br />
+Já restaurei master em várias oportunidades. Mas nunca havia executado CHECKDB até então. Topando com esse erro pela primeira vez. Vivendo e aprendendo.<br />
+[]'s</body></html></p>
