@@ -1,0 +1,116 @@
+---
+layout: post
+title: 'Desafio #1 T-SQL'
+date: 2013-07-12 08:35:25.000000000 -03:00
+type: post
+parent_id: '0'
+published: true
+password: ''
+status: publish
+categories:
+- Microsoft SQL Server
+- OFFTOPIC
+- SQL Server 2008
+- T-SQL
+tags:
+- BeyondRelational
+- checkpoint
+- Desafio
+- Query
+- SQL Server
+- T-SQL
+meta:
+  _wp_old_slug: '25'
+  original_post_id: '25'
+  geo_public: '0'
+  _publicize_pending: '1'
+  dsq_thread_id: '3485008952'
+author:
+  login: Renato Siqueira
+  email: ''
+  display_name: Renato Siqueira
+  first_name: ''
+  last_name: ''
+permalink: "/checkpoint-pessoal-desafio-1-t-sql/"
+---
+<p><!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN" "http://www.w3.org/TR/REC-html40/loose.dtd"><br />
+<html><body><br />
+<a href="http://renatomsiqueira.com.br/wp-content/uploads/2013/07/11.png"><img class="aligncenter size-full wp-image-505" alt="Divagação sobre momento + desafio TSQL" src="{{site.baseurl}}/assets/2013/07/11.png" width="470" height="294"></a></p>
+<p>Bom dia!</p>
+<p>Vi no blog do Vitor Fava (<a title="http://vfava.wordpress.com/" href="http://vfava.wordpress.com/">http://vfava.wordpress.com/</a>) uma recomendação de sites com desafios de T-SQL.<br />
+Perfeita ocasião pra voltar a dar mais uma revisada na codagem!<br />
+Decidi então trazer alguns deles pra cá por dois motivos:</p>
+<p>1) Incentivar você, leitor (se tiver afim é claro) de praticar (e reforçar o que você já sabe);<br />
+2) Transmitir uma forma de pensar diferente ou nova de lógica;</p>
+<p>O crédito pelas questões é do site <a title="http://beyondrelational.com/" href="http://beyondrelational.com/">http://beyondrelational.com/</a>, que é bem legal, e recomendo, pra quem curte desafios que visite sem medo de ser feliz (a não ser que você já seja um coder-monster, aí no caso você iria só pra brincar mesmo).</p>
+<p>Toda semana, por períodos irregulares, irei trazer os desafios que eu acho interessante e postar aqui.<br />
+Quem quiser postar uma solução, pode fazê-lo no site ou aqui mesmo, pra gente compartilhar pontos de vista diferentes. Eu postarei a minha solução comentada sobre o exercício em outro  post pra não alongar esse aqui demais. Provavelmente esse final de semana! Já tá pronto aqui, só aguardando a oportunidade :)</p>
+<p>Vamos ao enunciado:</p>
+<p>Link da questão original: <a title="http://beyondrelational.com/modules/19/tsql-beginners/297/tsql-beginners-challenge-1-find-the-second-highest-salary-for-each-department.aspx?tab=info" href="http://beyondrelational.com/modules/19/tsql-beginners/297/tsql-beginners-challenge-1-find-the-second-highest-salary-for-each-department.aspx?tab=info">http://beyondrelational.com/modules/19/tsql-beginners/297/tsql-beginners-challenge-1-find-the-second-highest-salary-for-each-department.aspx?tab=info</a></p>
+<p><strong>Enunciado:</strong> O desafio é listar os <em>funcionários com o segundo maior salário de cada departamento</em>. Se dois funcionários tiverem o mesmo salário, você precisa listá-los também!</p>
+<p><strong>Regra:</strong> Sua solução deve funcionar no SQL Server 2005 ou superior, e a ordernação deve ser feita pelo salário.</p>
+<p><strong>Restrição: </strong>A solução deve ser apresentada em apenas uma consulta que comece com WITH ou SELECT. Ou seja, pode usar CTE? Pode tio(a). Pode usar tabela temporária, etc? Não tio(a), não pode.</p>
+<p><strong>Dados de amostra</strong></p>
+<pre>EmployeeID  EmployeeName    Department      Salary   
+----------- --------------- --------------- ---------
+1           T Cook          Finance         40000.00
+2           D Michael       Finance         25000.00
+3           A Smith         Finance         25000.00
+4           D Adams         Finance         15000.00
+5           M Williams      IT              80000.00
+6           D Jones         IT              40000.00
+7           J Miller        IT              50000.00
+8           L Lewis         IT              50000.00
+9           A Anderson      Back-Office     25000.00
+10          S Martin        Back-Office     15000.00
+11          J Garcia        Back-Office     15000.00
+12          T Clerk         Back-Office     10000.00</pre>
+<p><strong>Resultado esperado</strong></p>
+<pre>EmployeeID  EmployeeName    Department      Salary   
+----------- --------------- --------------- ---------
+10          S Martin        Back-Office     15000.00
+11          J Garcia        Back-Office     15000.00
+2           D Michael       Finance         25000.00
+3           A Smith         Finance         25000.00
+7           J Miller        IT              50000.00
+8           L Lewis         IT              50000.00</pre>
+<p><strong>Código da amostra:</strong></p>
+<pre>DECLARE @Employees TABLE(
+	EmployeeID INT IDENTITY,
+	EmployeeName VARCHAR(15),
+	Department VARCHAR(15),
+	Salary NUMERIC(16,2)
+)
+
+INSERT INTO @Employees(EmployeeName, Department, Salary)
+VALUES('T Cook','Finance', 40000)
+INSERT INTO @Employees(EmployeeName, Department, Salary)
+VALUES('D Michael','Finance', 25000)
+INSERT INTO @Employees(EmployeeName, Department, Salary)
+VALUES('A Smith','Finance', 25000)
+INSERT INTO @Employees(EmployeeName, Department, Salary)
+VALUES('D Adams','Finance', 15000)
+
+INSERT INTO @Employees(EmployeeName, Department, Salary)
+VALUES('M Williams','IT', 80000)
+INSERT INTO @Employees(EmployeeName, Department, Salary)
+VALUES('D Jones','IT', 40000)
+INSERT INTO @Employees(EmployeeName, Department, Salary)
+VALUES('J Miller','IT', 50000)
+INSERT INTO @Employees(EmployeeName, Department, Salary)
+VALUES('L Lewis','IT', 50000)
+
+INSERT INTO @Employees(EmployeeName, Department, Salary)
+VALUES('A Anderson','Back-Office', 25000)
+INSERT INTO @Employees(EmployeeName, Department, Salary)
+VALUES('S Martin','Back-Office', 15000)
+INSERT INTO @Employees(EmployeeName, Department, Salary)
+VALUES('J Garcia','Back-Office', 15000)
+INSERT INTO @Employees(EmployeeName, Department, Salary)
+VALUES('T Clerk','Back-Office', 10000)</pre>
+<p>Algumas dicas pra quem se sentir perdido (só leia isso se sentir bastante dificuldade):</p>
+<p>1) <del>Usar CTE (Common Table Expressions) é a forma mais fácil de fazer, na minha opinião;</del></p>
+<p>2) <del>Dê uma olhada nas Windows Functions, são o santo graal pra Ad-hoc Queries e vai resolver fácil essa questão .</del></p>
+<p><del>3) Não veja a solução no site (existe a mesma disponível lá na aba solutions). Tente fazer pra aprender . Não é nada complexo e não exige muita leitura.</del></p>
+<p><strong>A solução será postada em outro post com explicações (farei isso final de semana ou na segunda). Se quiser ver a resposta (de novo, não recomendo) que ainda não tem as explicações mais atenciosas que farei na próxima postagem, clique <a title="aqui, neste link" href="http://sdrv.ms/12qV8qf">aqui!</a></strong></p>
+<p>Até mais!</body></html></p>

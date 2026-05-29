@@ -1,0 +1,67 @@
+---
+layout: post
+title: 'Impressões sobre o Exame 70-461: SQL Server 2012 - Querying'
+date: 2013-08-23 07:16:49.000000000 -03:00
+type: post
+parent_id: '0'
+published: true
+password: ''
+status: publish
+categories:
+- Certificação
+- Microsoft SQL Server
+- SQL Server 2012
+- T-SQL
+tags:
+- Querying
+- T-SQL
+meta:
+  _su_rich_snippet_type: none
+  original_post_id: '1385'
+  _wp_old_slug: '1385'
+  _publicize_pending: '1'
+  _oembed_0150b52497d76811915160bf9fd06067: "{{unknown}}"
+  _oembed_207a450531b5bfb7c641d825ef9c895f: "{{unknown}}"
+  geo_public: '0'
+  _oembed_c709119cdbc6ac91bcb3b143267cde4b: "{{unknown}}"
+  _oembed_50f3ceaa7cafa094d7a3496c57d49464: "{{unknown}}"
+  dsq_thread_id: '3229491749'
+author:
+  login: Renato Siqueira
+  email: ''
+  display_name: Renato Siqueira
+  first_name: ''
+  last_name: ''
+permalink: "/impressoes-sobre-o-exame-70-461-sql-server-2012-querying-2/"
+---
+<p><!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN" "http://www.w3.org/TR/REC-html40/loose.dtd"><br />
+<html><body><br />
+<a href="http://173.192.35.98/~renatoms/wp-content/uploads/2013/09/wallpppp.png"><img class="aligncenter wp-image-865 size-full" src="{{site.baseurl}}/assets/2013/08/wallpppp1.png" alt="query" width="476" height="149"></a></p>
+<p>Boa noite :)</p>
+<p>Quarta passada tive êxito no exame 70-461: Querying, o primeiro capítulo da trilogia MCSA.</p>
+<p>Se você não conhece o funcionamento sobre a nova trilha certificação, <a href="http://sqlgo.wordpress.com/2012/08/06/semana-de-webcasts-sobre-certificacao-em-sql-server-2012/">verifique este link, baixe os webcasts e veja como funciona</a>.</p>
+<p>Dei uma folheada Training Kit 70-461 e usei como base séria o <a href="http://www.microsoft.com/learning/en-us/exam-70-461.aspx">Skills Measure</a> . Pra não sair no escuro, dei uma lida também, durante um bom tempo, em impressões de outros profissionais que fizeram essa prova. Você pode dar uma pesquisada na internet que com certeza acha. Só pra saber onde eu direcionava mais atenção. E meu post tem esse intuito, de quem sabe, fazer essas dicas úteis pra quem vai prestar o exame.</p>
+<p>A forma de prática foi o Prep-Kit, que vem junto com o Training Kit.<br />
+Recomendo o uso do Prep-kit apenas para reforçar conceitos e revisar comandos e não para pegar o ritmo da prova, que é bem diferente, sendo supérfluo e sem complexidade alguma! Não tem como comparar o nível de dificuldade do Prep-kit com a prova, btw.</p>
+<p>O que mais me prejudicou na prova, e sim, prepare pra rir: marquei, sem querer, a prova em Português. Não cometa esse erro jamais na sua vida. As traduções em português não estão "ruins", só não estão compatíveis com o bom senso. Por exemplo, é fácil reconhecer VIEWS em banco de dados, mas não "Modos de Exibição". Teve vários termos, que eu nem consigo mais lembrar de tão exóticos que são. Alguns traduzidos de forma extremamente literal. Até demais. "Larga de frescura rapaz!" - disse alguém. Mas quero ver esse alguém sacar NA HORA o que significa "Função definida pelo usuário com valor de tabela". Rola um WAITFOR na cabeça, pelo menos na minha. A massa cinza até processa a tradução mas não na hora :)</p>
+<p><strong>Enfim, compartilho algumas dicas importantes pra quem for prestar o exame:</strong></p>
+<blockquote><p>- Aprenda e PRATIQUE todos os tipos de função, principalmente as TVF (Table Value Functions);</p>
+<p>- FOR XML PATH, AUTO e RAW. Vai cair, saiba o que cada cláusula traz e qual é a estrutura do XML. Saiba olhar para determinado XML e imaginar qual FOR XML gerou;</p>
+<p>- Modos de Isolamento. Saiba qual causa mais bloqueios, o padrão do SQL Server, o que "versiona" os registros e o que evita leitura suja...</p>
+<p>- Views indexadas. Saiba usar SCHEMABINDING. Aliás, views estão bastante em foco neste exame, inclusive para operações DML. De foco nessa parte!</p>
+<p>- Relembre: INTERSECT, UNION, UNION ALL, DISTINCT,  ALL, SOME, ANY, RANK FUNCTION...</p>
+<p>- CONSTRAINTS em geral. Computed Columns, inclusive com funções;</p>
+<p>- Questões DRAG and DROP parecem fáceis. Mas o 'cão' mora nos detalhes...Preste bastante atenção no enunciado da questão. Por exemplo, se na questão disse que o usuário USRXPTO já possui acesso de leitura na tabela XPTO, e você deve ALTERAR a tabela mantendo as permissões, você não vai dar um DROP, CREATE e GRANT ou seja lá o que for desnecessários, certo? Se você for alterar, nesse caso, também não precisa do GRANT. Saiba também que criar um campo NOT NULL em tabela já populada não é nenhum almoço grátis. Saiba como resolver esse tipo de pedido.Enfim, parece besteira, mas quem não pratica isso ou nunca teve experiência, pode perder muitos pontos com questões do gênero.</p>
+<p>- Essa prova tem um foco exagerado em views (já falei, mas reforço). Pratique inserir/atualizar/deletar alguns registros nela (sim, é possível, via trigger instead of). Inclusive em views que possuem SELECT em mais de uma tabela (dica de ouro);</p>
+<p>- Planos de Execução: Aprenda as formas de visualizá-lo;</p>
+<p>- Tabelas inserted e deleted + triggers são essenciais. Aliás triggers foram assuntos bem presentes, não tanto quanto VIEWS, mas quase;</p>
+<p>- Cairam algumas cláusulas novas: LEAD, LAG , EOMONTH, FORMAT, TRY_CONVERT, PARSE, dentre outros. Inclusive, caiu uma questão de EOMONTH combinada com DATEADD que me confundiu bastante, principalmente por não ter oportunidade de validar o código ):</p>
+<p>- Saiba o que faz um PIVOT, UNPIVOT e APPLY (Outer e Cross). Não precisa focar seu estudo nisso (estou pensando em economia de tempo), apenas saiba em que situação aplicar;</p>
+<p>- Diferencie newid e newsequentialid, saiba o que cada um faz e TESTE!</p>
+<p>- Pratique abrir transações com tratamento de erros. Nada complexo pra quem já trabalha com T-SQL: TRY, CATCH, @@ERRORCOUNT e outras variáveis comuns à transações podem cair. Conhecer o funcionamento do XACT_ABORT e conhecer Triggers que fazem o uso deste tipo de programação é fundamental!</p></blockquote>
+<p>Creio que são informações úteis para quem está estudando. Claro que a prova vai muito além, e esses tópicos acima estiveram presentes no exame que fiz, então, reforço, não deixe de estudar pelo Skills Measure e não se limite ao que foi dito acima.</p>
+<p>Uma coisa que me chamou bastante a atenção é que conhecer T-SQL, mas não praticar pode ser um perigo potencial no exame. Existem alguns peguinhas que só quem codifica no dia a dia e executa vai identificar. Parece uma frase clichê, e não deixa de ser, mas é uma verdade crua nessa prova.</p>
+<p>E  Socorro, se tiver lendo isto, obrigado pelas dicas e conhecimentos trocados, especialmente as de XML o/</p>
+<p>E é isso pessoal.</p>
+<p>Estou estudando agora para a 70-462 agora e já tô preocupado com a 70-463 (BI).</p>
+<p>[]'s</body></html></p>

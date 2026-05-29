@@ -1,0 +1,238 @@
+---
+layout: post
+title: ERRORLOG - Dicas e casos (parte 2 de 3)
+date: 2014-11-07 19:24:37.000000000 -03:00
+type: post
+parent_id: '0'
+published: true
+password: ''
+status: publish
+categories:
+- Configuração
+- Logging
+tags:
+- arquivos
+- aumentar quantidade
+- errorlog
+- limite
+- logging
+- melhores práticas
+meta:
+  dsq_thread_id: '3229518767'
+  geo_public: '0'
+  draftfeedback_requests: a:2:{s:26:"rodrigor.gomes@hotmail.com";a:3:{s:3:"key";s:13:"545bd26119a6c";s:4:"time";s:10:"1415303777";s:7:"user_id";s:8:"10343035";}s:26:"edvaldo.castro@outlook.com";a:3:{s:3:"key";s:13:"545bd2615858b";s:4:"time";s:10:"1415303777";s:7:"user_id";s:8:"10343035";}}
+  _publicize_pending: '1'
+  _edit_last: '1'
+  _aioseo_title: ''
+  _aioseo_description: ''
+  _aioseo_keywords: ''
+  _aioseo_og_title: ''
+  _aioseo_og_description: ''
+  _aioseo_og_article_section: ''
+  _aioseo_og_article_tags: ''
+  _aioseo_twitter_title: ''
+  _aioseo_twitter_description: ''
+author:
+  login: Renato Siqueira
+  email: ''
+  display_name: Renato Siqueira
+  first_name: ''
+  last_name: ''
+permalink: "/errorlog-dicas-e-casos-parte-2-de-3/"
+---
+<p><!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN" "http://www.w3.org/TR/REC-html40/loose.dtd"><br />
+<html><body><br />
+<img src="{{site.baseurl}}/assets/2014/11/errorlognivel2.jpg?w=600&amp;h=292" alt="Error Log level 2"></p>
+<p style="text-align: justify;">Olá,</p>
+<p style="text-align: justify;">Continuando a série de posts sobre errorlog (você pode ler a parte 1 clicando <a href="http://renatomsiqueira.com.br/2014/10/20/errorlog-o-basico-parte-1-de-3/">aqui</a>), vamos revisitar conceitos mais importantes explicados no post anterior e comentar sobre dicas/boas práticas. Caso hajam testes, indico que devem ser feitos em ambiente de teste (pelo amor de tudo o que você mais ama, rs).<br />
+Os tópicos são:</p>
+<p style="text-align: justify;">1) Conceito de (Re)Cycle;<br />
+2) Aumentar quantidade de ERRORLOGS;<br />
+3) Necessidade do ERRORLOG<br />
+4) ERRORLOG + DBCC's</p>
+<p style="text-align: justify;"><!--more--></p>
+<hr>
+<p style="text-align: justify;"><strong>1) Conceito de (Re)Cycle</strong></p>
+<p style="text-align: justify;">Conforme post anterior, foi explicado que a geração de arquivos de ERRORLOG possuem uma natureza circular, cujo versionamento obedece uma lógica usando decremento e o processo que realiza a criação dos arquivos se chama Cycle. Creio que reforçar o entendimento sobre o cycle é essencial para entender plenamente como funciona a lógica de geração.</p>
+<p style="text-align: justify;">Os eventos de Cycle ocorrem quando:</p>
+<p style="text-align: justify;">(1) - O servidor é reiniciado;<br />
+(2) - Se estiver em cluster e ocorrer movegroup (mesma coisa do evento 1);<br />
+(3) - Forem executados os seguintes comandos: DBCC ERRORLOG e sp_cycle_errorlog<br />
+(4) - A partir do SQL Server 2012: Alteração de thresold do tamanho do arquivo. A alteração ocorre via registro. Para maiores informações, veja aqui: http://www.sqlskills.com/blogs/paul/limiting-error-log-file-size-in-sql-server-2012/</p>
+<p style="text-align: justify;"><strong>Cenário de exemplo </strong></p>
+<p style="text-align: justify;">Acabei de instalar uma instância do SQL Server e inicialmente tenho apenas um arquivo de ERRORLOG (apaguei propositalmente os numerados). Reiniciei o serviço e outro arquivo de ERRORLOG é criado, ilustrando perfeitamente o que realmente acontece no processo de cycle: O arquivo atual (ERRORLOG) é versionado para ERRORLOG.1 e um novo ERRORLOG é gerado.</p>
+<p style="text-align: justify;"><img src="{{site.baseurl}}/assets/2014/11/arch1.png?w=600&amp;h=413" alt="Arch1"></p>
+<p style="text-align: justify;">O nome do termo é Cycle embora Recycle também pode ser usado alternadamente (já que ocorre reuso de arquivos além dos nomes lógicos durante o processo).</p>
+<p style="text-align: justify;"><strong>2) Como aumentar o número de ERRORLOGS gerados</strong></p>
+<p style="text-align: justify;">Existem várias formas de aumentar o limite padrão de geração de arquivos de ERRORLOG (6 arquivos numerados + 1 default). O primeiro método é via interface gráfica utilizando o Management Studio:</p>
+<p style="text-align: justify;"><img src="{{site.baseurl}}/assets/2014/11/arch2.png?w=600" alt="Arch2"></p>
+<p style="text-align: justify;"><a href="http://renatomsiqueira.com.br/wp-content/uploads/2014/11/arch31.png"><img src="{{site.baseurl}}/assets/2014/11/arch3.png?w=600&amp;h=539" alt="Arch3"></a></p>
+<p style="text-align: justify;">A interface gráfica é bem intuitiva: Limite o número de arquivos de errorlog antes deles serem reciclados. O valor deve ser entre 6 (totalizando 7 arquivos ao total contando com o arquivo corrente) e 99.</p>
+<p style="text-align: justify;">Também é possível realizar essa configuração diretamente pelo registro:</p>
+<ul style="text-align: justify;">
+<li>HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Microsoft SQLServer\<em>MSSQL10_50.MSSQLSERVER\</em>MSSQLServer\ onde "MSSQL10_50.MSSQLSERVER" é o nome da instância em questão.</li>
+</ul>
+<p style="text-align: justify;"><img src="{{site.baseurl}}/assets/2014/11/arch4.png?w=600&amp;h=423" alt="Arch4"></p>
+<p style="text-align: justify;">Reforçando que o número de arquivos do ERRORLOG neste caso não considera o arquivo default. Ou seja, doze arquivos totalizam 12 ao todo: 12 numerados e 1 default. O padrão por exemplo é de<br />
+6, e isto significa que o limite é de 7 arquivos (6 numerados e 1 default). Você também pode alterar essa configuração de outras formas, utilizando powershell ou T-SQL manipulando o registro por exemplo...</p>
+<p style="text-align: justify;"><strong>3) Necessidade do ERRORLOG</strong></p>
+<p style="text-align: justify;">O errorlog é um arquivo obrigatório para inicialização padrão do SQL Server.  Uma das formas de configurar o caminho para o diretório dos errorlogs  é realizado pelo SQL Server Configuration Manager:</p>
+<p style="text-align: justify;"><img src="{{site.baseurl}}/assets/2014/11/errorlog_issues.png?w=600" alt="errorlog_issues"></p>
+<p style="text-align: justify;">Caso você altere o caminho utilizado pelo parâmetro -e (de errorlog, obviamente), no próximo startup  o SQL Server irá criar, no mínimo, novos arquivos de ERRORLOG, o padrão e o arquivo de No.1 (isso se novo caminho não tenha nenhum arquivo) e seguir com seu funcionamento normal.</p>
+<p style="text-align: justify;">Uma dúvida incomum mas já vi perguntarem:</p>
+<p style="text-align: justify;">- Eu não uso o ERRORLOG. Posso desabilitar, pois eu não uso e está ocupando espaço, tem problema?</p>
+<p style="text-align: justify;">Antes de responder a pergunta, vamos ao primeiro relato:</p>
+<p style="text-align: justify;"><strong>Caso I - O problema estava no ERRORLOG </strong></p>
+<p style="text-align: justify;">Este caso é real, Em 2013 onde trabalhei na empresa Y, e tivemos um incidente em produção em plena sexta-feira  no horário de almoço. Alguns serviços caíram sem explicação e todos foram rapidamente resolvidos pela equipe de DBA's, exceto por uma instância que não subia de jeito nenhum. A instância estava em cluster e por mais que tudo parecesse 100% configurado (revisamos praticamente tudo), a DBA Sênior acabou identificando que o apontamento do SQL Server para o ERRORLOG estava desconfigurado (caminho inválido, não lembro se era falta de uma barra ou se o caminho estava sem o nome errorlog).</p>
+<p style="text-align: justify;">Dá pra você simular isso em uma máquina local, apenas altere o caminho do errorlog para um caminho inválido, aplique a mudança, pare e inicie o serviço do SQL Server (e lembre-se de corrigir o problema depois do teste, rs).</p>
+<p style="text-align: justify;"><img src="{{site.baseurl}}/assets/2014/11/withouchoronemvela.png?w=600" alt="WithouChoroNemVela"></p>
+<p style="text-align: justify;"><strong>Conclusão:</strong> Até hoje não sabemos como o problema aconteceu e nem como o cluster estava funcionando, e deduzimos que o caminho sofreu alteração enquanto o serviço estava no ar e apenas no restart o SQL Server utilizou o novo caminho. É vital que o ERRORLOG contenha um caminho válido, pois o serviço SQL Server PRECISA do errorlog em seu funcionamento padrão e desejo que ninguém passe por isso. Mas se passar, pode ser interessante olhar esse detalhe que geralmente não é a primeira coisa a se pensar, pois as mensagens de erro neste caso não são tão específicas.</p>
+<hr>
+<p style="text-align: justify;">E sobre a quantidade máxima de ERRORLOGS?</p>
+<p style="text-align: justify;"><strong>Caso II - Limite de arquivos de ERRORLOG</strong></p>
+<p style="text-align: justify;"><img src="{{site.baseurl}}/assets/2014/11/maximumnumber.png?w=600&amp;h=161" alt="MaximumNumber"></p>
+<p style="text-align: justify;">Qual é o valor recomendado para quantidade de arquivos de errorlog?  Tempos atrás conversei com um consultor, fiz essa mesma pergunta e ele me informou que prefere deixar o limite (99). Porém, em um ambiente X onde ele estava prestando consultoria, esqueceu de aumentar esse valor. O ambiente X é um SQL Server em cluster que na ocasião estava instável e a instância em questão  movia-se várias vezes durante a madrugada entre os hosts...</p>
+<p style="text-align: justify;">E o que acontece em eventos de stop-start e em movegroups?<br />
+Cycles! Chuta o que acontece com cycles e o valor de quantidade de arquivos está padrão....</p>
+<p style="text-align: justify;">No dia seguinte, a primeira coisa que o consultor fez pra investigar o problema foi entrar no ERRORLOG para investigar possíveis evidências do problema mas não encontrou praticamente nada que pudesse ajudá-lo, pois o servidor já tinha reiniciado tantas vezes que o log mais antigo sequer apontava pra eventos da noite passada. De outras formas, começou a observar o problema e identificou que o problema era thread starvation (e isso explicava os moves). Mas a moral da história é: tudo o que aconteceu nos dias anteriores e estava ali no errorlog não existe mais (nesse caso não se fazia backup de errorlog). São evidências perdidas...Depois do ocorrido, o consultor setou a quantidade de arquivos pra 99 (era uma configuração que ele podia fazer neste ambiente em questão).</p>
+<p style="text-align: justify;">Conclusão: deixar o número de arquivos padrão prejudicou a análise do consultor, que conseguiu identificar o problema, mas utilizando outros meios...mas não só isso...sumiu com dias de evidências de logging.</p>
+<p style="text-align: justify;"><strong>Conclusão:</strong> Alguns defendem que ter poucos arquivos de errorlog é útil pois não existe necessidade de historicidade dos registros de ERRORLOGS em seus ambientes (mas essa ideia some rapidinho quando algum problema acontece) e outros argumentam que é interessante sim ter muitos arquivos para manter historicidade e ter respostas de eventos antigos se necessário. Há pessoas que inclusive defendem um cycle todos os dias na calada da noite pra separar os eventos por arquivo utilizando a data (e isso faz sentido, mas não acho que seja uma boa prática geral) para diminuir a ocorrência de logs grandes.</p>
+<p style="text-align: justify;">Particularmente, concordo que 7 arquivos (6 numerados e 1 padrão) é um limite baixo e que é interessante de ser aumentado, enquanto noventa e nove (99) é relativamente alto e pode assustar. A opinião de muita gente (e compartilho com ela) é que manter 99 arquivos é melhor do que confiar em apenas 6. Em geral, como o hábito de fazer backup do errorlog é algo bastante incomum, vários profissionais (de acordo com o que leio) setam no limite (99) justamente para não correr o risco de se perder evidências. Acho que é uma abordagem válida desde que se fique de olho na quantidade e tamanho dos arquivos, pois desta forma o reuso de arquivos através dos (re)cycles pode demorar para acontecer, mas não sem antes um plano de expurgo ou backup destes arquivos. Tem pessoas que preferem um meio termo e setam algo em torno de 50 arquivos....Essa é uma decisão de cada um e intimamente relacionada com o uso que cada administrador faz do errorlog. Como está em seu ambiente e porquê? Fique à vontade para comentar sobre, tenho interesse em saber.</p>
+<p style="text-align: justify;"><strong>3- Personalizando o ERRORLOG </strong></p>
+<p style="text-align: justify;">Essa dica é muito útil para quem quer aproveitar mais do ERRORLOG. Existe uma procedure interna bastante utilizada no SQL Server 2000, sumiu no 2005 e que foi reintroduzida no SQL Server 2008 chamada sp_alter_message. A ideia é simples e bastante intuitiva de entender...</p>
+<p style="text-align: justify;">Lembram que o primeiro post comentamos sobre a sys.messages?</p>
+<p style="text-align: justify;"><img src="{{site.baseurl}}/assets/2014/11/arch5.png?w=600&amp;h=255" alt="Arch5"></p>
+<p style="text-align: justify;">Repare na coluna is_event_logged. É possível, através desta procedure, permitir que certos eventos sejam logados no ERRORLOG conforme necessidade.</p>
+<p style="text-align: justify;">Por exemplo, vamos logar as mensagens que indicam comentários que não foram fechados corretamente (/**/). O exemplo não é muito aplicável na vida real, btw, é mais pra facilitar o entendimento:</p>
+<pre>/* Vamos pesquisar a mensagem "Missing end comment mark"... */
+
+SELECT * FROM sys.messages
+WHERE 1=1
+AND language_id = 1033
+AND message_id = 113
+
+/* Flipando o is_event_logged para 1 */
+
+EXEC sp_altermessage
+@message_id = 113
+,@parameter = 'WITH_LOG'
+,@parameter_value = 'true'
+
+/* Simulando o erro (execute ignorando o fechamento de comentário) */
+
+/*
+select 'teste'
+
+/* Leia o erro */
+
+SP_READERRORLOG 0,1,'Missing end comment mark'
+
+</pre>
+<p style="text-align: justify;">Agora, algo interessante. O que acontece se tentarmos alterar a configuração das mensagens que são logadas por padrão (ou seja, que possuem o is_event_logged) ?</p>
+<pre>/* Pesquisando pela mensagem: */
+
+SELECT * FROM sys.messages
+WHERE 1=1
+AND language_id = 1033
+and text like '%The error log has been reinitialized%'
+
+/* Configurando o SQL Server para NÃO logar as mensagens anteriores */
+
+EXEC sp_altermessage
+@message_id = 17184
+,@parameter = 'WITH_LOG'
+,@parameter_value = 'FALSE'
+
+/* Simular um cycle, que é um evento que gera essa mensagem */
+
+SP_CYCLE_ERRORLOG
+
+</pre>
+<p style="text-align: justify;">Então, teoricamente a mensagem não deveria ser logada, certo?<br />
+Certeza?</p>
+<p style="text-align: justify;">sp_readerrorlog 0,1,'The error log has been reinitialized'</p>
+<div style="direction: ltr; text-align: justify;">
+<table style="direction: ltr; border-collapse: collapse; border: 1pt solid #A3A3A3;" border="1" cellspacing="0" cellpadding="0">
+<tbody>
+<tr>
+<td style="vertical-align: top; width: 1.6645in; padding: 4pt; border: 1pt solid #A3A3A3;">
+<p style="margin: 0; font-family: Calibri; font-size: 11pt;">LogDate</p>
+</td>
+<td style="vertical-align: top; width: 1.2534in; padding: 4pt; border: 1pt solid #A3A3A3;">
+<p style="margin: 0; font-family: Calibri; font-size: 11pt;">ProcessInfo</p>
+</td>
+<td style="vertical-align: top; width: 3.9055in; padding: 4pt; border: 1pt solid #A3A3A3;">
+<p style="margin: 0; font-family: Calibri; font-size: 11pt;">Text</p>
+</td>
+</tr>
+<tr>
+<td style="vertical-align: top; width: 1.6645in; padding: 4pt; border: 1pt solid #A3A3A3;">
+<p style="margin: 0; font-family: Calibri; font-size: 11pt;">2014-11-05 18:13:19.230</p>
+</td>
+<td style="vertical-align: top; width: 1.2534in; padding: 4pt; border: 1pt solid #A3A3A3;">
+<p style="margin: 0; font-family: Calibri; font-size: 11pt;">Spid54</p>
+</td>
+<td style="vertical-align: top; width: 3.9055in; padding: 4pt; border: 1pt solid #A3A3A3;">
+<p style="margin: 0; font-family: Calibri; font-size: 11pt;">The error log has been reinitialized. See the previous log for older entries.</p>
+</td>
+</tr>
+</tbody>
+</table>
+<p>A mensagem foi logada. A pergunta é, qual motivo?</p>
+</div>
+<p style="text-align: justify;">Vamos simular o mesmo erro através do RAISEERROR:</p>
+<pre>RAISERROR (17184,10,1) 
+</pre>
+<div style="direction: ltr; text-align: justify;">
+<table style="direction: ltr; border-collapse: collapse; border: 1pt solid #A3A3A3;" border="1" cellspacing="0" cellpadding="0">
+<tbody>
+<tr>
+<td style="vertical-align: top; width: 1.6645in; padding: 4pt; border: 1pt solid #A3A3A3;">
+<p style="margin: 0; font-family: Calibri; font-size: 11pt;">LogDate</p>
+</td>
+<td style="vertical-align: top; width: 1.2534in; padding: 4pt; border: 1pt solid #A3A3A3;">
+<p style="margin: 0; font-family: Calibri; font-size: 11pt;">ProcessInfo</p>
+</td>
+<td style="vertical-align: top; width: 3.9055in; padding: 4pt; border: 1pt solid #A3A3A3;">
+<p style="margin: 0; font-family: Calibri; font-size: 11pt;">Text</p>
+</td>
+</tr>
+<tr>
+<td style="vertical-align: top; width: 1.6645in; padding: 4pt; border: 1pt solid #A3A3A3;">
+<p style="margin: 0; font-family: Calibri; font-size: 11pt;">2014-11-05 18:13:19.230</p>
+</td>
+<td style="vertical-align: top; width: 1.2534in; padding: 4pt; border: 1pt solid #A3A3A3;">
+<p style="margin: 0; font-family: Calibri; font-size: 11pt;">Spid54</p>
+</td>
+<td style="vertical-align: top; width: 3.9055in; padding: 4pt; border: 1pt solid #A3A3A3;">
+<p style="margin: 0; font-family: Calibri; font-size: 11pt;">The error log has been reinitialized. See the previous log for older entries.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p style="text-align: justify;">Consulte o errorlog novamente, e a mensagem realmente não foi logada (e seria se o is_event_logged tivesse setado como 1). E se, no comando, forçarmos o log desta?</p>
+<pre>RAISERROR (17184,10,1) WITH LOG</pre>
+<p style="text-align: justify;">Agora o log foi forçado. Isso indica que eventos que são logados por padrão, mesmo setados para 0, podem logar se o trecho de código de determinado evento explicitar que ele faça isso. Ou seja, mesmo que desabilitemos certas mensagens que não queremos ver no errorlog, mas na chamada de código tiver algum comando que exiga o logging, esta chamada terá prevalência.</p>
+<p style="text-align: justify;">Outro exemplo de configurações que possibilitam essa prevalência em relação ao ERRORLOG são os Trace Flags, que também controlam determinados eventos que vão (ou não) para o log. Um dos exemplos mais clássicos é TF 3226, que NÃO loga mensagens de backups realizados com sucesso (backups com falhas continuam sendo logados).</p>
+<p style="text-align: justify;">Outra possibilidade são as configurações realizadas via Management Studio, no contexto de servidor:. Um exemplo já velho conhecido de alguns, é o de registrar eventos de login com sucesso, sem sucesso ou ambos:</p>
+<p style="text-align: justify;"><img src="{{site.baseurl}}/assets/2014/11/sabiadisso.png?w=600&amp;h=383" alt="Sabiadisso"></p>
+<p style="text-align: justify;"><strong>Dica: Logging on Demand - RAISERROR </strong></p>
+<p style="text-align: justify;">Seguindo essa mesma lógica, você pode forçar via RAISERROR que  mensagens sejam logadas. Isso significa que as possibilidades de agregar valor ao ERRORLOG são inúmeras, dependendo do ambiente e necessidades de cada um. Imagine por exemplo, que você tenha um job que realiza verificação de páginas em SUSPECT. Vai depender da sua implementação, mas você pode, por exemplo, consultar a saída deste comando direto no errorlog:</p>
+<p style="text-align: justify;">Um exemplo de uso:</p>
+<pre>DECLARE @Contagem AS INT = (SELECT COUNT(1) FROM MSDB.DBO.SUSPECT_PAGES)
+DECLARE @msgFechamento AS VARCHAR(100) = 'Verificação de ambiente: Suspect Pages: '+CAST(@Contagem as CHAR(3))
+RAISERROR (@msgFechamento,10,1) WITH LOG
+
+</pre>
+<p style="text-align: justify;">Tem quem use essa velha e conhecida técnica para fins de debug e tem quem use para logar mensagens de negócio importantes (como por exemplo, resultados de fechamentos financeiros) mas esse último, particularmente, acho uma má ideia no geral, pois o errorlog é essencialmente um log do SQL Server como Infraestrutura e destinado para administradores de banco, ou seja, acho que se perde muito o sentido de misturar informação negocial com informação de infraestrutura (em sinceras palavras, vira bagunça, IMHO) e penso que mensagens relacionadas à infraestrutura (como o exemplo da suspect pages) são mais aplicáveis na vida real. Mas, cada ambiente é um ambiente diferente, com necessidades diferentes, então quem sabe haja aplicação para alguém, então fica aqui a dica.</p>
+<hr>
+<p style="text-align: justify;">O próximo post será o último d trilogia e vai apresentar motivos e estratégias relacionadas ao Errorlog na prática: estratégias para aproveitá-lo da melhor forma possível. Quero trazer um algoritmo (beta) que administra os errorlogs de uma forma diferente e que pode ajudar alguém.</p>
+<p style="text-align: justify;">Fique à vontade para comentar (dúvidas, críticas, sugestões, etc) enquanto a terceira parte está em produção.</p>
+<p style="text-align: justify;">[]'s</p>
+<hr>
+<p style="text-align: justify;">Referências:</p>
+<p style="text-align: justify;"><strong>- Sys.messages:</strong> http://msdn.microsoft.com/pt-br/library/ms187382.aspx<br />
+<strong>- Alterando quantidade de errorlogs:</strong> http://support.microsoft.com/kb/196909<br />
+<strong>- Threshold Errorlog:</strong> http://www.sqlskills.com/blogs/paul/limiting-error-log-file-size-in-sql-server-2012/</p>
+<p></body></html></p>

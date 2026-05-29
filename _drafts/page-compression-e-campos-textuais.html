@@ -1,0 +1,45 @@
+---
+layout: post
+title: Page Compression e campos textuais
+date:
+type: post
+parent_id: '0'
+published: false
+password: ''
+status: draft
+categories:
+- Esqueci de categorizar
+tags: []
+meta:
+  _edit_last: '2'
+author:
+  login: Renato Siqueira
+  email: ''
+  display_name: Renato Siqueira
+  first_name: ''
+  last_name: ''
+permalink: "/"
+---
+<p><!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN" "http://www.w3.org/TR/REC-html40/loose.dtd"><br />
+<html><body>
+<p> </p>
+<p>Olá,</p>
+<p><strong>Direto do  túnel do tempo...</strong></p>
+<p>Depois de algum tempo sem postar, venho aqui reforçar algo que já havia comentado no post sobre compressão. Criei uma rotina que realiza a coleta de ERRORLOG's e joga isso em um único repositório. A ideia é manter backup destes arquivos além de aproveitá-los para consulta. A vantagem aqui na leitura dos logs é que além de você consultar em apenas um lugar, também tem a benção de NÃO depender da (s)xp_readerrorlog e poder usar T-SQL puro, o que facilita demais a manipulação das informações do errorlog.</p>
+<p>Em breve (meia noite da data desta postagem, pra ser mais exato) atualizarei o post original com o novo script :)</p>
+<p><strong>Vamos ao post</strong></p>
+<p>Ainda sobre a rotina, uma preocução que tinha desde o começo era sobre espaço. Não só em disco, mas também no data cache (em memória). Teoricamente, como a maior parte das colunas desta  tabela é textual, vamos obter bons resultados com compressão de dados, correto?</p>
+<p>[caption id="attachment_2430" align="alignnone" width="778"]<a href="http://renatomsiqueira.com.br/wp-content/uploads/2015/04/Meta.jpg"><img class="wp-image-2430 size-full" src="{{site.baseurl}}/assets/Meta.jpg" alt="Meta" width="778" height="330"></a> Obs: DPages = Data Pages[/caption]</p>
+<p>Claro. No índice cluster <strong>idx_errorlog</strong>, temos um ganho bem modesto na compressão de linha (6%) e um ganho considerável (75%) na compressão de página.</p>
+<p>No índice<strong> idx_errorlog_textINC</strong>, um cenário similar: um ganho de 2% com compressão de linha e  outro ganho considerável (85%) na compressão de página.</p>
+<p>Como o ganho da compressão traz inúmeras vantagens além do alto ganho de armazenamento neste caso em específico, nem penso em tirar a compressão de página desta tabela. Automaticamente, começo a ver toda e qualquer tabela de log como um potencial candidato à compressão, já que essencialmente  temos além do campo de data (obrigatório em qualquer log de verdade) uma alta repetição de texto, sem contar que o errorlog às vezes registra a mesma mensagem segundos depois, o que pode auxiliar ainda mais a vida dos algoritmos que realizam a compressão no SQL Server. Sem contar outras tabelas que tem a característica de serem essencialmente textuais.</p>
+<p><strong>Conclusão</strong></p>
+<p>A mensagem que quero deixar neste post é: considere compressão de página se você tiver a possibilidade de usar esta <em>feature</em> e estude se o seu ambiente se comporta bem. Dependendo das condições de repetição de texto nas páginas de dados, a chance de ter bons resultados é ainda maior.</p>
+<p>[]'s</p>
+<p> </p>
+<p> </p>
+<p> </p>
+<p> </p>
+<p> </p>
+<p> </p>
+<p></body></html></p>

@@ -1,0 +1,131 @@
+---
+layout: post
+title: SQL Server 2012 - Logical Functions e mais economia de código
+date: 2013-08-09 06:19:47.000000000 -03:00
+type: post
+parent_id: '0'
+published: true
+password: ''
+status: publish
+categories:
+- SQL Server 2012
+- T-SQL
+tags:
+- CHOOSE
+- IF TERNÁRIO
+- IIF
+- TSQL
+meta:
+  _publicize_pending: '1'
+  geo_public: '0'
+  original_post_id: '558'
+  dsq_thread_id: '3258867464'
+  _wp_old_slug: '558'
+author:
+  login: Renato Siqueira
+  email: ''
+  display_name: Renato Siqueira
+  first_name: ''
+  last_name: ''
+permalink: "/sql-server-2012-logical-functions-e-mais-economia-de-codigo/"
+---
+<p><!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN" "http://www.w3.org/TR/REC-html40/loose.dtd"><br />
+<html><body><br />
+<a href="http://renatomsiqueira.com.br/wp-content/uploads/2013/08/logic1.png"><img class="size-full wp-image-755" alt="logic" src="{{site.baseurl}}/assets/2013/08/logic1.png" width="470" height="147"></a></p>
+<p>Boa noite :)</p>
+<p>Outro post básico e rápido sobre funções lógicas (do mesmo grupo das já conhecidas estruturas lógicas, que envolvem WHILE, IF, CASE)...</p>
+<p>Duas agradáveis adições foram realizadas no SQL Server 2012. Duas funções lógicas que já são velhas conhecidas para quem já programa(ou): IIF e CHOOSE.</p>
+<p><strong>IIF</strong></p>
+<p>(Documentação Oficial na <a title="IIF" href="http://msdn.microsoft.com/query/dev10.query?appId=Dev10IDEF1&amp;l=EN-US&amp;k=k(IIF_TSQL);k(SQL11.SWB.TSQLRESULTS.F1);k(SQL11.SWB.TSQLQUERY.F1);k(MISCELLANEOUSFILESPROJECT);k(DevLang-TSQL)&amp;rd=true">MSDN</a> para maior apronfudamento)</p>
+<p>Também conhecido como IF ternário, nada mais, no contexto de algumas linguagens de programação, uma forma mais organizada de se fazer realizar uma escolha condicional entre dois valores utilizando uma expressão.</p>
+<p>Estrutura:</p>
+<p><em>IIF (boolean_expression, true_value, false_value) ou em bom português <em>IIF (expressão_booleana, valorSeVerdadeiro, <em><em>valorSeFalso</em></em>)</em></em></p>
+<p>É justamente pela estrutura que vem o nome de IF Ternário, por possui três elementos (parâmetros) em sua condição.</p>
+<p>Seguem três exemplos pra posteriores comentários.</p>
+<pre>USE TEMPDB
+GO
+
+DECLARE @Idade INT = 22
+-- DECLARE @Idade INT = 10 /* Pra quem quiser testar */
+
+--&gt; Exemplo com IIF
+
+SELECT IIF(@Idade &gt;= 18,'Pode tirar carteira','Não pode tirar carteira') as TesteIIF
+
+--&gt; Exemplo com CASE
+
+SELECT
+	TesteCase = 
+	CASE
+		WHEN @Idade &gt;= 18 THEN 'Pode tirar carteira'
+		ELSE 'Não pode tirar carteira'
+	END
+
+--&gt; Exemplo com IF-ELSE
+
+	IF (@Idade &gt;= 18) 
+	BEGIN
+		SELECT 'Pode tirar carteira' AS TesteIF
+	END
+	ELSE
+		SELECT 'Não pode tirar carteira' AS TesteIF</pre>
+<p>Em suma, como IF não pode ser utilizado em comandos SELECT deliberadamente para realizar condições, sendo utilizado mais em Stored Procedures e Funções, <strong>IIF serve como sintaxe alternativa para a função CASE</strong>, que faz exatamente o que a instrução IIF faria em uma instrução SELECT.  O que acho bacana nesse comando:</p>
+<ul>
+<li>Sintaxe simples, limpa e direta (embora de começo pareça complexa);</li>
+<li>Segue padrões .net (ao trabalhar com Integration Services, por exemplo, é uma cláusula largamente utilizada para faze comparações) e de outras linguagens;</li>
+<li> Economia de código, facilitando legibilidade;</li>
+</ul>
+<p>Tem só um pequeno detalhe... Não estou dizendo que é um substituto pra CASE, por um simples e humilde motivo, e lógico ainda por cima:</p>
+<p>CASE, assim como IF (em seu devido lugar) permitem mais de duas expressões lógicas. IIF é X, se não for X, ah meu amigo, é Y. Sem choro nem vela.</p>
+<p>Códigos para expressar o sentimento:</p>
+<pre>SELECT
+	TesteCase = 
+	CASE
+		WHEN @Idade &gt;= 18 THEN 'Pode tirar carteira'
+		WHEN @Idade BETWEEN 15 AND 17 THEN 'Falta pouco pra poder tirar!'
+		ELSE 'Não pode tirar carteira'
+	END</pre>
+<p>Logo, é necessário avaliar qual a melhor construção para a sua lógica.</p>
+<p><strong>CHOOSE</strong></p>
+<p>Documentação Inicial na <a title="CHOOSE" href="http://msdn.microsoft.com/en-us/library/hh213019(v=sql.120).aspx">MSDN</a></p>
+<p>Resumindo, assim como o IIF, o CHOOSE é outra cláusula condicional que pode, dependendo do caso, substituir o CASE. É mais uma construção bastante utilizada em .net e inclusive no Integration Services (Olha a MS casando particularidades de produtos "distintos" da suite  do SQL Server aos poucos aí!)</p>
+<p>Vamos falar antes de sua construção:</p>
+<pre>CHOOSE (index, val_1, val_2 [, val_n ])</pre>
+<p>A função CHOOSE vai retornar exatamente o valor que corresponde ao index passado no primeiro parâmetro:</p>
+<pre>DECLARE @Nota INT = 4
+SELECT CHOOSE (@Nota,'Péssimo','Ruim','Normal','Bom','Sensacional') AS Nota
+
+DECLARE @Nota INT = 7
+SELECT CHOOSE (@Nota,'Péssimo','Ruim','Normal','Bom','Sensacional') AS NotaNULA</pre>
+<p>O protocolo é claro. Existem cinco parâmetros dentro do CHOOSE. O primeiro vale um (1) e o último cinco (5). O número (index) passado é Quatro (4) então ele vai buscar o quarto valor nos parâmetros. No segundo exemplo, como ele não acha o parâmetro cujo valor é sete (7) ele simplesmente retorna NULO. A mesma coisa vale para o ZERO.<br />
+Outra aplicação prática:</p>
+<pre>DECLARE @T AS TABLE(
+	VALOR INT
+)
+
+INSERT INTO @T (VALOR) VALUES (1),(2),(3),(4),(5),(6),(7)
+
+SELECT VALOR, CHOOSE (VALOR,'DOMINGO','SEGUNDA','TERÇA','QUARTA','QUINTA','SEXTA','SABADO') AS Nota
+FROM @T</pre>
+<p>But, contudo, todavia, todos os parâmetros devem ser do mesmo tipo, pois caso um dos valores esteja fora do padrão, ocorrerá um erro na execução. Veja só:</p>
+<pre>DECLARE @T AS TABLE(
+	VALOR INT
+)
+
+INSERT INTO @T (VALOR) VALUES (1),(2),(3),(4),(5),(6),(7)
+
+SELECT VALOR, CHOOSE (VALOR,'DOMINGO','SEGUNDA','TERÇA','QUARTA','QUINTA','SEXTA','SABADO',9) AS Nota
+FROM @T</pre>
+<blockquote><p>(6 row(s) affected)<br />
+Msg 245, Level 16, State 1, Line 7<br />
+Conversion failed when converting the varchar value 'DOMINGO' to data type int.</p></blockquote>
+<p>Enfim, alguns pontos positivos:</p>
+<ul>
+<li>As mesmas vantagens do IIF</li>
+</ul>
+<p>Minha única observação sobre a função é que poderia ser MUITO, mas MUITO útil caso fosse possível utilizar intervalos de valores, como é possível com CASE (usando BETWEEN por exemplo) e outras possibilidades lógicas. Acho o comando um pouco limitado no geral assim como o IIF. Mas tem quem gostará, com certeza. Qual a melhor escolha? A resposta pra praticamente qualquer coisa no SQL Server é: It's depends.</p>
+<p>--</p>
+<p>Espero ter sido claro e ter ajudado alguém. Se sim, Já valeu a postagem.</p>
+<p>Obrigado pela visita and...</p>
+<p>Keep Querying !</p>
+<p>[]'s</body></html></p>

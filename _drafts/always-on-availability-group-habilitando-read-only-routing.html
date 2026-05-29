@@ -1,0 +1,235 @@
+---
+layout: post
+title: Always On Availability Group - Habilitando Read Only Routing
+date:
+type: post
+parent_id: '0'
+published: false
+password: ''
+status: draft
+categories: []
+tags: []
+meta:
+  _last_editor_used_jetpack: block-editor
+  _edit_last: '1'
+  _yoast_wpseo_content_score: '30'
+author:
+  login: renatomsiq@gmail.com
+  email: renatomsiq@gmail.com
+  display_name: renatomsiq@gmail.com
+  first_name: ''
+  last_name: ''
+permalink: "/"
+---
+<p><!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN" "http://www.w3.org/TR/REC-html40/loose.dtd"><br />
+<!-- wp:paragraph --><html><body></p>
+<p><strong>ReadOnly Routing Always On Availability Groups</strong></p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:heading {"level":1} --></p>
+<h1> </h1>
+<p><!-- /wp:heading --></p>
+<p><!-- wp:heading {"level":1} --></p>
+<h1>Descrição do recurso</h1>
+<p><!-- /wp:heading --></p>
+<p><!-- wp:paragraph --></p>
+<p>O recurso <em>read-only routing</em> for AG é um método de configuração onde, configurando adequadamente o Always On incluindo endereços de roteamento, possibilita que a aplicação que realiza acessos de leitura o faça automaticamente no servidor secundário. <a href="https://docs.microsoft.com/pt-br/sql/database-engine/availability-groups/windows/configure-read-only-routing-for-an-availability-group-sql-server?view=sql-server-ver15">https://docs.microsoft.com/pt-br/sql/database-engine/availability-groups/windows/configure-read-only-routing-for-an-availability-group-sql-server?view=sql-server-ver15</a></p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:heading {"level":1} --></p>
+<h1>Motivação da implementação</h1>
+<p><!-- /wp:heading --></p>
+<p><!-- wp:paragraph --></p>
+<p>Melhor uso dos recursos computacionais da GEAP, tendo em vista que a topologia atual (AlwaysOn com três servidores sendo dois deles, cópias de produção) permite com que tais máquinas que estão atualmente com baixo consumo, processar cargas de leitura (o que acaba indiretamente diminuindo para a carga do servidor primário, que realiza cargas de leitura e escrita.</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:heading {"level":1} --></p>
+<h1>Vantagens</h1>
+<p><!-- /wp:heading --></p>
+<p><!-- wp:list --></p>
+<ul>
+<li>Utiliza melhor a infraestrutura da GEAP;</li>
+<li>Potencializa cargas de leitura em servidores sem a mesma concorrência do ambiente de produção;</li>
+<li>Apesar de exigir mudança na aplicação, as mudanças são pequenas e algumas podem até ser abstraídas.</li>
+</ul>
+<p><!-- /wp:list --></p>
+<p><!-- wp:heading {"level":1} --></p>
+<h1>Desvantagens</h1>
+<p><!-- /wp:heading --></p>
+<p><!-- wp:list --></p>
+<ul>
+<li>Pode representar consumo de licenciamento caso a secundária estivesse puramente em standby (não é o caso)<strong></strong>
+</li>
+<li>O fato de habilitar secundárias para leitura automaticamente habilita versionamento adicional de registro, aumentando levemente o tamanho de uma página de dados devido ao acréscimo de ponteiro, conforme referência técnica a seguir: <a href="https://docs.microsoft.com/pt-br/sql/database-engine/availability-groups/windows/active-secondaries-readable-secondary-replicas-always-on-availability-groups?view=sql-server-ver15">https://docs.microsoft.com/pt-br/sql/database-engine/availability-groups/windows/active-secondaries-readable-secondary-replicas-always-on-availability-groups?view=sql-server-ver15</a><strong></strong>
+</li>
+<li><strong> </strong></li>
+</ul>
+<p><!-- /wp:list --></p>
+<p><!-- wp:paragraph --></p>
+<p><strong><br></strong></p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:heading {"level":1} --></p>
+<h1>Tutorial</h1>
+<p><!-- /wp:heading --></p>
+<p><!-- wp:list {"ordered":true,"type":"1"} --></p>
+<ol type="1">
+<li>A premissa para este tutorial é que o AlwaysOn a ser configurado, já esteja em produção e com LISTENER configurado. Ter um LISTENER é obrigatório para habilitar a configuração. Logo o primeiro passo é verificar o nome do AG, e o nome do LISTENER, para posterior uso nas configurações.</li>
+</ol>
+<p><!-- /wp:list --></p>
+<p><!-- wp:image --></p>
+<figure class="wp-block-image"><img src="{{site.baseurl}}/assets/" alt=""></figure>
+<p><!-- /wp:image --></p>
+<p><!-- wp:paragraph --></p>
+<p>Figure 1- Em vermelho, o nome do AG e em azul, o nome do listener configurado para o AG em questão.</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:list --></p>
+<ul>
+<li>Revise as configurações do Always On, especificamente a configuração Readable Secondary, a configuração necessária é “Read-intent Only”.</li>
+</ul>
+<p><!-- /wp:list --></p>
+<p><!-- wp:image --></p>
+<figure class="wp-block-image"><img src="{{site.baseurl}}/assets/" alt=""></figure>
+<p><!-- /wp:image --></p>
+<p><!-- wp:paragraph --></p>
+<p>Figure 2 - Configuração antiga, quando não havia a configuração adequada para possibilitar o read only route configurada.</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --></p>
+<p>A configuração também pode ser realizada via Script:</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --></p>
+<p>-- Altera modo de leitura do secundário para Readonly intent</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --></p>
+<p>ALTER AVAILABILITY GROUP [GRP-DE-CLU-BD0304] MODIFY REPLICA ON N'DE-SRV-BD003'  </p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --></p>
+<p>WITH (SECONDARY_ROLE (ALLOW_CONNECTIONS = READ_ONLY));</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --></p>
+<p>ALTER AVAILABILITY GROUP [GRP-DE-CLU-BD0304] MODIFY REPLICA ON N'DE-SRV-BD004'  </p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --></p>
+<p>WITH (SECONDARY_ROLE (ALLOW_CONNECTIONS = READ_ONLY));</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --></p>
+<p>ALTER AVAILABILITY GROUP [GRP-DE-CLU-BD0304] MODIFY REPLICA ON N'AZ-SRV-BD003' </p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --></p>
+<p>WITH (SECONDARY_ROLE (ALLOW_CONNECTIONS = READ_ONLY));</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --></p>
+<p>Abaixo como a interface reflete o script executado:</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:image --></p>
+<figure class="wp-block-image"><img src="{{site.baseurl}}/assets/" alt=""></figure>
+<p><!-- /wp:image --></p>
+<p><!-- wp:list --></p>
+<ul>
+<li>Agora, é necessário definer uma Read Routing URL para cada replica que pertence ao Always On. Vale lembrar que a porta é de extrema importância que seja configurada juntamente com equipe de redes, no caso do exemplo, a TCP 1433 já tem regra de liberação, então a mesma será utilizada.</li>
+</ul>
+<p><!-- /wp:list --></p>
+<p><!-- wp:paragraph --></p>
+<p>ALTER AVAILABILITY GROUP [GRP-DE-CLU-BD0304] </p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --></p>
+<p>MODIFY REPLICA ON N'DE-SRV-BD003' WITH </p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --></p>
+<p>(SECONDARY_ROLE (READ_ONLY_ROUTING_URL = N'TCP://DE-SRV-BD003.geap.com.br:1433'));</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --></p>
+<p>ALTER AVAILABILITY GROUP [GRP-DE-CLU-BD0304]</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --></p>
+<p>MODIFY REPLICA ON N'DE-SRV-BD004' WITH</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --></p>
+<p>(SECONDARY_ROLE (READ_ONLY_ROUTING_URL = N'TCP://DE-SRV-BD004.geap.com.br:1433'));</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --></p>
+<p>ALTER AVAILABILITY GROUP [GRP-DE-CLU-BD0304] </p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --></p>
+<p>MODIFY REPLICA ON N'AZ-SRV-BD003' WITH</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --></p>
+<p>(SECONDARY_ROLE (READ_ONLY_ROUTING_URL = N'TCP://AZ-SRV-BD003.geap.com.br:1433'));</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:list --></p>
+<ul>
+<li>Após configurar a URL de leitura, por fim, vamos configurar a ordem de leitura.</li>
+</ul>
+<p><!-- /wp:list --></p>
+<p><!-- wp:paragraph --></p>
+<p>ALTER AVAILABILITY GROUP [GRP-DE-CLU-BD0304]</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --></p>
+<p>MODIFY REPLICA ON</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --></p>
+<p>N'DE-SRV-BD003' WITH</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --></p>
+<p>(PRIMARY_ROLE (READ_ONLY_ROUTING_LIST=('DE-SRV-BD004','AZ-SRV-BD003')));</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --></p>
+<p>ALTER AVAILABILITY GROUP [GRP-DE-CLU-BD0304]</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --></p>
+<p>MODIFY REPLICA ON</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --></p>
+<p>N'DE-SRV-BD004' WITH</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --></p>
+<p>(PRIMARY_ROLE (READ_ONLY_ROUTING_LIST=('DE-SRV-BD003','AZ-SRV-BD003')));</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --></p>
+<p>ALTER AVAILABILITY GROUP [GRP-DE-CLU-BD0304]</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --></p>
+<p>MODIFY REPLICA ON</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --></p>
+<p>N'AZ-SRV-BD003' WITH</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --></p>
+<p>(PRIMARY_ROLE (READ_ONLY_ROUTING_LIST=('DE-SRV-BD004','DE-SRV-BD003')));</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --></p>
+<p>A partir do SQL Server 2016 é possível utilizar uma espécie de load balance para cargas de leitura através do uso de mais parênteses, verifique a documentação official caso necessite de uma configuração desse tipo.</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:list --></p>
+<ul>
+<li>Validando que as rotas foram devidamente criadas, agora em interface gráfica:</li>
+</ul>
+<p><!-- /wp:list --></p>
+<p><!-- wp:image --></p>
+<figure class="wp-block-image"><img src="{{site.baseurl}}/assets/" alt=""></figure>
+<p><!-- /wp:image --></p>
+<p><!-- wp:list --></p>
+<ul>
+<li>Agora para validar a configuração, conecte utilizando o listener, especifique na conexão um banco que pertença ao AG (ou tenha esse banco como default database do seu login) e use o parâmetro ApplicationIntent.</li>
+</ul>
+<p><!-- /wp:list --></p>
+<p><!-- wp:image --></p>
+<figure class="wp-block-image"><img src="{{site.baseurl}}/assets/" alt=""></figure>
+<p><!-- /wp:image --></p>
+<p><!-- wp:paragraph --></p>
+<p>Figure 3 - CONDIÇÃO No.1 - Use o nome do LISTENER para conectar ao ambiente</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:image --></p>
+<figure class="wp-block-image"><img src="{{site.baseurl}}/assets/" alt=""></figure>
+<p><!-- /wp:image --></p>
+<p><!-- wp:paragraph --></p>
+<p>Figure 4 - Condição de No.2 - Se conecte a um database que faça parte do AG</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:image --></p>
+<figure class="wp-block-image"><img src="{{site.baseurl}}/assets/" alt=""></figure>
+<p><!-- /wp:image --></p>
+<p><!-- wp:paragraph --></p>
+<p>Figure 5 - ApplicationIntent precisa estar configurado como ReadOnly</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --></p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --></p>
+<p>Figure 6 - Validação de que o roteamento funcionou.</p>
+<p><!-- /wp:paragraph --><br />
+</body></html></p>

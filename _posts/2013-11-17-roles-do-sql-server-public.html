@@ -1,0 +1,88 @@
+---
+layout: post
+title: Roles do SQL Server - Public
+date: 2013-11-17 18:58:15.000000000 -03:00
+type: post
+parent_id: '0'
+published: true
+password: ''
+status: publish
+categories:
+- Roles
+- Security
+tags:
+- public
+- server roles
+meta:
+  _wp_old_slug: '1385'
+  _syntaxhighlighter_encoded: '1'
+  _likes: '0'
+  original_post_id: '1218'
+  dsq_thread_id: '3437925099'
+  _publicize_pending: '1'
+author:
+  login: Renato Siqueira
+  email: ''
+  display_name: Renato Siqueira
+  first_name: ''
+  last_name: ''
+permalink: "/roles-do-sql-server-public/"
+---
+<p><!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN" "http://www.w3.org/TR/REC-html40/loose.dtd"><br />
+<html><body><br />
+<a href="http://renatomsiqueira.com.br/wp-content/uploads/2014/04/public1.jpg"><img class="alignleft size-full wp-image-1580" src="{{site.baseurl}}/assets/2013/11/public1.jpg" alt="public" width="480" height="276"></a><a href="http://renatomsiqueira.com.br/wp-content/uploads/2013/11/public.png"><br />
+</a></p>
+<p> </p>
+<p> </p>
+<p> </p>
+<p> </p>
+<p> </p>
+<p> </p>
+<p> </p>
+<p> </p>
+<p>Olá!</p>
+<p>Continuando com a série de Roles do SQL Server, vamos conversar sobre a role Public.</p>
+<p>Provavelmente o post mais rápido do blog =)</p>
+<p><strong>Public</strong></p>
+<p>De cara, vale dizer que public possui uma implementação diferente das outras roles de servidor. Alguma peculiaridades:</p>
+<ul>
+<li>Todo login criado no SQL Server, por padrão está vinculado à role <em>public;</em>
+</li>
+<li>Das roles de servidor padrão (entenda-se excluindo as roles de servidor customizadas), é a única server role que pode ter as permissões controladas através de GRANT, DENY e REVOKE;</li>
+<li>É gerado em cada banco uma database role com o mesmo nome. Embora estejam estritamente relacionadas, não são a mesma coisa;</li>
+</ul>
+<p>Qual a ideia afinal do public? Bem... Sabe o nosso direito de ser cidadão, independente de quem seja? Liberdade de ir e vir, liberdade de expressão, etc? Segue a mesma ideia. Os direitos (e restrições) valem pra todo mundo, exceto para os sysadmins (que não possuem nenhuma restrição). Public contém as instruções padrões para TODOS os logins que se autenticam na instância.</p>
+<pre>
+
+--&gt; Cria um login sem direito algum
+CREATE LOGIN NaoFazNada WITH PASSWORD='123', CHECK_POLICY=OFF
+
+</pre>
+<p><strong> </strong></p>
+<p>Acabamos de criar um login qualquer. Quais permissões ele possui? Até o momento nenhuma, <strong>exceto as automaticamente herdadas pelo public</strong>. Pra ficar mais claro ainda, vamos aos testes de laboratório. Logue com o usuário recém-criado e tente criar um base:</p>
+<pre>
+
+CREATE DATABASE pensaNumCaos
+
+</pre>
+<p>Obviamente, o esperado é...</p>
+<p><em>Msg 262, Level 14, State 1, Line 1</em><br />
+<em>CREATE DATABASE permission denied in database 'master'.</em></p>
+<p>Agora, logado em seu usuário que seja <em>sysadmin</em> ou que tenha privilégios suficientes para executar o comando abaixo, tire a prova...</p>
+<pre>
+
+--&gt; Dá direito de criação para public (ou seja, qualquer um)
+GRANT CREATE ANY DATABASE TO PUBLIC
+
+</pre>
+<p>Com o login <em>NaoFazNada</em>, tente criar a base novamente...</p>
+<p> </p>
+<p><strong>Observações de public</strong></p>
+<p>Embora conceder permissões para public sempre seja o caminho mais fácil, evite isso sempre que possível. É a mesma coisa de, na preguiça, conceder acesso para Everyone em determinado diretório no Windows Server... Resolver resolve, mas abre a porta pra qualquer um entrar. Será que isso pode causar dor de cabeça futuramente?</p>
+<p><strong>E mais algumas enquanto database-role...</strong></p>
+<p>Existe outro cuidado bastante peculiar quando falamos de public enquanto DATABASE-ROLE (É importante distinguir uma da outra). É comum encontrarmos por aí solicitações, por exemplo, de conceder permissão para executar functions de tratamento de caracteres para o public em determinado banco. <strong>Esse public  como database-role na verdade contêm as definições que TODOS os usuários com acesso em determinada base. </strong></p>
+<p>Não é foco desta postagem granular a atuação do public ao nível de banco, mas, sobre tal tipo de solicitação bastante recorrente, só tenho a dizer que, embora facilite demais a vida de quem utiliza essas funções, sempre se deve levar em conta o permissionamento mínimo, logo...</p>
+<p>Futuramente, vou criar um post sobre o tema, mas enquanto isso...</p>
+<p><strong>Por fim..</strong></p>
+<p>A conclusão é: nunca confie demais algo ao público, você pode não saber quem está lá.</p>
+<p>Fique à vontade para acrescentar algo nos comentários abaixo, caso queira. Nos vemos por aí.</body></html></p>

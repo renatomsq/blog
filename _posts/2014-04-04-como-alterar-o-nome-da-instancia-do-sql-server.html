@@ -1,0 +1,68 @@
+---
+layout: post
+title: Como alterar o nome da instância do SQL Server
+date: 2014-04-04 22:34:21.000000000 -03:00
+type: post
+parent_id: '0'
+published: true
+password: ''
+status: publish
+categories:
+- Configuração
+tags:
+- alterar nome do servidor
+- instância default.
+- instância padrão
+meta:
+  _publicize_pending: '1'
+  _rest_api_published: '1'
+  _rest_api_client_id: "-1"
+  geo_public: '0'
+  _wpas_skip_facebook: '1'
+  _wpas_skip_google_plus: '1'
+  _wpas_skip_twitter: '1'
+  _wpas_skip_linkedin: '1'
+  _wpas_skip_tumblr: '1'
+  _wpas_skip_path: '1'
+  dsq_thread_id: '3438700043'
+author:
+  login: Renato Siqueira
+  email: ''
+  display_name: Renato Siqueira
+  first_name: ''
+  last_name: ''
+permalink: "/como-alterar-o-nome-da-instancia-do-sql-server/"
+---
+<p><!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN" "http://www.w3.org/TR/REC-html40/loose.dtd"><br />
+<html><body><br />
+<a href="http://renatomsiqueira.com.br/wp-content/uploads/2014/04/dist1.png"><img id="i-1426" class="size-full wp-image" src="{{site.baseurl}}/assets/2014/04/dist1.png?w=650" alt="Imagem"></a></p>
+<p>Olá,</p>
+<p>Dúvida bastante recorrente</p>
+<blockquote><p>Fulano: Putz, criei a instância com o nome NPC100LEROLEROTESTE e agora quero mudar o nome, como eu faço?</p></blockquote>
+<p>Lembrando que instância padrão você acessa com o nome da máquina, e instância nomeada, com o <em>NomeDaMáquinaNomeDaInstância.</em></p>
+<p><!--more--></p>
+<p>Mas então....Não existe uma forma documentada pela Microsoft de alterar o nome da instância stand-alone, mas você pode sim alterar o nome da máquina caso possua essa necessidade.</p>
+<p>Por exemplo, se você mudar o nome da sua máquina de NPC999, a sua instância precisa ser acessada pelo nome NPC999LEROLEROTESTE. Se você quer mudar o nome da instância SQL propriamente dita (LEROLEROTESTE), instale outra com o nome desejado.</p>
+<p>Qual o procedimento para alterar o nome da máquina dentro do SQL Server ?</p>
+<p>Para instâncias default (padrão):</p>
+<pre>
+sp_dropserver 'NPC100'
+GO
+sp_addserver 'NPC999', 'local';
+</pre>
+<p>Para instâncias nomeadas:</p>
+<pre>
+sp_dropserver 'NPC100LEROLEROTESTE'
+GO
+sp_addserver 'NPC999LEROLEROTESTE'</pre>
+<p>Lembre-se de, em ambos os casos, reiniciar o serviço do SQL Server para que você já consiga acessar usando o novo nome.</p>
+<p><strong>Mudei o nome da máquina mas nunca usei essa procedure aí, nunca deu nada!</strong></p>
+<p>Se você mudar o nome da máquina mas não utilizar a procedure acima para atualizar o nome do servidor nos metadados do SQL Server (pra ser mais exato, na sys.servers), pro SQL Server, o nome da máquina é o antigo. Pra comprovar tal afirmação, mude o nome da máquina, faça um SELECT @@SERVERNAME e veja que o nome antigo ainda consta nos registros. Caso algum processo no SQL Server referencie um nome inválido, aquele processo lançará um erro.</p>
+<p>Então, se por um acaso, se você em algum momento se perguntar de novo como mudar o nome da instância, e alguém copiar e colar esse procedimento que altera o nome DA MÁQUINA e não o da instância propriamente dita, <strong>fique ligado.</strong></p>
+<p>Reforçando  a resposta do post: quiser mudar o nome da instância, reinstale com o nome correto :)</p>
+<p>[]'s</p>
+<p><strong>Referência:</strong></p>
+<ul>
+<li><a href="http://technet.microsoft.com/en-us/library/ms143799.aspx"><strong>Rename a Computer that Hosts a Stand-Alone Instance of SQL Server </strong></a></li>
+</ul>
+<p></body></html></p>

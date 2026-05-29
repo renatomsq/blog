@@ -1,0 +1,46 @@
+---
+layout: post
+title: Analogia - Users e Logins
+date: 2013-02-20 04:47:22.000000000 -03:00
+type: post
+parent_id: '0'
+published: true
+password: ''
+status: publish
+categories:
+- Microsoft SQL Server
+- Security
+tags:
+- Autenticação
+- Autorização
+- Login
+- Permissão
+- User
+meta:
+  original_post_id: '25'
+  _publicize_pending: '1'
+  _wp_old_slug: '1385'
+  dsq_thread_id: '3229491243'
+author:
+  login: Renato Siqueira
+  email: ''
+  display_name: Renato Siqueira
+  first_name: ''
+  last_name: ''
+permalink: "/analogia-1-users-e-logins/"
+---
+<p><!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN" "http://www.w3.org/TR/REC-html40/loose.dtd"><br />
+<html><body><br />
+<a href="http://renatomsiqueira.com.br/wp-content/uploads/2013/04/guarda1.png"><img class="aligncenter size-full wp-image-379" alt="Guarda" src="{{site.baseurl}}/assets/2013/02/guarda1.png" width="470" height="203"></a></p>
+<p>Bom dia pessoal,</p>
+<p>A analogia de hoje esclarece muitas dúvidas em relação ao conceito de Login e Usuário no contexto do SQL Server.</p>
+<blockquote><p>Você acaba de chegar no clube Northwind.  Nota que na entrada, uma pessoa está resmungando com o segurança pois não pôde passar na catraca, pois o guarda pediu a carteirinha do sujeito e o mesmo não tinha. A recomendação do guarda, é que, se ele realmente tem permissão de entrar no clube, que ele localize sua carteirinha e volte depois. E foi o que o campeão fez. Xingou o guarda, deu meia volta, disse que ia no carro, e depois de quinze minutos voltou com... a carteirinha e mostrou ao guarda, que liberou a passagem.</p>
+<p>Bem, lá dentro, já autenticado, o cara sorri e diz que "tá em casa rsrs" e de fato está. Ele se autenticou, sua credencial está cadastrada e ele conseguiu comprovar isso com a carteirinha. Lá dentro, ele é o <strong>salva-vidas</strong> da maior piscina do clube.</p></blockquote>
+<dl class="wp-caption  aligncenter" style="width:360px;">
+<dt class="wp-caption-dt"><strong>Moral da história no contexto do SQL Server</strong></dt>
+</dl>
+<p><strong>Login remete ao conceito de autenticação: Estou autorizado a entrar? O login na analogia era a carteirinha, </strong>que no caso é a forma de autenticação usada no sistema do clube. Se ele perdesse a carteirinha, teria que tirar outra ou participar de outros procedimentos (no caso do SQL Server, uma troca de senha realizada por um sysadmin resolveria, ou criar outro login, depende do caso). Meu amigo, o cara podia ser o Chuck Norris, mas se ele não tivesse cadastro no sistema do clube dificilmente ele entraria por meios pacíficos sem se autenticar (risos). Pro guarda, não interessa se ele é o Chuck Norris (Usuário), e sim se ele pode entrar ali ou não.</p>
+<p>User (Usuários) possuem alguma função dentro de um sistema, no caso do SQL Server. No caso do clube ele era o salva vidas, mas dentro de um banco de dados SQL Server, o cara poderia ser um dos administradores internos (sysadmin) ou até mesmo o cara que salva vidas (backupoperator, que inclusive faz backups). Note que é importante saber o que um user pode fazer, e os mapeamentos que ele possui dentro de um banco de dados. E isso nos leva ao conceito de.... Usuários!</p>
+<p><strong>Usuários remetem ao conceito de Autorização: O que fulano pode ou não fazer? Qual o seu papel no sistema? Até onde ele pode ir dentro do clube? </strong></p>
+<p>Como o post já é auto-explicativo, a única recomendação que dou é cuidar bem da sua carteirinha pra que você não perca o acesso ou que ela caia em mãos de pessoas más-intencionadas. Imagina se um cara parecido com o fulano da analogia é um serial killer, furta a carteirinha do dono e consegue entrar no clube se passando pelo salva-vidas (isso é assunto pra outro post, o impersonation)? Tá, exemplo exagerado, mas não pensei em nada mais suave, talvez seja a o sono e a falta do café. E bem, talvez seja por isso que eu não usei exemplos mais óbvios, como por exemplo, a entrada em um estádio de futebol ou num evento qualquer.</p>
+<p>Abs!</body></html></p>

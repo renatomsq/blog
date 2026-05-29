@@ -1,0 +1,123 @@
+---
+layout: post
+title: 'Desafio #1 - Data Compression Labs'
+date: 2014-10-15 22:52:18.000000000 -03:00
+type: post
+parent_id: '0'
+published: true
+password: ''
+status: publish
+categories:
+- Compressão
+- SQL Server 2008
+- SQL Server 2012
+- SQL Server 2014
+tags:
+- compression
+- Desafio
+- page compression
+meta:
+  dsq_thread_id: '3249263347'
+  geo_public: '0'
+  _publicize_pending: '1'
+author:
+  login: Renato Siqueira
+  email: ''
+  display_name: Renato Siqueira
+  first_name: ''
+  last_name: ''
+permalink: "/desafio-1-data-compression-labs/"
+---
+<p><!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN" "http://www.w3.org/TR/REC-html40/loose.dtd"><br />
+<html><body><br />
+<a href="http://renatomsiqueira.com.br/wp-content/uploads/2014/10/books1.jpg"><img class="aligncenter size-full wp-image-2014" src="{{site.baseurl}}/assets/2014/10/books1.jpg" alt="Books" width="600" height="337"></a></p>
+<p>Oi,</p>
+<p>Antes de começar o próximo post do Compression Labs, tenho um pequeno e humilde desafio pra quem se interessar a responder (e eu até poderia dizer que estou fazendo isso pra ganhar  tempo fazendo de fazer um post direito, mas estaria sendo estupidamente honesto)...Vamos utilizar o script do <a href="http://renatomsiqueira.com.br/2014/10/03/data-compression-labs-1-tipagem-inteligente-e-paginas-zumbis/">Compression Labs #1</a> adaptado para montar o cenário: vamos criar desta vez duas tabelas, sendo que uma delas vai levar compressão de página.</p>
+<p><!--more--></p>
+<p>Os testes foram realizados no SQL Server 2008 R2 Enterprise, mas valem também 2012 e 2014 Enterprise e similares (aka Developer e Evaluation).</p>
+<pre> 
+
+USE MASTER
+
+GO
+
+IF EXISTS (SELECT NAME FROM SYS.DATABASES WHERE NAME LIKE '%DComp%')
+BEGIN
+
+ALTER DATABASE DComp SET RESTRICTED_USER;
+DROP DATABASE  DComp;
+
+END
+
+GO
+
+CREATE DATABASE DComp
+GO
+
+USE DComp
+GO
+
+CREATE TABLE dbo.Pessoa
+(
+ID INT IDENTITY (1,1) PRIMARY KEY NOT NULL,
+NOME VARCHAR(50) NULL DEFAULT 'Nome de alguém',
+DESCRICAO CHAR(8000) NULL DEFAULT REPLICATE('A',8000),
+IDADE INT NULL
+);
+
+INSERT INTO DBO.PESSOA (NOME, DESCRICAO, IDADE) VALUES ('Quico','Realizando o teste da compressão',9);
+INSERT INTO DBO.PESSOA (NOME, DESCRICAO, IDADE) VALUES ('Seu Madruga','Realizando o teste da compressão',50);
+INSERT INTO DBO.PESSOA (NOME, DESCRICAO, IDADE) VALUES ('Chaves','Realizando o teste da compressão',8);
+INSERT INTO DBO.PESSOA (NOME, DESCRICAO, IDADE) VALUES ('Chiquinha','Realizando o teste da compressão',7);
+INSERT INTO DBO.PESSOA (NOME, DESCRICAO, IDADE) VALUES ('Bruxa do 71','Realizando o teste da compressão',50);
+
+CREATE TABLE dbo.Pessoa2
+(
+ID INT IDENTITY (1,1) PRIMARY KEY NOT NULL,
+NOME VARCHAR(50) NULL DEFAULT 'Nome de alguém',
+DESCRICAO CHAR(8000) NULL DEFAULT REPLICATE('A',8000),
+IDADE INT NULL
+);
+
+INSERT INTO DBO.PESSOA2 (NOME, DESCRICAO, IDADE) VALUES ('Quico','Realizando o teste da compressão',9);
+INSERT INTO DBO.PESSOA2 (NOME, DESCRICAO, IDADE) VALUES ('Seu Madruga','Realizando o teste da compressão',50);
+INSERT INTO DBO.PESSOA2 (NOME, DESCRICAO, IDADE) VALUES ('Chaves','Realizando o teste da compressão',8);
+INSERT INTO DBO.PESSOA2 (NOME, DESCRICAO, IDADE) VALUES ('Chiquinha','Realizando o teste da compressão',7);
+INSERT INTO DBO.PESSOA2 (NOME, DESCRICAO, IDADE) VALUES ('Bruxa do 71','Realizando o teste da compressão',50);
+
+ALTER TABLE dbo.Pessoa2 REBUILD WITH (DATA_COMPRESSION=PAGE);
+</pre>
+<p>Tem uma DMF  bem interessante que verifica as propriedades físicas de um índice, a <a href="http://msdn.microsoft.com/pt-br/library/ms188917.aspx">sys.dm_db_index_physical_stats</a>, o que inclui não apenas informações sobre fragmentação, mas também sobre quantidade de páginas, e pra ser mais específico, também nos informa a quantidade de páginas comprimidas, através da coluna compressed_page_count. Segue informações do BOL.</p>
+<p><a href="http://renatomsiqueira.com.br/wp-content/uploads/2014/10/compressed11.png"><img class="aligncenter size-full wp-image-2011" src="{{site.baseurl}}/assets/2014/10/compressed11.png" alt="Compressed1" width="600" height="109"></a></p>
+<p>Sabemos que a DMF possui três modos: LIMITED, SAMPLED E DETAILED. Vamos usar DETAILED pra apresentar algumas informações bem específicas dos índices, das duas tabelas.</p>
+<p>Segue consulta:</p>
+<pre>
+
+SELECT
+OBJECT_NAME(object_id) AS [Tabela],
+INDEX_ID as indid,
+INDEX_TYPE_DESC,
+INDEX_DEPTH,
+INDEX_LEVEL,
+AVG_FRAGMENTATION_IN_PERCENT as [AVG_FRAG_IN_%],
+PAGE_COUNT AS [PAGES],
+AVG_PAGE_SPACE_USED_IN_PERCENT as [AVG_PAGE_SPACE_USED_IN_%],
+RECORD_COUNT as [RECORDS],
+-- MIN_RECORD_SIZE_IN_BYTES,
+MAX_RECORD_SIZE_IN_BYTES,
+-- AVG_RECORD_SIZE_IN_BYTES,
+COMPRESSED_PAGE_COUNT
+
+FROM sys.dm_db_index_physical_stats
+(DB_ID(), null, NULL, NULL , 'DETAILED')
+WHERE OBJECT_NAME(OBJECT_ID) IN ('Pessoa','Pessoa2')
+
+</pre>
+<p>Resultado:</p>
+<p><a href="http://renatomsiqueira.com.br/wp-content/uploads/2014/10/resultadoindex1.png"><img class="aligncenter size-full wp-image-2013" src="{{site.baseurl}}/assets/2014/10/resultadoindex1.png" alt="ResultadoIndex" width="600" height="62"></a></p>
+<p>As perguntas:</p>
+<p>1) Se nossa tabela é um índice cluster, porque temos apenas dois níveis na tabela Pessoa, e, mais estranho ainda, um nível na tabela Pessoa2? Que b+tree é essa que não tem raíz, nível intermediário e folha?</p>
+<p>2)Porque a <em>compression_page_count </em>não retorna absolutamente nada pra tabela Pessoa2 sendo que temos página comprimida?</p>
+<p>As perguntas não são difíceis (principalmente a primeira), mas também não estão "de graça" (acho, rs).<br />
+Desafio lançado está e até a próxima.</p>
+<p>[]'s</body></html></p>

@@ -1,0 +1,108 @@
+---
+layout: post
+title: 'Desafio #2 T-SQL - MERGE e OUTPUT'
+date: 2013-08-07 06:05:40.000000000 -03:00
+type: post
+parent_id: '0'
+published: true
+password: ''
+status: publish
+categories:
+- Esqueci de categorizar
+- SQL Server 2012
+- T-SQL
+tags:
+- DELETED
+- INSERTED
+- MERGE
+- OUTPUT
+- TSQL
+meta:
+  _publicize_pending: '1'
+  geo_public: '0'
+  original_post_id: '1385'
+  dsq_thread_id: '3460782630'
+  _wp_old_slug: '558'
+author:
+  login: Renato Siqueira
+  email: ''
+  display_name: Renato Siqueira
+  first_name: ''
+  last_name: ''
+permalink: "/desafio-2-t-sql-merge-e-output/"
+---
+<p><!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN" "http://www.w3.org/TR/REC-html40/loose.dtd"><br />
+<html><body><br />
+<a href="http://renatomsiqueira.com.br/wp-content/uploads/2013/08/merge11.png"><img class="aligncenter size-full wp-image-727" alt="Merge" src="{{site.baseurl}}/assets/2013/08/merge11.png" width="470" height="147"></a></p>
+<p>MERGE é uma cláusula sensacional que foi implementada no SQL Server 2008. Pouca gente usa, e eu imagino que seja pela complexidade de declaração se comparando com outros comandos DML (Como por exemplo, DELETE, UPDATE e INSERT).</p>
+<p>Leia mais sobre o comando <a title="MERGE segundo o MSDN" href="http://msdn.microsoft.com/query/dev10.query?appId=Dev10IDEF1&amp;l=EN-US&amp;k=k(MERGE_TSQL);k(SQL11.SWB.TSQLRESULTS.F1);k(SQL11.SWB.TSQLQUERY.F1);k%20(MISCELLANEOUSFILESPROJECT);k(DevLang-TSQL)&amp;rd=true">aqui</a></p>
+<p>Devo lembrar que a prova 70-461 vai cobrar esse conhecimento e provavelmente em mais de uma questão (assim como aconteceu na 70-433) e é bastante interessante que o conhecimento da mesma seja algo natural e intuitivo, além de ser um ótimo modo de se pensar/programar DML. Qual a forma que encontrei falar sobre a cláusula? Bem, claro, com um desafio! Vamos ao Desafio T-SQL #2 - MERGE e OUTPUT</p>
+<p><strong>Case</strong></p>
+<p>A empresa Trupe123 resolve, depois de anos sem dar aumento para seus funcionários, tomar uma atitude. Muito foi discutido sobre plano de crescimento, meritocracia, etc e depois de muita discussão, polêmica e briga. Como várias pessoas também saíram da empresa em um curto período de tempo, o RH aproveitou o momento para realizar mudanças no quadro de funcionários (acrescentando e/ou retirando profissionais) ou alterando cargos.O responsável pelo RH, chamado Pedro Bial entregou a você, o DBA, uma lista de mudanças que devem ser refletidas na tabela de empregados.</p>
+<pre>--&gt; Vamos criar o que consta no case...
+
+USE TEMPDB
+GO
+
+IF OBJECT_ID('dbo.Empregado','U') IS NOT NULL
+	DROP TABLE dbo.Empregado
+
+GO
+
+--&gt; Esta é a tabela que deve ser atualizada!
+
+CREATE TABLE dbo.Empregado(
+	id INT identity (1,1) NOT NULL PRIMARY KEY,
+	nome VARCHAR(50) NULL,
+	cargo VARCHAR(50) NULL,
+	ativo BIT NULL
+);
+
+GO
+
+--&gt; A cláusula OUTPUT foi colocada ali pra conferir o resultado da inserção. Tal linha pode ser omitida.
+
+INSERT INTO dbo.Empregado
+OUTPUT INSERTED.*
+VALUES ('Paulo','DBA Jr.',1),('Teonardo','DBA Jr.',1),('Maria','DBA Sr.',1),('Tio','DBA Sr.',1),
+	   ('Daiana','DBA BI',1),('Risonho','DBA Pl.',1),('Marciones','DBA Híbrido',1)
+
+--&gt; A tabela a seguir contêm as mudanças solicitadas pelo Gestor de Informação do RH que devem ser realizadas na tabela de Empregado
+
+IF OBJECT_ID('dbo.ListaMudancasRH','U') IS NOT NULL
+	DROP TABLE dbo.ListaMudancasRH
+
+GO
+
+CREATE TABLE dbo.ListaMudancasRH(
+	id int identity (1,1) not null primary key,
+	nome varchar(50) null,
+	cargo varchar(50) null,
+	explicacao varchar(300) null,
+	ativo bit null
+)
+
+--&gt; Mudanças nessa tabela. A cláusula OUTPUT pode ser omitida pelos mesmos motivos de sua aparição anterior aqui no exercício.
+
+INSERT INTO dbo.ListaMudancasRH
+OUTPUT INSERTED.*
+VALUES  ('Paulo','DBA Jr.','Manteve o mesmo cargo porque não quer se capacitar',1),
+		('Teonardo','DBA BI.','Se destacou na área de BI',1),
+		('Maria','DBA Sr.','Foi mandada embora por vender informações confidenciais da empresa',0),
+		('Tio','DBA Sr.','Mudou de empresa para ganhar duas vezes mais',0),
+		('Latrocínio','DBA Dev.','Entrou para a empresa. Possui disciplina e garra',1),
+		('Daiana','DBA BI','Mudou de empresa e de área para ganhar duas vezes mais',0),
+		('Risonho','DBA Pl.','Dropou todas as bases de sacanagem. Teve que ser mandado.',0),
+		('Manolo','DBA Jr.','Estagiário que virou Trainee que virou depois de muito tempo Jr.',1)</pre>
+<p>Com o material necessário pronto para fazer o seu trabalho, algumas instruções lhe são impostas: O pedido do RH foi bastante claro: associar pelo nome que já existe no sistema.</p>
+<p>1) Quem estiver com ativo = 0, foi desligado. Logo, deve-se <strong>apagar </strong>da tabela de Empregados quem foi desligado.</p>
+<p>2) O Profissional que estiver na lista de Mudanças do RH mas não estiver na tabela de Empregados deve ser <strong>incluído</strong>.</p>
+<p>3) Pode ter havido alguma alteração de cargo para quem não foi desligado. O valor que deve <strong>permanecer </strong>é o que vem da lista de Mudanças do RH, desde que o funcionário exista tanto na tabela como na Lista do RH.</p>
+<p>4) O profissional que estiver na tabela de Empregados mas não estiver na Lista de Mudanças deve ser <strong>mantido </strong>como está.</p>
+<p>Agora, como dizia Bane: LET THE GAMES BEGIN! O desafio, composto de duas etapas:</p>
+<p>1) Construa uma instrução MERGE que esteja dentro do pedido do Pedro Bial, do RH;</p>
+<p>2) Construa uma tabela de auditoria temporária que irá receber:</p>
+<p>a) O nome do funcionário envolvido na atualização;</p>
+<p>b) O nome do evento (INCLUSÃO, EXCLUSÃO OU ATUALIZAÇÃO) seguido do valor antigo e do valor novo, se necessário;</p>
+<p>c) Um campo de DATA que informe DATA E HORÁRIO de quando o registro foi incluído na tabela de auditoria; PS: Para o desafio de no.2, sinta-se a vontade para recriar toda a estrutura e adapte a sua estrutura MERGE utilizando a cláusula OUTPUT.</p>
+<p>Outra coisa: como você provavelmente vai testar bastante tais comandos, vale a pena abrir algumas transações e ver o resultado por lá mesmo. É isso. Na próxima postagem volto com o resultado. Provavelmente final de semana. Novamente, obrigado pela sua visita e sinta-se a vontade.</body></html></p>

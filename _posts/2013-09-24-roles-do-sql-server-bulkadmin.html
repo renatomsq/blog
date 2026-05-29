@@ -1,0 +1,172 @@
+---
+layout: post
+title: Roles do SQL Server - Bulkadmin
+date: 2013-09-24 17:06:04.000000000 -03:00
+type: post
+parent_id: '0'
+published: true
+password: ''
+status: publish
+categories:
+- Microsoft SQL Server
+- Security
+tags:
+- bulk insert
+- bulk load
+- bulkadmin
+- insert
+- role
+- server
+meta:
+  dsq_thread_id: '3437977308'
+  _wp_old_slug: '1379'
+  _publicize_pending: '1'
+  _syntaxhighlighter_encoded: '1'
+  original_post_id: '1385'
+author:
+  login: Renato Siqueira
+  email: ''
+  display_name: Renato Siqueira
+  first_name: ''
+  last_name: ''
+permalink: "/roles-do-sql-server-bulkadmin/"
+---
+<p><!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN" "http://www.w3.org/TR/REC-html40/loose.dtd"><br />
+<html><body><br />
+<a href="http://renatomsiqueira.com.br/wp-content/uploads/2013/09/s112.png"><img class="alignnone size-full wp-image-1063" alt="Cavaleiros" src="{{site.baseurl}}/assets/2013/09/s112.png" width="470" height="147"></a></p>
+<p>Bom dia. Continuando a série sobre Roles, atualmente falando sobre as Fixed Server Roles, vamos falar um pouco sobre o Bulk Admin. O artigo ficou um pouco extenso devido aos exemplos, que achei interessante aplicar pra fixar a informação passada.</p>
+<p><strong>O que é  o Bulkadmin?</strong></p>
+<p>O que o BOL (Books Online) diz sobre a role:</p>
+<blockquote><p>Members of the bulkadmin fixed server role can run the BULK INSERT statement.</p></blockquote>
+<p>Em português simples traduzido no popular:</p>
+<blockquote><p>Membros da função fixa bulkadmin podem executar comandos BULK INSERT</p></blockquote>
+<p>Sem muito segredo. Significa que ele pode rodar comandos BULK INSERT.</p>
+<p>Por definição, BULK INSERT permite a inserção de arquivos que contenham dados externos ao <strong>SQL Server. </strong>Com o intuito de reforçar a segurança, o SQL Server insiste que não basta apenas ter insert na tabela, para inserir arquivos externos, é necessário ter permissão exclusiva pra tal. Aqui entra uma observação importante: ter permissão de BULK INSERT não significa que o login ciclano pode realizar inserção de arquivos externos onde quiser: ele ainda precisa da permissão de INSERT nas tabelas normalmente. No final das contas, figurativamente falando, o usuário precisa de <em>Permissão pra Inserir + Permissão pra Inserir arquivos externos.</em></p>
+<p><strong>Aplicação</strong></p>
+<p>É uma permissão interessante e necessária apenas para o uso do comando BULK INSERT e mais nada. Para cargas de ETL que usam arquivos externo, por exemplo, é uma situação recorrente e que demanda o uso da permissão, geralmente para uma conta de aplicação. Fora o Bulkadmin, a única permissão que pode realizar este tipo de inserção externa é o sysadmin (que tem permissão total na instância).</p>
+<p><strong>Testes</strong></p>
+<p>Vamos ver na prática como funciona?</p>
+<p>Primeiramente, vamos ver o que a role pode fazer:</p>
+<pre>
+
+-- Verifica quais são as permissões da role
+
+EXEC SP_SRVROLEPERMISSION 'bulkadmin'</pre>
+<p>Retorna: "O bulkadmin pode fazer BULK INSERT e  Conceder privilégio de BulkAdmin"</p>
+<p>OBS: Os testes foram feitos em uma instância local.</p>
+<p>1) Crie um arquivo de texto com o seguinte conteúdo:</p>
+<blockquote><p>1,BULKADMIN,Pode realizar comandos BULK INSERT<br />
+2,BULKADMIN,Pode propagar a role de BULK INSERT para outros logins</p></blockquote>
+<p>2) Salve o arquivo em C:tempcarga.txt. Esse é o tal do arquivo externo que vamos usar nos nossos testes.</p>
+<p>3) Logue em uma instância na qual você possa testar. Use um login com permissão sysadmin para tal.</p>
+<p>4) Vamos criar a estrutura para testes</p>
+<pre>
+-- Criação de um banco para nossos testes
+CREATE DATABASE RoleTest
+GO
+
+--Selecionar a base
+USE RoleTest
+GO
+
+--Tabela pra teste
+
+CREATE TABLE dbo.Roles(
+linha INT NULL,
+nome VARCHAR(20) NULL,
+descricao VARCHAR(100) NULL)
+</pre>
+<p>5) Agora vamos criar os logins/usuários para as bases. Atenção aos comentários dos scripts abaixo:</p>
+<pre>
+-- Criação dos logins para teste
+USE MASTER
+GO
+-- Esse cara foi eleito BulkAdmin pela comissão oficial dos databases do brasil
+CREATE LOGIN CarinhaBulkAdmin WITH PASSWORD = 'bulkadmin1', CHECK_POLICY = OFF;
+
+-- Adiciona o login à role Bulkadmin
+EXEC sp_addsrvrolemember 'CarinhaBulkAdmin', 'bulkadmin';
+
+--Esse cara terá permissão de inserção e nada mais (nem arquivo externo)
+CREATE LOGIN CarinhaDoInsert WITH PASSWORD = 'insert1', CHECK_POLICY = OFF;
+
+/* Criando usuários para ambos os logins na base */
+
+USE RoleTest
+
+--O usuário foi criado. Lembrando: ele tem role de servidor Bulkadmin
+CREATE USER usrBulkInsert FOR LOGIN CarinhaBulkAdmin
+
+-- O usuário que só pode inserir e não pode fazer bulk insert
+CREATE USER usrInsert FOR LOGIN CarinhaDoInsert
+
+-- Ou seja...O único que tem permissão de Insert é o usrInsert
+GRANT INSERT ON Object::dbo.Roles TO usrInsert</pre>
+<p>Pronto! Chegamos onde queríamos chegar. Agora, vamos testar os logins! Se você tiver experiência para usar impersonação, fique a vontade para usar EXECUTE AS LOGIN. Porém, em nosso teste, vamos logar com o usuário via ssms mesmo. Alguns detalhes pra evitar ter que fazer troubleshooting:</p>
+<p>a) Verifique se o modo de autenticação está como misto (mixed mode)</p>
+<p>b) Verifique se o caminho do arquivo está no mesmo servidor  que a instância.</p>
+<p>Simbora :)</p>
+<p>6) Logue com o login CarinhaDoInsert via Management Studio. Execute o seguinte comando:</p>
+<pre>
+USE RoleTest
+GO
+-- Insert deve funcionar normalmente.
+INSERT INTO dbo.Roles (linha,nome,descricao) VALUES (0,'bulkadm','Começo de teste')
+-- Agora tente dar um BULK INSERT sem ter permissão...
+BULK INSERT dbo.Roles FROM 'C:tempcarga.txt' WITH  (   FIELDTERMINATOR = ',',   ROWTERMINATOR   = 'n'   )
+</pre>
+<p>Primeiro insert funciona, pois ele tem permissão para tal. Mas e o bulk insert?</p>
+<p>Uma mensagem vermelha vai emergir sobre as profundezas da engine do SQL Server, direto da sua máquina.</p>
+<blockquote><p>Msg 4834, Level 16, State 4, Line 7</p>
+<p>You do not have permission to use the bulk load statement.</p></blockquote>
+<p>Erro extremamente óbvio. "Você não tem permissão pra usar comandos de carregamento BULK.</p>
+<p>Agora vamos ver o outro lado da moeda... Quem realmente tem permissão.</p>
+<p>7) Logue com o login CarinhaBulkAdmin via Management Studio. Execute o seguinte comando:</p>
+<pre>
+USE RoleTest
+GO
+-- Insert deve funcionar normalmente.
+INSERT INTO dbo.Roles (linha,nome,descricao) VALUES (0,'bulkadm','Começo de teste')
+</pre>
+<p>Sinta a surpresa (só que não):</p>
+<blockquote><p>Msg 229, Level 14, State 5, Line 1<br />
+The INSERT permission was denied on the object 'Roles', database 'RoleTest', schema 'dbo'.</p></blockquote>
+<p>Ok. Mas ele tem permissão de realizar um BULK INSERT, então, se ele não tem permissão de INSERT, ah, de BULK tem que ter...certo? Certo? Are you sure?</p>
+<pre>
+
+BULK INSERT dbo.Roles
+FROM 'C:tempcarga.txt'
+WITH
+(
+FIELDTERMINATOR = ',',
+ROWTERMINATOR   = 'n'
+);
+
+</pre>
+<p>Adivinha qual mensagem aparece?</p>
+<blockquote><p>Msg 229, Level 14, State 5, Line 6</p>
+<p>The INSERT permission was denied on the object 'Roles', database 'RoleTest', schema 'dbo'.</p></blockquote>
+<p>Note que independente do comando, ele acusou falta de permissão de INSERT. Simples assim...</p>
+<p>Logue como sysadmin novamente e conceda a seguinte permissão:</p>
+<pre>
+
+USE RoleTest
+GO
+GRANT INSERT ON Object::dbo.Roles TO usrBulkInsert
+
+</pre>
+<p>Agora sim, o BulkAdmin vai conseguir realizar tanto o BulkInsert como o Insert normal.  O exemplo ficou longo (e óbvio pra muitas pessoas) mas agora creio que deu como comprovar de fato pra o BULK INSERT e permissionamento na prática. Ainda logado como CarinhaBulkAdmin, vamos fazer o último teste</p>
+<p>8) Lembram lá no começo que qualquer membro de uma server role pode passar permissões (da mesma role) para outro login? Então, vamos ver isso na prática:</p>
+<pre>
+
+EXEC sp_addsrvrolemember CarinhaDoInsert, 'bulkadmin'
+
+</pre>
+<p>Pronto. Agora o CarinhaDoInsert também é bulkadmin. Outro exemplo do porquê se deve ter bastante cuidado ao concender roles de servidor... Não vou entrar em detalhes aqui, mas imagine no milagre da multiplicação...</p>
+<p><strong>Bônus/curiosidade:</strong>  Não falei ainda sobre o DbOwner, que é uma role de banco, mas aqui vai uma curiosidade interessante: o dbOwner ele tem privilégios extremos no banco de dados na qual ele é dono. Ele pode fazer qualquer coisa praticamente em sua base. Note que eu disse "praticamente". O BULK LOAD é considerado algo tão importante na parte de segurança que ainda assim, o dbowner precisaria ter explicitamente bulkadmin pra poder usar o bulk insert, pois caso tente uma operação deste tipo sem devida permissão, ocorrerá um erro (e olha que ele é dono da base).</p>
+<p><strong>Considerações finais</strong></p>
+<p>Pra reforçar o entendimento, sugiro ler novamente [Aplicação], tópico escrito acima. Finish!</p>
+<p>--</p>
+<p>É isso. Estou estudando para exames (70-463) então pode demorar um pouco para os post sairem. Mas saem. Dbcreator ficaria pra esse post mas infelizmente não deu tempo. Prometo. Em paralelo, posso prometer que vem um pouco de BI e SSIS por aí (assunto que estou estudando).</p>
+<p>Qualquer dúvida, sugestão, etc, entre em contato.</p>
+<p>[]'s</body></html></p>

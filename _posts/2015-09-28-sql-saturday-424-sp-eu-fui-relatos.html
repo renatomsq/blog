@@ -1,0 +1,102 @@
+---
+layout: post
+title: 'SQL Saturday #424 (SP) - Eu fui + relatos'
+date: 2015-09-28 20:53:55.000000000 -03:00
+type: post
+parent_id: '0'
+published: true
+password: ''
+status: publish
+categories:
+- Eventos
+- Microsoft SQL Server
+tags:
+- evento
+- pass
+- satsp
+- sql saturday
+- SQL Server
+- sqtsat
+meta:
+  _edit_last: '2'
+author:
+  login: Renato Siqueira
+  email: ''
+  display_name: Renato Siqueira
+  first_name: ''
+  last_name: ''
+permalink: "/sql-saturday-424-sp-eu-fui-relatos/"
+---
+<p><!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN" "http://www.w3.org/TR/REC-html40/loose.dtd"><br />
+<html><body><br />
+<a href="http://renatomsiqueira.com.br/wp-content/uploads/2015/09/IMG_20150929_132953005-Large.jpg"><img class="alignnone size-large wp-image-2499" src="{{site.baseurl}}/assets/2015/09/IMG_20150929_132953005-Large-1024x576.jpg" alt="IMG_20150929_132953005 (Large)" width="840" height="473"></a></p>
+<p>Olá,</p>
+<p>Rolou nesse final de semana (26/09) na UNIP de Taubaté (São Paulo) mais uma edição do SQL Saturday (<a href="http://www.sqlsaturdaytest.com/424/sessions/schedule.aspx">#424</a>). Em resumo, trata-se de um sábado dedicado para disseminação de informação sobre o SQL Server (e relacionados) por voluntários que fazem parte da comunidade técnica (e sem medo de falar besteira, alguns dos melhores profissionais do Brasil estão entre eles) assim como uma oportunidade ímpar de networking com profissionais que estão ali trabalhando com a mesma coisa que você. E o melhor, é um evento gratuito (mesmo que os palestrantes paguem do próprio bolso todo o deslocamento pro evento).</p>
+<p>Já é a quarta edição do evento que eu participo (sendo a segunda em São Paulo) e minha impressão pessoal é que tem melhorado cada vez mais como um todo (organização, distribuição de palestras, etc) e isso só tem sido possível graças à sempre afiada comunidade técnica e aos patrocinadores que aparentemente tem investido muito mais no evento do que a própria Microsoft.</p>
+<p>A minha dica é: se você pode participar de uma oportunidade dessas, não pense duas vezes: é riquíssima de conhecimento e networking, então se o SAT não chegar na sua cidade, considere viajar para participar. Sugiro também que, caso a empresa não assuma as despesas da viagem por você, considere pagar do próprio bolso. Por mais que não pareça, é um experiência interessante para sua carreira e isso certamente terá retorno (não apenas financeiro, mas profissional, pessoal, etc).</p>
+<p> </p>
+<p><strong>Relatos<br />
+</strong></p>
+<p>Enfim, vou falar um pouco sobre momentos do evento. Estou fazendo isso porque preciso voltar a escrever e essa é sim uma boa desculpa pra isso :)</p>
+<p><b>Abertura:  </b>Aconteceu no auditório. Começou um pouco em cima da hora e por esse motivo o responsável por abrir o evento (Diego Nogare) realizou a abertura mais depressa possível,  que durou menos de 10 minutos. Trata-se de explicações básicas sobre o evento, quem está patrocinando, como funciona a estrutura das trilhas, etc. Conversa breve e todo mundo levantou  e se direcionou para as salas.</p>
+<hr>
+<p><b>Advanced SQL Server Execution Plans - Level 500</b></p>
+<p><b>Fabiano Neves Amorim</b></p>
+<p><b>Trilha: DBA (Desenvolvimento)</b></p>
+<p>A palestra seria em uma sala que rapidamente transbordou de tanta gente (e olha que a sala era grande), e quando não cabia mais cadeiras na sala decidiram trocar nesse momento o local e voltamos para o auditório (onde rolou a abertura).</p>
+<p>A palestra foi bem engraçada, com uma abertura bem zoeira do Fabiano que montou um slide só de memes e zoeiras de outros palestrantes, e depois disso  começou de verdade a apresentação: cheia de desafios de otimização e claro, soluções, e nessa apresentação especificamente, soluções que não são sempre as melhores devido à particularidades do Query Optimizer do SQL Server. Enfim, muito doido, recomendo pra quem gosta de conteúdo denso. Como o tempo estava um pouco corrido, Fabiano encerrou a apresentação mencionando que ainda tinha mais coisas pra mostrar, e aí indicou procurar no blog dele (e/ou  na página oficial do sat) .</p>
+<p>Ah, e no final ele tirou algumas dúvidas e distribuiu algumas cópias do seu livro <a href="http://blogfabiano.com/2011/10/31/free-execution-plans-e-book-e-meu/">Complete Showplan Operators</a> na bondade pura e acabei adquirindo uma cópia física do livro :) Recomendo a leitura se o assunto plano de execução te interessa. O livro aborda de modo bem detalhado os operadores básicos e não é uma leitura pesada. Também é possível obter o .pdf gratuitamente baixando direto pelo site da RedGate.</p>
+<hr>
+<p><b>Entendendo o Clusterlog</b></p>
+<p><b>Marcelo Fernandes e Alex (@zedump)</b></p>
+<p><b>Trilha: DBA Administração)</b></p>
+<p>Palestra bem interessantes. Antes de explicarem o que é o Clusterlog, como é gerado e formas de analisá-lo, abordaram um pouco sobre o conceito de alta disponibilidade no geral, a regra dos 9's e um  pouco sobre Failover Cluster.</p>
+<p>O Alex também deu algumas dicas de como pesquisar com efetividade o clusterlog principalmente em casos de crise (onde o tempo é mais escasso), seja filtrando e interpretando o mais importante e fazendo associações com outros logs (como o log do event viewer, por exemplo).</p>
+<p>A explicação foi bem clara e direta ao ponto. Algo que eu curti bastante e que não fazia a mínima ideia da existência disso: Backup para recuperação Bare Metal, que é um backup a nível de Sistema Operacional que possibilita a recuperação das configurações de várias estruturas do S.O, inclusive do Cluster, em casos de necessidade. O Marcelo mostrou uma demo disso no final da apresentação. É bacana, é um assunto que de fato tem pouco material na internet e no final arrancou alguns aplausos do povo porque a galera curtiu de verdade. O Marcelo aproveitou e mencionou que esse assunto está em maiores detalhes no livro recém lançado por ele e o Milton, o "<a href="http://www.mcdbabrasil.com.br/modules.php?name=News&amp;file=article&amp;sid=661"> SQL Server 2014:  Alta disponibilidade na prática com AlwaysOn Failover Cluster Instances</a>", e de fato está (dei uma folheada e estava lá bem explicado).</p>
+<hr>
+<p><b>SQL Server Security Hardening</b></p>
+<p><b>Diego Miranda</b></p>
+<p><b>Trilha: Geral 2</b></p>
+<p>É um tema que curto muito e foi muito bem explicado pelo Diego Miranda. O começo da palestra foi uma explicação direta  abstraindo um pouco do que significa segurança no contexto de TI, depois aquele gráfico bem famoso de SGBDS x vulnerabilidades ao longo do tempo (tipo as do <a href="https://nvd.nist.gov/">NIST</a>) e tá ali a prova histórica de que o SQL Server não negocia o conceito de segurança: é um must e não um extra e todo o desenvolvimento do produto leva isso como parte do design.</p>
+<p> </p>
+<p>Depois disso foi explicado vários pontos onde muitos ambientes possuem vulnerabilidades e as melhores práticas para corrigi-las. Citando alguns exemplos (que são extremamente comuns em qualquer ambiente e vi muita gente tossindo de leve em algumas ):</p>
+<p> </p>
+<ul>
+<li>Conta do SQL Server como <i>admin</i> local;</li>
+<li>XP_CMDSHELL</li>
+<li>Porta padrão</li>
+<li>Sysadmin</li>
+</ul>
+<p> </p>
+<p>Na parte das demos, houve um tempo pra falar e mostrar sobre certificados, um pouco de TDE e também de um assunto que curto muito: CONTROL SERVER, que embora não seja um <i>sysadmin</i> pode "se elevar" o suficiente para se "tornar" um. Existem algumas formas de fazer isso e uma delas foi mostrada na apresentação. Não lembro se foi também a última demo, mas teve uma sobre trigger de login pra auditar acessos. Ele explorou algumas falhas que a maioria das implementações deste recurso fazem (como por exemplo, filtrar por Program Name sendo que esse parâmetro é totalmente editável pela string de conexão).</p>
+<p>Enfim, foi uma palestra excelente e ficou claro o domínio do palestrante sobre o tema. Quem assistiu não deve ter se arrependido.</p>
+<hr>
+<p> </p>
+<p><b>Vamos falar sobre TEMPDB</b></p>
+<p><b>Ricardo Leka</b></p>
+<p><b>Trilha: Geral 2 (DBA Dev)</b></p>
+<p>Leka faz parte do grupo seleto de dois MCM's e dessa vez o assunto foi particularidades sobre o TEMPDB, explicando a importância dessa base, porque ela é conhecida como playground dos desenvolvedores do SQL Server, arquitetura e limitações, qual a ligação da model com ela (sim) e no final comentou um pouco sobre a polêmica de quantidade de criação de arquivos de TEMPDB. Ficou evidente de que havia muito conteúdo nessa apresentação que ficou de fora por falta de tempo e o palestrante prometeu disponibilizar  material depois (e pessoalmente, estou curioso pra conferir esse material :) ).</p>
+<hr>
+<p> </p>
+<p><b>DataZen - Do Início ao Fim </b></p>
+<p><b>Arthur Luz</b></p>
+<p><b>Trilha: Geral 1 </b></p>
+<p>DataZen é uma ferramenta de BI relativamente nova no mercado e que foi comprada pela Microsoft. Atualmente não trabalho com BI e fiquei curioso pois não sabia nada da ferramenta, e o Arthur fez um ótimo trabalho explicando de forma facilitada do que se trata a ferramenta e explicou passo a passo sobre o processo de instalação.</p>
+<p>O que me surpreendeu de verdade nessa palestra foi a tranquilidade e o domínio do palestrante sobre o tema, o que fez com que ele conseguisse passar tudo (e não era pouca coisa) o que ele realmente propôs na pauta e com certa tranquilidade (mesmo com menos tempo por que a sala estava ocupada). Achei um excelente ponto de partida para conhecer mais da ferramenta. A principal vantagem aqui é que o Arthur está constantemente blogando (e blogando bastante, olouco) sobre a ferramenta que agora é uma frente de trabalho dele, então se você se interessar pelo tema certamente vai querer conferir direto no blog dele, que você pode acessar <a href="https://arthurluz.wordpress.com/">aqui</a>.</p>
+<hr>
+<p><b>Hekaton v.2 e ColumnsTore Index v.3 - Nova Geração de Banco de Dados</b></p>
+<p><b>Luan Moreno Medeiros Maciel</b></p>
+<p><b>Trilha: DEV 1 </b></p>
+<p>O Luan é bastante conhecido na comunidade por ter praticamente adotado dois assuntos que são "eternas novidades" no SQL Server: o <i>Hekaton</i> (hoje conhecido por<i> In-Memory OLTP</i>) e <i>Columnstore</i>. Essa palestra foi bacana porque ele conseguiu falar as novidades sobre o Columnstore, depois sobre o Hekaton, depois sobre o Columnstore no Hekaton. Bem interessante ver que as features evoluíram muito desde a versão de inauguração: Hekaton não restringe tanto quanto antigamente como na primeira versão e agora o Columnstore possui algumas vantagens que na minha opinião deveriam ser essenciais desde a primeira versão (uma delas bastante importante é que ele é atualizável agora).</p>
+<p>Se você se interessa sobre o assunto, basta procurar o <a href="https://luanmorenodba.wordpress.com/">blog </a>do Luan e você verá um avalanche de post sobre o assunto.</p>
+<p> </p>
+<hr>
+<p> </p>
+<p><b>Encerramento do evento + Material</b></p>
+<p> </p>
+<p>E fomos para o auditório para as palavras finais, os agradecimentos, e como de costume, sorteio de vários brindes. É extremamente importante ressaltar que todo o conteúdo do SAT é disponibilizada na web, seja no blog dos palestrantes, seja na página oficial da edição do SAT correspondende. Então, minha recomendação é: se você tiver interesse e quiser um ponto de partida, clique <a href="http://www.sqlsaturdaytest.com/424/sessions/schedule.aspx">aqui</a>.</p>
+<hr>
+<p><b>Conclusão + chamada pro próximo SQL Saturday (#469)</b></p>
+<p>No final ficou aquele sentimento (pelo menos pra mim) de que precisamos estudar mais (sempre, ehuhea) e que valeu a pena estar ali, e já pensando sobre os próximos SATS. O próximo é aqui em Brasília que ocorrerá no dia 21 de Novembro. <a href="http://www.sqlsaturday.com/469/eventhome.aspx">Se inscreva clicando aqui. </a>Bora? Não deixe de fazer sua inscrição visitando esse link. Como já disse no início, vale muito a pena!</p>
+<p>[]'s</p>
+<p> </body></html></p>

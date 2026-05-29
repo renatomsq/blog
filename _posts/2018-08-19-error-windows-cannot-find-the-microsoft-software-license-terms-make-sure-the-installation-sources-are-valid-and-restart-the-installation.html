@@ -1,0 +1,64 @@
+---
+layout: post
+title: 'Error: Windows cannot find the Microsoft Software License Terms. Make sure
+  the installation sources are valid and restart the installation.'
+date: 2018-08-19 03:00:55.000000000 -03:00
+type: post
+parent_id: '0'
+published: true
+password: ''
+status: publish
+categories:
+- Windows
+- Windows Server
+tags: []
+meta:
+  _yoast_wpseo_linkdex: '65'
+  _yoast_wpseo_content_score: '60'
+  _edit_last: '2'
+  _oembed_c286bbb9d300eac9a013240f7b1fa104: "{{unknown}}"
+  _yoast_wpseo_primary_category: ''
+  _yoast_wpseo_focuskw: Microsoft Software License Terms
+  _yoast_wpseo_metadesc: Como resolver o erro Windows cannot find the Microsoft Software
+    License Terms. Make sure the installation sources are valid and restart the installation
+author:
+  login: Renato Siqueira
+  email: ''
+  display_name: Renato Siqueira
+  first_name: ''
+  last_name: ''
+permalink: "/error-windows-cannot-find-the-microsoft-software-license-terms-make-sure-the-installation-sources-are-valid-and-restart-the-installation/"
+---
+<p><!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN" "http://www.w3.org/TR/REC-html40/loose.dtd"><br />
+<html><body></p>
+<p>Olá pessoal, mais um post rápido pra documentar um pequeno e simples troubleshooting encontrado ao configurar ambientes  com Virtualbox e o Windows Server 2016. Não <a href="http://renatomsiqueira.com.br/category/erros/">é sempre que posto erros relacionados a S.O</a>, mas tem tudo a ver com SQL Server porque geralmente andam lado a lado.Apesar disto, o erro não é restrito à máquinas virtuais e nem especificamente o Hypervisor em questão.</p>
+<h2><strong>Mensagem de erro</strong></h2>
+<p>A mensagem erro ocorre praticamente no início do processo de instalação do Sistema Operacional, com a seguinte mensagem:</p>
+<p><em>Windows cannot find the Microsoft Software License Terms. Make sure the installation sources are valid and restart the installation.</em></p>
+<h2><strong>Cenário (como simulei o problema)</strong></h2>
+<p>Instalando o Windows Server 2016 em uma VM (Virtualbox), selecionei a edição desejada (Desktop Experience)  e prossegui com a instalação utilizando as configurações padrões do Virtualbox. No momento em que o contrato de licença deveria ser carregado, um erro selvagem aparece  e impede a instalação. Abaixo duas telas que indicam como simular o problema:</p>
+<p>[caption id="attachment_2618" align="alignnone" width="770"]<img class="wp-image-2618 size-large" src="{{site.baseurl}}/assets/2018/08/1-1024x669.jpg" alt=" Windows cannot find the Microsoft Software License Terms  - Gerando mensagem" width="770" height="503"> Selecionando a mídia de instalação[/caption]</p>
+<p>[caption id="attachment_2619" align="alignnone" width="963"]<img class="wp-image-2619 size-full" src="{{site.baseurl}}/assets/2018/08/2.jpg" alt="Windows cannot find the Microsoft Software License Terms - Gerando mensagem de erro" width="963" height="648"> Mensagem de erro gerada com sucesso[/caption]</p>
+<p><em>Windows cannot find the Microsoft Software License Terms. Make sure the installation sources are valid and restart the installation.</em></p>
+<h2><strong>Resolução do problema </strong></h2>
+<p>Descartei a possibilidade da ISO utilizada para instalação estar corrompida porque já tinha realizado uma instalação usando a mesma dias antes do problema. Também refiz o procedimento quatro (4) vezes, e apenas uma vez o instalador pode prosseguir, então parece ser um intermitemente e não mídia corrompida. Parti pra documentação oficial do S.O pra ver se achava alguma pista nos requerimentos de instalação do servidor, e bingo:</p>
+<ul>
+<li>
+<span style="color: #800000;">[PT-BR]</span> https://docs.microsoft.com/pt-br/windows-server/get-started/system-requirements</li>
+<li>
+<span style="color: #800000;">[EN-US]</span> https://docs.microsoft.com/en-us/windows-server/get-started/system-requirements</li>
+</ul>
+<p>O texto abaixo descreve o problema de fato que estava encarando. Criei o servidor com o padrão de memória no Virtualbox que é de 512MB, que se encaixava neste cenário de inconformidade com os requisitos mínimos de hardware:</p>
+<blockquote><p>If you create a virtual machine with the minimum supported hardware parameters (1 processor core and 512 MB RAM) and then attempt to install this release on the virtual machine, Setup will fail.</p>
+<p>To avoid this, do one of the following:</p></blockquote>
+<ul>
+<li>
+<blockquote><p>Allocate more than 800 MB RAM to the virtual machine you intend to install this release on. Once Setup has completed, you can change the allocation to as little as 512 MB RAM, depending on the actual server configuration.</p></blockquote>
+</li>
+<li class="">
+<blockquote><p>Interrupt the boot process of this release on the virtual machine with SHIFT+F10. In the command prompt that opens, use Diskpart.exe to create and format an installation partition. Run <strong>Wpeutil createpagefile /path=C:\pf.sys</strong> (assuming the installation partition you created was C:). Close the command prompt and proceed with Setup.</p></blockquote>
+</li>
+</ul>
+<h2><strong>Conclusão</strong></h2>
+<p>A solução foi ajustar a memória da VM pra acima de 800MB que é um valor de memória aceitável e refazer a instalação para resolver o erro. Trata-se de uma mensagem de erro interessante, pois tudo parece indicar que a mídia de instalação está inválida de alguma forma quando na verdade é um comportamento já documentado pela Microsoft.</p>
+<p>Achou interessante o problema, ou já topou com ele em outro cenário diferente do que foi descrito aqui? Fique à vontade para comentar.</body></html></p>
