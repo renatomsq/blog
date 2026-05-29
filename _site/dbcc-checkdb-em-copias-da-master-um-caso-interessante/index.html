@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1"><!-- Begin Jekyll SEO tag v2.9.0 -->
+<title>DBCC CHECKDB em cópias da MASTER - Um caso interessante | Renato Siqueira</title>
+<meta name="generator" content="Jekyll v4.4.1" />
+<meta property="og:title" content="DBCC CHECKDB em cópias da MASTER - Um caso interessante" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="&lt;!DOCTYPE html PUBLIC &quot;-//W3C//DTD HTML 4.0 Transitional//EN&quot; &quot;http://www.w3.org/TR/REC-html40/loose.dtd&quot;&gt; &lt;/p&gt; Olá, Executei o CHECKDB em uma base chamada MASTER_SHADOW, que é uma cópia da master de um servidor de produção. Erros pipocam na tela conforme ilustrado abaixo (resumido com as partes relevantes, pois os erros abaixo se repetem para diferentes classes): Msg 8992, Level 16, State 1, Line 1 Check Catalog Msg 3851, State 1: An invalid row (class=12,depid=0,depsubid=0) was found in the system table sys.syssingleobjrefs (class=12). Msg 8992, Level 16, State 1, Line 1 Check Catalog Msg 3851, State 1: An invalid row (class=13,depid=1,depsubid=0) was found in the system table…" />
+<meta name="twitter:description" property="og:description" content="&lt;!DOCTYPE html PUBLIC &quot;-//W3C//DTD HTML 4.0 Transitional//EN&quot; &quot;http://www.w3.org/TR/REC-html40/loose.dtd&quot;&gt; &lt;/p&gt; Olá, Executei o CHECKDB em uma base chamada MASTER_SHADOW, que é uma cópia da master de um servidor de produção. Erros pipocam na tela conforme ilustrado abaixo (resumido com as partes relevantes, pois os erros abaixo se repetem para diferentes classes): Msg 8992, Level 16, State 1, Line 1 Check Catalog Msg 3851, State 1: An invalid row (class=12,depid=0,depsubid=0) was found in the system table sys.syssingleobjrefs (class=12). Msg 8992, Level 16, State 1, Line 1 Check Catalog Msg 3851, State 1: An invalid row (class=13,depid=1,depsubid=0) was found in the system table…" />
+<link rel="canonical" href="http://localhost:4000/dbcc-checkdb-em-copias-da-master-um-caso-interessante/" />
+<meta property="og:url" content="http://localhost:4000/dbcc-checkdb-em-copias-da-master-um-caso-interessante/" />
+<meta property="og:site_name" content="Renato Siqueira" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2016-06-02T18:13:13-03:00" />
+<meta property="article:modified_time" content="2016-06-02T18:13:13-03:00" />
+<meta name="twitter:card" content="summary" />
+<meta name="twitter:title" content="DBCC CHECKDB em cópias da MASTER - Um caso interessante" />
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"BlogPosting","dateModified":"2016-06-02T18:13:13-03:00","datePublished":"2016-06-02T18:13:13-03:00","description":"&lt;!DOCTYPE html PUBLIC &quot;-//W3C//DTD HTML 4.0 Transitional//EN&quot; &quot;http://www.w3.org/TR/REC-html40/loose.dtd&quot;&gt; &lt;/p&gt; Olá, Executei o CHECKDB em uma base chamada MASTER_SHADOW, que é uma cópia da master de um servidor de produção. Erros pipocam na tela conforme ilustrado abaixo (resumido com as partes relevantes, pois os erros abaixo se repetem para diferentes classes): Msg 8992, Level 16, State 1, Line 1 Check Catalog Msg 3851, State 1: An invalid row (class=12,depid=0,depsubid=0) was found in the system table sys.syssingleobjrefs (class=12). Msg 8992, Level 16, State 1, Line 1 Check Catalog Msg 3851, State 1: An invalid row (class=13,depid=1,depsubid=0) was found in the system table…","headline":"DBCC CHECKDB em cópias da MASTER - Um caso interessante","mainEntityOfPage":{"@type":"WebPage","@id":"http://localhost:4000/dbcc-checkdb-em-copias-da-master-um-caso-interessante/"},"url":"http://localhost:4000/dbcc-checkdb-em-copias-da-master-um-caso-interessante/"}</script>
+<!-- End Jekyll SEO tag -->
+<link rel="stylesheet" href="/assets/main.css"><link type="application/atom+xml" rel="alternate" href="http://localhost:4000/feed.xml" title="Renato Siqueira" /></head>
+<body><header class="site-header" role="banner">
+
+  <div class="wrapper"><a class="site-title" rel="author" href="/">Renato Siqueira</a><nav class="site-nav">
+        <input type="checkbox" id="nav-trigger" class="nav-trigger" />
+        <label for="nav-trigger">
+          <span class="menu-icon">
+            <svg viewBox="0 0 18 15" width="18px" height="15px">
+              <path d="M18,1.484c0,0.82-0.665,1.484-1.484,1.484H1.484C0.665,2.969,0,2.304,0,1.484l0,0C0,0.665,0.665,0,1.484,0 h15.032C17.335,0,18,0.665,18,1.484L18,1.484z M18,7.516C18,8.335,17.335,9,16.516,9H1.484C0.665,9,0,8.335,0,7.516l0,0 c0-0.82,0.665-1.484,1.484-1.484h15.032C17.335,6.031,18,6.696,18,7.516L18,7.516z M18,13.516C18,14.335,17.335,15,16.516,15H1.484 C0.665,15,0,14.335,0,13.516l0,0c0-0.82,0.665-1.483,1.484-1.483h15.032C17.335,12.031,18,12.695,18,13.516L18,13.516z"/>
+            </svg>
+          </span>
+        </label>
+
+        <div class="trigger"><a class="page-link" href="/about/">About</a></div>
+      </nav></div>
+</header>
+<main class="page-content" aria-label="Content">
+      <div class="wrapper">
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+
+  <header class="post-header">
+    <h1 class="post-title p-name" itemprop="name headline">DBCC CHECKDB em cópias da MASTER - Um caso interessante</h1>
+    <p class="post-meta">
+      <time class="dt-published" datetime="2016-06-02T18:13:13-03:00" itemprop="datePublished">Jun 2, 2016
+      </time>• <span itemprop="author" itemscope itemtype="http://schema.org/Person"><span class="p-author h-card" itemprop="name">{"login" => "Renato Siqueira", "email" => "", "display_name" => "Renato Siqueira", "first_name" => "", "last_name" => ""}</span></span></p>
+  </header>
+
+  <div class="post-content e-content" itemprop="articleBody">
+    <p><!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN" "http://www.w3.org/TR/REC-html40/loose.dtd"><br />
+<html><body><br />
+<img class="alignnone wp-image-2562" src="/assets/2016/06/master.png" alt="Ilustrando um DB generico a lot" width="143" height="172"></p>
+<p>Olá,</p>
+<p>Executei o CHECKDB em uma base chamada MASTER_SHADOW, que é uma cópia da master de um servidor de produção.</p>
+<p>Erros pipocam na tela conforme ilustrado abaixo (resumido com as partes relevantes, pois os erros abaixo se repetem para diferentes classes):</p>
+<p><em>Msg 8992, Level 16, State 1, Line 1</em><br />
+<em> Check Catalog Msg 3851, State 1: An invalid row (class=12,depid=0,depsubid=0) was found in the system table sys.syssingleobjrefs (class=12).</em><br />
+<em> Msg 8992, Level 16, State 1, Line 1</em><br />
+<em> Check Catalog Msg 3851, State 1: An invalid row (class=13,depid=1,depsubid=0) was found in the system table sys.syssingleobjrefs (class=13).</em><br />
+(...)<br />
+(...)<br />
+<em> CHECKDB found 0 allocation errors and 61 consistency errors not associated with any single object.</em><br />
+<em> DBCC results for 'sys.sysrscols'.</em></p>
+<p><strong><em>Msg 8906, Level 16, State 1, Line 1</em></strong><br />
+<strong><em> Page (1:10) in database ID 7 is allocated in the SGAM (1:3) and PFS (1:1), but was not allocated in any IAM. PFS flags 'MIXED_EXT ALLOCATED 0_PCT_FULL'.</em></strong></p>
+<p><em>CHECKDB found 1 allocation errors and 61 consistency errors in database 'master_shadow'.</em><br />
+<em> DBCC execution completed. If DBCC printed error messages, contact your system administrator.</em></p>
+<hr>
+<p><strong>O que era:</strong></p>
+<p>Assim que analisei o resultado, executei o CHECKDB na master em produção, a mãe desse "backup". Nenhum erro, tudo no grau.</p>
+<p>Suspeitei que fosse particularidade de alguma página da master que perdia referência ao virar uma base de usuário.</p>
+<p>Fiz aquela pesquisa básica e cheguei no seguinte artigo do Paul Randal que elucidou o motivo do erro: <a href="http://sqlmag.com/blog/my-master-database-really-corrupt">Is my master Database really corrupt?</a></p>
+<p>Em suma, realmente era particularidade da master, especificamente a página #10 da master que possui metadados "especiais", que não pode existir em nenhuma outra base de usuário, o que era o caso dessa cópia da MASTER. Pelas mensagens de erro, nota-se que todos os erros de consistência apontavam para a mesma página (#10), então estava lendo sobre o assunto certo pro problema certo.</p>
+<hr>
+<p><strong>Finalizando</strong></p>
+<p>Conclusões do artigo original já supracitados no artigo do <em>sqlmag</em>: É interessante manter a MASTER na sua rotina de checagem de backup/restore mas tire as cópias de testes de integridade pra evitar diversos falso-positivos.</p>
+<p><strong>Conclusão:</strong> MASTER na rotina de RESTORE? Sim. Na rotina de CHECKDB? Só direto em produção.<br />
+Já restaurei master em várias oportunidades. Mas nunca havia executado CHECKDB até então. Topando com esse erro pela primeira vez. Vivendo e aprendendo.<br />
+[]'s</body></html></p>
+
+  </div><a class="u-url" href="/dbcc-checkdb-em-copias-da-master-um-caso-interessante/" hidden></a>
+</article>
+
+      </div>
+    </main><footer class="site-footer h-card">
+  <data class="u-url" href="/"></data>
+
+  <div class="wrapper">
+
+    <h2 class="footer-heading">Renato Siqueira</h2>
+
+    <div class="footer-col-wrapper">
+      <div class="footer-col footer-col-1">
+        <ul class="contact-list">
+          <li class="p-name">Renato Siqueira</li><li><a class="u-email" href="mailto:rad_renato@hotmail.com">rad_renato@hotmail.com</a></li></ul>
+      </div>
+
+      <div class="footer-col footer-col-2"><ul class="social-media-list"><li><a href="https://github.com/renatomsq"><svg class="svg-icon"><use xlink:href="/assets/minima-social-icons.svg#github"></use></svg> <span class="username">renatomsq</span></a></li><li><a href="https://www.twitter.com/naotenhomais"><svg class="svg-icon"><use xlink:href="/assets/minima-social-icons.svg#twitter"></use></svg> <span class="username">naotenhomais</span></a></li></ul>
+</div>
+
+      <div class="footer-col footer-col-3">
+        <p>Meu blog de artigo técnico sobre banco de dados e carreira.</p>
+      </div>
+    </div>
+
+  </div>
+
+</footer>
+</body>
+
+</html>

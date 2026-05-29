@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1"><!-- Begin Jekyll SEO tag v2.9.0 -->
+<title>Sobre Stretch Database | Renato Siqueira</title>
+<meta name="generator" content="Jekyll v4.4.1" />
+<meta property="og:title" content="Sobre Stretch Database" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="&lt;!DOCTYPE html PUBLIC &quot;-//W3C//DTD HTML 4.0 Transitional//EN&quot; &quot;http://www.w3.org/TR/REC-html40/loose.dtd&quot;&gt; &lt;/p&gt; Olá pessoal, tudo bem? O Stretch Database é um recurso disponível a partir do SQL Server 2016 que apresenta uma solução híbrida (cloud e on-premises) de armazenamento e acesso de dados frios em nuvem. Sendo mais prático, imagina uma tabela de 10 GB onde 9 GB são dados frios, que não são frequentemente acessados. Até que algo seja feito (expurgo, ou migração pra algum lugar), estes dados estão ocupando a mesma área &quot;nobre&quot; de dados quentes (dados frequentemente utilizados). O Stretch faz justamente essa migração de dados frios para a nuvem,…" />
+<meta name="twitter:description" property="og:description" content="&lt;!DOCTYPE html PUBLIC &quot;-//W3C//DTD HTML 4.0 Transitional//EN&quot; &quot;http://www.w3.org/TR/REC-html40/loose.dtd&quot;&gt; &lt;/p&gt; Olá pessoal, tudo bem? O Stretch Database é um recurso disponível a partir do SQL Server 2016 que apresenta uma solução híbrida (cloud e on-premises) de armazenamento e acesso de dados frios em nuvem. Sendo mais prático, imagina uma tabela de 10 GB onde 9 GB são dados frios, que não são frequentemente acessados. Até que algo seja feito (expurgo, ou migração pra algum lugar), estes dados estão ocupando a mesma área &quot;nobre&quot; de dados quentes (dados frequentemente utilizados). O Stretch faz justamente essa migração de dados frios para a nuvem,…" />
+<link rel="canonical" href="http://localhost:4000/sobre-stretch-database-analise/" />
+<meta property="og:url" content="http://localhost:4000/sobre-stretch-database-analise/" />
+<meta property="og:site_name" content="Renato Siqueira" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2020-09-22T07:58:56-03:00" />
+<meta property="article:modified_time" content="2020-09-22T07:58:56-03:00" />
+<meta name="twitter:card" content="summary" />
+<meta name="twitter:title" content="Sobre Stretch Database" />
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"BlogPosting","dateModified":"2020-09-22T07:58:56-03:00","datePublished":"2020-09-22T07:58:56-03:00","description":"&lt;!DOCTYPE html PUBLIC &quot;-//W3C//DTD HTML 4.0 Transitional//EN&quot; &quot;http://www.w3.org/TR/REC-html40/loose.dtd&quot;&gt; &lt;/p&gt; Olá pessoal, tudo bem? O Stretch Database é um recurso disponível a partir do SQL Server 2016 que apresenta uma solução híbrida (cloud e on-premises) de armazenamento e acesso de dados frios em nuvem. Sendo mais prático, imagina uma tabela de 10 GB onde 9 GB são dados frios, que não são frequentemente acessados. Até que algo seja feito (expurgo, ou migração pra algum lugar), estes dados estão ocupando a mesma área &quot;nobre&quot; de dados quentes (dados frequentemente utilizados). O Stretch faz justamente essa migração de dados frios para a nuvem,…","headline":"Sobre Stretch Database","mainEntityOfPage":{"@type":"WebPage","@id":"http://localhost:4000/sobre-stretch-database-analise/"},"url":"http://localhost:4000/sobre-stretch-database-analise/"}</script>
+<!-- End Jekyll SEO tag -->
+<link rel="stylesheet" href="/assets/main.css"><link type="application/atom+xml" rel="alternate" href="http://localhost:4000/feed.xml" title="Renato Siqueira" /></head>
+<body><header class="site-header" role="banner">
+
+  <div class="wrapper"><a class="site-title" rel="author" href="/">Renato Siqueira</a><nav class="site-nav">
+        <input type="checkbox" id="nav-trigger" class="nav-trigger" />
+        <label for="nav-trigger">
+          <span class="menu-icon">
+            <svg viewBox="0 0 18 15" width="18px" height="15px">
+              <path d="M18,1.484c0,0.82-0.665,1.484-1.484,1.484H1.484C0.665,2.969,0,2.304,0,1.484l0,0C0,0.665,0.665,0,1.484,0 h15.032C17.335,0,18,0.665,18,1.484L18,1.484z M18,7.516C18,8.335,17.335,9,16.516,9H1.484C0.665,9,0,8.335,0,7.516l0,0 c0-0.82,0.665-1.484,1.484-1.484h15.032C17.335,6.031,18,6.696,18,7.516L18,7.516z M18,13.516C18,14.335,17.335,15,16.516,15H1.484 C0.665,15,0,14.335,0,13.516l0,0c0-0.82,0.665-1.483,1.484-1.483h15.032C17.335,12.031,18,12.695,18,13.516L18,13.516z"/>
+            </svg>
+          </span>
+        </label>
+
+        <div class="trigger"><a class="page-link" href="/about/">About</a></div>
+      </nav></div>
+</header>
+<main class="page-content" aria-label="Content">
+      <div class="wrapper">
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+
+  <header class="post-header">
+    <h1 class="post-title p-name" itemprop="name headline">Sobre Stretch Database</h1>
+    <p class="post-meta">
+      <time class="dt-published" datetime="2020-09-22T07:58:56-03:00" itemprop="datePublished">Sep 22, 2020
+      </time>• <span itemprop="author" itemscope itemtype="http://schema.org/Person"><span class="p-author h-card" itemprop="name">{"login" => "renatomsiq@gmail.com", "email" => "renatomsiq@gmail.com", "display_name" => "renatomsiq@gmail.com", "first_name" => "", "last_name" => ""}</span></span></p>
+  </header>
+
+  <div class="post-content e-content" itemprop="articleBody">
+    <p><!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN" "http://www.w3.org/TR/REC-html40/loose.dtd"><br />
+<!-- wp:image {"id":2860,"width":836,"height":411,"sizeSlug":"large"} --><html><body></p>
+<figure class="wp-block-image size-large is-resized"><img src="/assets/2020/09/image-24.png" alt="" class="wp-image-2860" width="836" height="411"></figure>
+<p><!-- /wp:image --></p>
+<p><!-- wp:paragraph --></p>
+<p>Olá pessoal, tudo bem? O <strong>Stretch Database</strong> é um recurso disponível a partir do SQL Server 2016 que apresenta uma solução híbrida (<em>cloud </em>e <em>on-premises</em>) de armazenamento e acesso de dados frios em nuvem. Sendo mais prático, imagina uma tabela de 10 GB onde 9 GB são dados frios, que não são frequentemente acessados. Até que algo seja feito (expurgo, ou migração pra algum lugar), estes dados estão ocupando a mesma área "nobre" de dados quentes (dados frequentemente utilizados). O <em>Stretch </em>faz justamente essa migração de dados frios para a nuvem, porém não só isso, ele garante que os mesmos poderão ser acessados normalmente, como se tivessem presentes no on-premises, de modo transparente. </p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --></p>
+<p>As perguntas que podem ser feitas para descobrir se o recurso te atende são:</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:list --></p>
+<ul>
+<li>Eu ou os usuários do sistema às vezes precisamos consultar dados antigos mesmo não sendo tão frequentemente?</li>
+<li>Quero/preciso economizar espaço e dinheiro com storage de produção?</li>
+<li>Minhas tabelas crescem muito e estou começando a perder o controle sobre isso? Estou sempre precisando alocar mais storage e o tamanho está começando a afetar rotinas de manutenção (e dependendo do caso comprometendo o SLA)?</li>
+</ul>
+<p><!-- /wp:list --></p>
+<p><!-- wp:paragraph --></p>
+<p>Para informações mais direcionadoras, recomendo documentação oficial, inclusive para saber quais limitações tem o recurso antes e depois de implementar. No final do post, coloco as referências na documentação oficial.</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:heading {"level":3} --></p>
+<h3><strong>Cenário #1 - Quero migrar dados frios para nuvem</strong></h3>
+<p><!-- /wp:heading --></p>
+<p><!-- wp:paragraph --></p>
+<p>Bem, após análise cautelosa, considerei fazer uso do recurso de "stretch" na tabela de comentários da base do <em>StackOverflow2010 </em>(<a href="https://www.brentozar.com/archive/2015/10/how-to-download-the-stack-overflow-database-via-bittorrent/">disponível gratuitamente</a>) para arquivar em nuvem todos os comentários anteriores ao ano de 2010, que considero dados frios, raramente acessados, e  não quero manter isto armazenado nos discos locais porque descobri que armazenar e manter isso em nuvem é mais barato que meu servidor local.</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --></p>
+<p>Existem dois pré-requisitos para realização dos testes:</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:list {"ordered":true} --></p>
+<ol>
+<li>Ter uma instância on-premises instalada: No meu caso é uma instância MSSQL 2019 e claro, um banco de dados, que para meu negócio é o StackOverflow2010.</li>
+<li>Ter uma subscription no Azure para "alugar" o recurso Stretch e armazenar os dados frios em nuvem</li>
+</ol>
+<p><!-- /wp:list --></p>
+<p><!-- wp:paragraph --></p>
+<p>Vamos de interface gráfica por motivos de praticidade.</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:list {"ordered":true} --></p>
+<ol>
+<li>
+<strong>Selecionar a tabela que quero "alongar" na nuvem:</strong> Botão direito, Stretch &gt; Enable para iniciar a configuração:</li>
+</ol>
+<p><!-- /wp:list --></p>
+<p><!-- wp:image {"id":2835,"sizeSlug":"large"} --></p>
+<figure class="wp-block-image size-large"><img src="/assets/2020/09/image.png" alt="" class="wp-image-2835"></figure>
+<p><!-- /wp:image --></p>
+<p><!-- wp:paragraph --></p>
+<p>2. Aqui o SQL te explica no modo "fala aí nobreza" como o recuso funciona:</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:image {"id":2836,"sizeSlug":"large"} --></p>
+<figure class="wp-block-image size-large"><img src="/assets/2020/09/image-1.png" alt="" class="wp-image-2836"></figure>
+<p><!-- /wp:image --></p>
+<p><!-- wp:paragraph --></p>
+<p>3. Aqui você escolhe o que você quer levar para a nuvem. Eu quero uma migração parcial dos dados e não a tabela inteira (Entire Table), que seria outro cenário bem comum, então vamos alterar esta opção:</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:image {"id":2837,"sizeSlug":"large"} --></p>
+<figure class="wp-block-image size-large"><img src="/assets/2020/09/image-2.png" alt="" class="wp-image-2837"></figure>
+<p><!-- /wp:image --></p>
+<p><!-- wp:paragraph --></p>
+<p>Bom, apenas configurando o filtro, é criada uma função para identificar e migrar os dados considerados frios.</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:image {"id":2838,"sizeSlug":"large"} --></p>
+<figure class="wp-block-image size-large"><img src="/assets/2020/09/image-3.png" alt="" class="wp-image-2838"></figure>
+<p><!-- /wp:image --></p>
+<p><!-- wp:paragraph --></p>
+<p>Aqui como ficou após a escolha dos registros:</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:image {"id":2839,"sizeSlug":"large"} --></p>
+<figure class="wp-block-image size-large"><img src="/assets/2020/09/image-4.png" alt="" class="wp-image-2839"></figure>
+<p><!-- /wp:image --></p>
+<p><!-- wp:paragraph --></p>
+<p>4. Agora precisamos logar no Azure para configurar o lado da nuvem e aqui entra o requisito de se ter uma subscrição ativa:</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:image {"id":2840,"sizeSlug":"large"} --></p>
+<figure class="wp-block-image size-large"><img src="/assets/2020/09/image-5.png" alt="" class="wp-image-2840"></figure>
+<p><!-- /wp:image --></p>
+<p><!-- wp:paragraph --></p>
+<p>Aqui é necessário escolher em qual região vamos configurar o recurso, escolhi Brasil e ele também me pede pra criar um servidor (!) de Stretch.</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:image {"id":2841,"sizeSlug":"large"} --></p>
+<figure class="wp-block-image size-large"><img src="/assets/2020/09/image-6.png" alt="" class="wp-image-2841"></figure>
+<p><!-- /wp:image --></p>
+<p><!-- wp:paragraph --></p>
+<p>5. Agora o Azure pede que você crie uma master key para o banco envolvido no <em>Stretch </em>pra reforço de segurança:</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:image {"id":2842,"sizeSlug":"large"} --></p>
+<figure class="wp-block-image size-large"><img src="/assets/2020/09/image-7.png" alt="" class="wp-image-2842"></figure>
+<p><!-- /wp:image --></p>
+<p><!-- wp:paragraph --></p>
+<p>6. É necessária a criação de regra no Azure Firewall para permitir que o SQL on-premises acesse os dados frios em nuvem. Como são testes locais, vou deixar padrão:</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:image {"id":2843,"sizeSlug":"large"} --></p>
+<figure class="wp-block-image size-large"><img src="/assets/2020/09/image-8.png" alt="" class="wp-image-2843"></figure>
+<p><!-- /wp:image --></p>
+<p><!-- wp:paragraph --></p>
+<p>Pronto, acabou a configuração. Na tela abaixo tem um resumo do que fizemos nos passos acima. Detalhe para a informação "Estimated Pricing".</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:image {"id":2844,"sizeSlug":"large"} --></p>
+<figure class="wp-block-image size-large"><img src="/assets/2020/09/image-9.png" alt="" class="wp-image-2844"></figure>
+<p><!-- /wp:image --></p>
+<p><!-- wp:paragraph --></p>
+<p>Agora é apertar Finish. Aqui temos dois detalhes interessantes: </p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:list {"ordered":true} --></p>
+<ol>
+<li>O ícone do database mudou, indicando que aquele banco não é mais como os outros;</li>
+<li>A  frase "Enjoy your SQL Server Cloud Experience" pra te dar boas vindas  mas indiretamente, lembrar também que a Cloud ainda é "infra de alguém", então atenção aos custos!</li>
+</ol>
+<p><!-- /wp:list --></p>
+<p><!-- wp:image {"id":2846,"sizeSlug":"large"} --></p>
+<figure class="wp-block-image size-large"><img src="/assets/2020/09/image-11-1024x650.png" alt="" class="wp-image-2846"></figure>
+<p><!-- /wp:image --></p>
+<p><!-- wp:paragraph --></p>
+<p>Mas voltando ao assunto técnico, vamos monitorar visualmente se configuramos corretamente?</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --></p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:image {"id":2847,"sizeSlug":"large"} --></p>
+<figure class="wp-block-image size-large"><img src="/assets/2020/09/image-12.png" alt="" class="wp-image-2847"></figure>
+<p><!-- /wp:image --></p>
+<p><!-- wp:paragraph --></p>
+<p>E aqui está informações sobre a execução do processo de Stretch, inteiramente executado através da função que criamos. Para curiosos, temos um Extended Events com os eventos da sincronização/migração dos dados frios, se alguém se interessar (destacado em laranja):</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:image {"id":2848,"sizeSlug":"large","className":"is-style-default"} --></p>
+<figure class="wp-block-image size-large is-style-default"><img src="/assets/2020/09/image-13-1024x854.png" alt="" class="wp-image-2848"><br />
+<figcaption>Tela principal de monitoramento</figcaption>
+</figure>
+<p><!-- /wp:image --></p>
+<p><!-- wp:image {"id":2849,"sizeSlug":"large","className":"is-style-default"} --></p>
+<figure class="wp-block-image size-large is-style-default"><img src="/assets/2020/09/image-14.png" alt="" class="wp-image-2849"><br />
+<figcaption>Extended Events dos eventos de sincronização</figcaption>
+</figure>
+<p><!-- /wp:image --></p>
+<p><!-- wp:paragraph --></p>
+<p>Tudo certo, temos nosso recurso funcionando, e com os dados frios em nuvem, enquanto o restante fica local. Vamos ao...</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:heading {"level":3} --></p>
+<h3>Teste simples</h3>
+<p><!-- /wp:heading --></p>
+<p><!-- wp:paragraph --></p>
+<p>Na prática, temos uma query que  busca todos os comentários de 2008 de uma forma questionável (asterisco kkkkkk) que executava antes mesmo de ativar o Stretch, e vamos rodar de novo on-premises pra validar se ainda funciona, mesmo que todos os dados que ela consulte estejam em nuvem. Postei também o plano de execução para comprovar que os dados estão sendo acessados de forma "remota":</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:image {"id":2855,"sizeSlug":"large"} --></p>
+<figure class="wp-block-image size-large"><img src="/assets/2020/09/image-20-1024x295.png" alt="" class="wp-image-2855"><br />
+<figcaption>Note que a mesma consulta que funcionava normalmente, vai funcionar mesmo com os dados "migrados" para a nuvem.</figcaption>
+</figure>
+<p><!-- /wp:image --></p>
+<p><!-- wp:paragraph --></p>
+<p>Aqui vimos na prática como o recurso funciona: É sobre manter <em>dados frios </em>em nuvem com baixo custo (pro meu cenário) e com isso diminuir a quantidade de dados armazenada localmente, nas tabelas envolvidas no Stretch, tudo isso sem alteração de código. </p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --></p>
+<p>Bem, como são dados frios migrados para a nuvem, temos menos dados alocados na storage on-premises, e isso reflete diretamente em nossas rotinas de manutenção também (<em>checkdb, reindexações, estatísticas, backup, etc</em>). </p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --></p>
+<p>Agora vale a pena conferir no portal do Azure  o que foi criado por debaixo dos panos, já que sabemos que o papel da nuvem é também de abstrair importantes detalhes técnicos que muita gente geralmente não se importa (e talvez devesse).</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:heading {"level":3} --></p>
+<h3>Enquanto isso no Azure...</h3>
+<p><!-- /wp:heading --></p>
+<p><!-- wp:paragraph --></p>
+<p>Acessando os recursos relacionados ao Stretch (que gerou um <em>ResourceGroup </em>e quando o assunto é Azure <strong>SEMPRE verifique quais recursos foram gerados em qualquer coisa que for fazer pra não ter surpresas</strong>) temos dois detalhes importantes: um recurso do tipo <em>Stretch </em>Database (o que já era esperado) e outro sendo um servidor SQL Server (que ficou implícito que seria criado conhecendo a arquitetura da solução mas não é tão óbvio assim para primeiros passageiros, o que no final das contas (a grosso modo) faz um linked server on-prem -&gt; nuvem só que bem transparente).</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:image {"id":2850,"sizeSlug":"large"} --></p>
+<figure class="wp-block-image size-large"><img src="/assets/2020/09/image-15-1024x172.png" alt="" class="wp-image-2850"><br />
+<figcaption>Tela dos recursos relacionados ao Stretch</figcaption>
+</figure>
+<p><!-- /wp:image --></p>
+<p><!-- wp:paragraph --></p>
+<p>Vamos analisar as telas dos recursos:</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:list {"ordered":true} --></p>
+<ol>
+<li>Tela do recurso Stretch</li>
+</ol>
+<p><!-- /wp:list --></p>
+<p><!-- wp:image {"id":2851,"sizeSlug":"large"} --></p>
+<figure class="wp-block-image size-large"><img src="/assets/2020/09/image-16-1024x462.png" alt="" class="wp-image-2851"><br />
+<figcaption>Tela do recurso "strenched"</figcaption>
+</figure>
+<p><!-- /wp:image --></p>
+<p><!-- wp:paragraph --></p>
+<p>Muito legal essa tela, pois mostra o recurso criado e quanto espaço ele está ocupando no momento. Além disso, ganhamos um gráfico para monitoração e baseline (ponto para o Azure). Obviamente a cobrança aqui como descrita na documentação é GB/hour ou TB/month. Mas não é apenas no <strong>armazenamento </strong>que haverá cobrança, afinal, de acordo com a documentação oficial, a precificação é baseado em <strong>DSU </strong>(ou seja recurso computacional para acessar os dados) e não apenas em armazenamento, conforme informação abaixo:</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:image {"id":2856,"sizeSlug":"large"} --></p>
+<figure class="wp-block-image size-large"><img src="/assets/2020/09/image-21-1024x516.png" alt="" class="wp-image-2856"></figure>
+<p><!-- /wp:image --></p>
+<p><!-- wp:paragraph --></p>
+<p>Bem, aqui temos o conceito do que seria "DSU" (Database Stretch Unit):</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:image {"id":2857,"sizeSlug":"large"} --></p>
+<figure class="wp-block-image size-large"><img src="/assets/2020/09/image-22.png" alt="" class="wp-image-2857"><br />
+<figcaption>Em tradução livre: DSU é uma unidade que representa o poder de uma query e é quantifcada por objetivos da carga de trabalho: o quão rápido registros são escritos, lidos e processados. Tal medida ajuda clientes a avaliarem relativa quantidade de performance necessária para sua carga de trabalho.</figcaption>
+</figure>
+<p><!-- /wp:image --></p>
+<p><!-- wp:paragraph --></p>
+<p id="stretch">Em outras palavras, lembra o conceito de DTU porém um pouco mais "customizado" para a lógica do que seria consumir dados via stretch. De modo relativo, quanto maior o tier de DSU, maior o poder de processamento destes dados. Aqui cabe uma análise caso a caso, no meu cenário, não me interessa pagar mais por performance para acessar tais dados, então faz sentido configurar pela menor tier.</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --></p>
+<p>2. Tela do servidor</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:image {"id":2853,"sizeSlug":"large"} --></p>
+<figure class="wp-block-image size-large"><img src="/assets/2020/09/image-18-1024x535.png" alt="" class="wp-image-2853"></figure>
+<p><!-- /wp:image --></p>
+<p><!-- wp:paragraph --></p>
+<p>Olha que tela interessante . Ela mostra que foi criado um servidor SQL, para então criar um banco do tipo "<em>stretch</em>". Claro que a melhor parte foi destacada...A cobrança em tese seria em DSU, porque a Pricing Tier colocou <strong>DTU </strong>no meio?! A resposta é: existe um servidor SQL implícito associado ao recurso de Stretch.</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --></p>
+<p>Bem, se tem servidor no meio para armazenar o banco Stretch, talvez não custa acessá-lo e confirmar se é isso mesmo, né?</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:image {"id":2854,"sizeSlug":"large"} --></p>
+<figure class="wp-block-image size-large"><img src="/assets/2020/09/image-19-1024x390.png" alt="" class="wp-image-2854"><br />
+<figcaption>Seus dados frios estão basicamente em outro servidor SQL. Segue exemplo.</figcaption>
+</figure>
+<p><!-- /wp:image --></p>
+<p><!-- wp:heading {"level":3} --></p>
+<h3>Pricing e o "Enjoy your Cloud Experience"</h3>
+<p><!-- /wp:heading --></p>
+<p><!-- wp:paragraph --></p>
+<p>Bem, vamos falar um pouco sobre precificação e aqui fica meus "centavos" de contribuição sobre o assunto. Maiores detalhes nas referências deste post, mas a grosso modo, a Microsoft cobra por dados armazenados (independente se está em uso ou não, eles sofrem backup, snapshot, criptografia, etc) e pela computação sobre estes dados (processamento, no papo reto). Ou seja, mesmo que você desfaça a configuração do Stretch no banco de dados, vai precisar lidar com a remoção (e cobrança) destes recursos em sua subscrição do Azure para não ser cobrado de forma contínua.</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --></p>
+<p>[23-09-2020 18:16]<em>EDIT Bônus: <strong>Dois dias depois</strong> de configurar o recurso e deixar totalmente idle, eis o custo convertido em reais, de acordo com todos os parâmetros já informados no post acima :</em></p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:image {"id":2873,"sizeSlug":"large"} --></p>
+<figure class="wp-block-image size-large"><img src="/assets/2020/09/image-25-1024x426.png" alt="" class="wp-image-2873"></figure>
+<p><!-- /wp:image --></p>
+<p><!-- wp:paragraph --></p>
+<p>Pra mim essa é a cereja do bolo quando vamos falar de Azure e/ou Cloud em geral, tudo tem um custo associado (com razão, é de infra que estamos falando) e não basta apenas resolver um problema real do negócio mas também entender se o valor investido compensa e faz sentido, e isso é o verdadeiro valor da frase "Enjoy your Cloud Experience"!</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:heading {"level":3} --></p>
+<h3> Conclusão</h3>
+<p><!-- /wp:heading --></p>
+<p><!-- wp:paragraph --></p>
+<p>Bem, o recurso conseguiu atender meu caso de uso fictício e estou contente com o resultado. Se é aplicável ou não em todo cenário, vamos com a resposta mais honesta (e precisa) da TI possível: "Depende". Existem formas muito mais baratas on-premise de armazenar dados frios, assim como em vários casos eu já vi o mesmo problema ser resolvido (por ser possível naquele cenário específico) criando uma base ABC_Historico, com DataCompression=PAGE, discos lentos e tudo mais...Por mais conveniente que seja o Stretch, ele tem um custo e vale avaliar se vale no final das contas (trocadilho não-intencional).</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --></p>
+<p>Mas talvez seja uma solução que possa atender algum cenário seu, independente disso, é bom deixar no radar...</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --></p>
+<p>________________________</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --></p>
+<p>Bem, espero que tenham curtido a leitura. Pra mim foi divertido fazer esse escrever esse post enquanto eu vou experimentando os recursos. Espero que você esteja bem, e até o próximo post!</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --></p>
+<p><strong>Documentação:</strong> <a href="https://docs.microsoft.com/en-us/sql/sql-server/stretch-database/stretch-database?view=sql-server-ver15">https://docs.microsoft.com/en-us/sql/sql-server/stretch-database/stretch-database?view=sql-server-ver15</a></p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --></p>
+<p><strong>Limitações:</strong> <a href="https://docs.microsoft.com/en-us/sql/sql-server/stretch-database/limitations-for-stretch-database?view=sql-server-ver15">https://docs.microsoft.com/en-us/sql/sql-server/stretch-database/limitations-for-stretch-database?view=sql-server-ver15</a></p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --></p>
+<p><strong>Pricing: </strong><a href="https://azure.microsoft.com/en-us/pricing/details/sql-server-stretch-database/">https://azure.microsoft.com/en-us/pricing/details/sql-server-stretch-database/</a></p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --></p>
+<p>[]'s</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --></p>
+<p><!-- /wp:paragraph --><br />
+</body></html></p>
+
+  </div><a class="u-url" href="/sobre-stretch-database-analise/" hidden></a>
+</article>
+
+      </div>
+    </main><footer class="site-footer h-card">
+  <data class="u-url" href="/"></data>
+
+  <div class="wrapper">
+
+    <h2 class="footer-heading">Renato Siqueira</h2>
+
+    <div class="footer-col-wrapper">
+      <div class="footer-col footer-col-1">
+        <ul class="contact-list">
+          <li class="p-name">Renato Siqueira</li><li><a class="u-email" href="mailto:rad_renato@hotmail.com">rad_renato@hotmail.com</a></li></ul>
+      </div>
+
+      <div class="footer-col footer-col-2"><ul class="social-media-list"><li><a href="https://github.com/renatomsq"><svg class="svg-icon"><use xlink:href="/assets/minima-social-icons.svg#github"></use></svg> <span class="username">renatomsq</span></a></li><li><a href="https://www.twitter.com/naotenhomais"><svg class="svg-icon"><use xlink:href="/assets/minima-social-icons.svg#twitter"></use></svg> <span class="username">naotenhomais</span></a></li></ul>
+</div>
+
+      <div class="footer-col footer-col-3">
+        <p>Meu blog de artigo técnico sobre banco de dados e carreira.</p>
+      </div>
+    </div>
+
+  </div>
+
+</footer>
+</body>
+
+</html>

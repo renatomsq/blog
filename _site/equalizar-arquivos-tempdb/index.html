@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1"><!-- Begin Jekyll SEO tag v2.9.0 -->
+<title>Equalizando arquivos do TEMPDB | Renato Siqueira</title>
+<meta name="generator" content="Jekyll v4.4.1" />
+<meta property="og:title" content="Equalizando arquivos do TEMPDB" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="Um post sobre deixar os arquivos do TEMPDB iguais , vantagens e como fazer." />
+<meta name="twitter:description" property="og:description" content="Um post sobre deixar os arquivos do TEMPDB iguais , vantagens e como fazer." />
+<link rel="canonical" href="http://localhost:4000/equalizar-arquivos-tempdb/" />
+<meta property="og:url" content="http://localhost:4000/equalizar-arquivos-tempdb/" />
+<meta property="og:site_name" content="Renato Siqueira" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2020-08-25T21:38:40-03:00" />
+<meta property="article:modified_time" content="2020-08-25T21:38:40-03:00" />
+<meta name="twitter:card" content="summary" />
+<meta name="twitter:title" content="Equalizando arquivos do TEMPDB" />
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"BlogPosting","dateModified":"2020-08-25T21:38:40-03:00","datePublished":"2020-08-25T21:38:40-03:00","description":"Um post sobre deixar os arquivos do TEMPDB iguais , vantagens e como fazer.","headline":"Equalizando arquivos do TEMPDB","mainEntityOfPage":{"@type":"WebPage","@id":"http://localhost:4000/equalizar-arquivos-tempdb/"},"url":"http://localhost:4000/equalizar-arquivos-tempdb/"}</script>
+<!-- End Jekyll SEO tag -->
+<link rel="stylesheet" href="/assets/main.css"><link type="application/atom+xml" rel="alternate" href="http://localhost:4000/feed.xml" title="Renato Siqueira" /></head>
+<body><header class="site-header" role="banner">
+
+  <div class="wrapper"><a class="site-title" rel="author" href="/">Renato Siqueira</a><nav class="site-nav">
+        <input type="checkbox" id="nav-trigger" class="nav-trigger" />
+        <label for="nav-trigger">
+          <span class="menu-icon">
+            <svg viewBox="0 0 18 15" width="18px" height="15px">
+              <path d="M18,1.484c0,0.82-0.665,1.484-1.484,1.484H1.484C0.665,2.969,0,2.304,0,1.484l0,0C0,0.665,0.665,0,1.484,0 h15.032C17.335,0,18,0.665,18,1.484L18,1.484z M18,7.516C18,8.335,17.335,9,16.516,9H1.484C0.665,9,0,8.335,0,7.516l0,0 c0-0.82,0.665-1.484,1.484-1.484h15.032C17.335,6.031,18,6.696,18,7.516L18,7.516z M18,13.516C18,14.335,17.335,15,16.516,15H1.484 C0.665,15,0,14.335,0,13.516l0,0c0-0.82,0.665-1.483,1.484-1.483h15.032C17.335,12.031,18,12.695,18,13.516L18,13.516z"/>
+            </svg>
+          </span>
+        </label>
+
+        <div class="trigger"><a class="page-link" href="/about/">About</a></div>
+      </nav></div>
+</header>
+<main class="page-content" aria-label="Content">
+      <div class="wrapper">
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+
+  <header class="post-header">
+    <h1 class="post-title p-name" itemprop="name headline">Equalizando arquivos do TEMPDB</h1>
+    <p class="post-meta">
+      <time class="dt-published" datetime="2020-08-25T21:38:40-03:00" itemprop="datePublished">Aug 25, 2020
+      </time>• <span itemprop="author" itemscope itemtype="http://schema.org/Person"><span class="p-author h-card" itemprop="name">{"login" => "renatomsiq@gmail.com", "email" => "renatomsiq@gmail.com", "display_name" => "renatomsiq@gmail.com", "first_name" => "", "last_name" => ""}</span></span></p>
+  </header>
+
+  <div class="post-content e-content" itemprop="articleBody">
+    <p><!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN" "http://www.w3.org/TR/REC-html40/loose.dtd"><br />
+<!-- wp:paragraph --><html><body></p>
+<p>Olá pessoal,</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --></p>
+<p>Depois de um ano de hiato no blog, voltei no sapatinho e agendei alguns posts de assuntos que achei interessante documentar, e o primeiro deles é para trazer algumas informações pertinentes sobre o banco favorito da galera, o <a rel="noreferrer noopener" href="https://docs.microsoft.com/en-us/sql/relational-databases/databases/tempdb-database?view=sql-server-ver15" target="_blank"><strong>TEMPDB</strong>, aquele banco de sistema que é utilizado para diversas operações temporárias </a>por toda a instância. Como ele é um recurso global, toda otimização é bem vinda não é mesmo? O assunto do post é o de equalizar o tamanho dos arquivos do TEMPDB, trocando uma ideia sobre alguns pontos que acho interessante compartilhar.</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:heading --></p>
+<h2 class="wp-block-heading">Cenário</h2>
+<p><!-- /wp:heading --></p>
+<p><!-- wp:paragraph --></p>
+<p>No ambiente XYZ que possui um MSSQL 2014, a equipe de banco de dados identificou um ponto de melhoria no (<s>banheiro público</s>) consagrado TEMPDB, que possui quatro (4) arquivos de dados e (1) arquivo de log. Algumas boas práticas já foram aplicadas, como a quantidade de arquivos de dados, a habilitação de trace flags 1117 e 1118, etc pão de queijo e café e muito bom etc. </p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --></p>
+<p>Um dos pontos que ficou pendente quando a instância nasceu foi a <span style="text-decoration: underline;">equalização dos arquivos de dados</span>, para que fiquem do mesmo tamanho e daí facilitem a vida do SQL Server, que através do componente interno chamado <em>Storage Engine</em>, faz uso de algoritmos para alocação de páginas que trabalham de mãos dadas, o <strong>Round Robin</strong> e o <strong>Proportional Fill</strong>.</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:image {"id":3088,"sizeSlug":"full","linkDestination":"none","align":"center"} --></p>
+<figure class="wp-block-image aligncenter size-full"><img src="/assets/2020/08/image-1.png" alt="" class="wp-image-3088"><br />
+<figcaption class="wp-element-caption">Piada nerd para não perder o post</figcaption>
+</figure>
+<p><!-- /wp:image --></p>
+<p><!-- wp:heading {"level":3} --></p>
+<h3 class="wp-block-heading"> </h3>
+<p><!-- /wp:heading --></p>
+<p><!-- wp:paragraph --></p>
+<p>Não é  objetivo explicar os algoritmos neste post mas de forma resumida, eles garantem que internamente, <strong>os dados sejam distribuídos de uma forma mais "equilibrada" entre os arquivos (<em>Round Robin</em>) se utilizando do espaço livre dos arquivos dentro de um mesmo <em>filegroup </em>e preenchendo de forma proporcional e distribuída (<em>Proportional Fill</em>)</strong>, em outras palavras, evita e/ou mitiga problemas de contenção/performance.</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:heading --></p>
+<h2 class="wp-block-heading">Hands-on</h2>
+<p><!-- /wp:heading --></p>
+<p><!-- wp:paragraph --></p>
+<p>Bem, pra facilitar toda a explicação, nada melhor que imagens, certo? Vamos de ambiente de teste para simular a equalização.</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:image {"id":3089,"sizeSlug":"full","linkDestination":"none"} --></p>
+<figure class="wp-block-image size-full"><img src="/assets/2020/08/image-2.png" alt="" class="wp-image-3089"></figure>
+<p><!-- /wp:image --></p>
+<p><!-- wp:paragraph --></p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --></p>
+<p>Essa é a visão do Windows. Vamos a visão dentro do SQL pra ver o tamanho atual dos arquivos na <strong>sys.database_files</strong> :</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --></p>
+<p><code>SELECT name, size/128.0 FileSizeInMB,<br>size/128.0 - CAST(FILEPROPERTY(name, 'SpaceUsed') AS int)/128.0<br>AS EmptySpaceInMB<br>FROM sys.database_files;</code></p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:image {"id":3090,"sizeSlug":"full","linkDestination":"none"} --></p>
+<figure class="wp-block-image size-full"><img src="/assets/2020/08/image-3.png" alt="" class="wp-image-3090"></figure>
+<p><!-- /wp:image --></p>
+<p><!-- wp:paragraph --></p>
+<p>Bem, com o serviço do SQL Server em execução e sem reiniciar o serviço, a forma mais simples de equalizar os arquivos é <strong>equalizar se baseando pelo maior arquivo</strong>:</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:list --></p>
+<ul>
+<!-- wp:list-item --></p>
+<li>Identificar o maior arquivo (no caso é o tempdb_mssql_2 com 90 MB)</li>
+<p><!-- /wp:list-item --></p>
+<p><!-- wp:list-item --></p>
+<li>Crescer os outros arquivos de dados (ignore que o log existe ali) para o mesmo tamanho através do seguinte comando:</li>
+<p><!-- /wp:list-item -->
+</ul>
+<p><!-- /wp:list --></p>
+<p><!-- wp:group --></p>
+<div class="wp-block-group">
+<!-- wp:paragraph --></p>
+<p><code>ALTER DATABASE TEMPDB MODIFY FILE (NAME='tempdev', SIZE = 90 MB)<br>ALTER DATABASE TEMPDB MODIFY FILE (NAME='temp3', SIZE = 90 MB)<br>ALTER DATABASE TEMPDB MODIFY FILE (NAME='temp4', SIZE = 90 MB)</code></p>
+<p><!-- /wp:paragraph -->
+</div>
+<p><!-- /wp:group --></p>
+<p><!-- wp:paragraph --></p>
+<p>E o resultado disso que você confere com menos de nove meses:</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:image {"id":3091,"sizeSlug":"full","linkDestination":"none"} --></p>
+<figure class="wp-block-image size-full"><img src="/assets/2020/08/image-4.png" alt="" class="wp-image-3091"></figure>
+<p><!-- /wp:image --></p>
+<p><!-- wp:paragraph --></p>
+<p>Até aí sem problemas, aumentar o tamanho dos arquivos em um ambiente "busy" é tranquilo. Mas e se eu quisesse <strong>diminuir </strong>o tamanho dos arquivos? Bem, trago aqui duas alternativas pra discutirmos e aqui vai ser papo reto:</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:heading {"level":4} --></p>
+<h4 class="wp-block-heading">Alternativa #1: <strong>SHRINK</strong><br />
+</h4>
+<p><!-- /wp:heading --></p>
+<p><!-- wp:paragraph --></p>
+<p>Na minha opinião, <strong>qualquer operação de <em>shrink </em>de arquivo de dados que seja antecedida por um expurgo de dados significativo é potencialmente criminoso</strong>. Executar SHRINK em arquivos de dados deve ser uma exceção, não regra. Reforço também que quando o assunto é SHRINK no TEMPDB o buraco é mais embaixo, pois além de você dificilmente conseguir o tamanho desejado na operação, ainda pode causar diversos bloqueios na instância (dependendo do <em>workload</em>) durante a tentativa de encolher o arquivo.</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --></p>
+<p>Imagine para fins de exemplo que eu me arrependi de crescer todos os arquivos para 90 MB e quero deixá-los com 40 MB. Então vou executar um SHRINK nos arquivos de dados em um horário onde existe uso moderado do TEMPDB em minha instância, o que pode dar errado não é mesmo?</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:image {"id":3092,"sizeSlug":"full","linkDestination":"none"} --></p>
+<figure class="wp-block-image size-full"><img src="/assets/2020/08/image-5.png" alt="" class="wp-image-3092"></figure>
+<p><!-- /wp:image --></p>
+<p><!-- wp:image {"id":3095,"sizeSlug":"full","linkDestination":"none"} --></p>
+<figure class="wp-block-image size-full"><img src="/assets/2020/08/image-8.png" alt="" class="wp-image-3095"></figure>
+<p><!-- /wp:image --></p>
+<p><!-- wp:paragraph --></p>
+<p>O shrink falhou! E isso costuma acontecer com frequência ao executar em ambientes produtivos.</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --></p>
+<p>E aqui vai a primeira pegadinha do malandro que vai fazer mais sentido no cenário #2...Olha o tamanho dos arquivos através de duas views diferentes:</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --></p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --></p>
+<p><code>select name, size/128. as SizeMB, 'sys.master_files' as [View]<br>from sys.master_files where database_id = 2 and type_desc ='rows'<br></code></p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --></p>
+<p><code>select name, size/128. as SizeMB, 'sys.database_files' as [View]<br>from sys.database_files where type_desc ='rows'</code></p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:image {"id":3096,"sizeSlug":"full","linkDestination":"none"} --></p>
+<figure class="wp-block-image size-full"><img src="/assets/2020/08/image-9.png" alt="" class="wp-image-3096"></figure>
+<p><!-- /wp:image --></p>
+<p><!-- wp:paragraph --></p>
+<p>Além de observamos  a extremamente mal-sucedida tentativa de encolher os arquivos (algo bem comum em shrink de arquivo de dados) vou jogar no ar uma informação importante sobre as duas views quando o assunto é TEMPDB: </p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:group --></p>
+<div class="wp-block-group">
+<!-- wp:paragraph --></p>
+<p><strong><a href="https://docs.microsoft.com/en-us/sql/relational-databases/system-catalog-views/sys-database-files-transact-sql?view=sql-server-ver15">sys.database_files</a></strong></p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:image {"id":3098,"sizeSlug":"full","linkDestination":"none"} --></p>
+<figure class="wp-block-image size-full"><img src="/assets/2020/08/image-11.png" alt="" class="wp-image-3098"></figure>
+<p><!-- /wp:image -->
+</div>
+<p><!-- /wp:group --></p>
+<p><!-- wp:paragraph --></p>
+<p><strong><a href="https://docs.microsoft.com/en-us/sql/relational-databases/system-catalog-views/sys-master-files-transact-sql?view=sql-server-ver15">sys.master_files</a></strong></p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:image {"id":3099,"sizeSlug":"full","linkDestination":"none"} --></p>
+<figure class="wp-block-image size-full"><img src="/assets/2020/08/image-12.png" alt="" class="wp-image-3099"></figure>
+<p><!-- /wp:image --></p>
+<p><!-- wp:paragraph --></p>
+<p>Ambas dizem "Current size" e tudo bem até aí, o problema é que existe uma situação onde o resultado das duas visões apresenta diferença: <em>database_files </em>parece ter mais relação com tamanho atual, e o master_files parece ter mais relação com tamanho "configurado" no fim das contas. Neste caso os tamanhos são iguais então ficou elas por elas, mas prometo que isso vai fazer sentido ao mostrar a alternativa #2, então por enquanto guarde essa lógica...</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --></p>
+<p>Enfim, quando temos algum grau de atividade na instância e queremos diminuir o tamanho do arquivo, precisamos de uma janela com menor atividade para tentar reduzir o arquivo via SHRINK. Obviamente, se você pensar "ok posso reiniciar a instância em janela programada e assim que a instância voltar posso fazer um shrink rapidão antes que a porteira das transações volte com força"e é um pensamento válido, mas tem opções melhores se você tem a opção de reiniciar o serviço, o que nos leva a outra alternativa, muito menos pagã!</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:heading {"level":4} --></p>
+<h4 class="wp-block-heading">Alternativa #2 - MODIFY FILE</h4>
+<p><!-- /wp:heading --></p>
+<p><!-- wp:paragraph --></p>
+<p>Aqui é um excelente exemplo de que o TEMPDB é um banco diferenciado, e de vez em quando ele "<strong>caga" </strong>pra certas regras que o MSSQL usa pra praticamente tudo.</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --></p>
+<p>Pois bem, vamos retornar o ambiente ao problema original, <span class="has-inline-color has-luminous-vivid-orange-color">que são arquivos de tamanhos diferentes e quero deixá-los do mesmo tamanho</span>, porém quero fazer isso com um <strong>tamanho menor que o atual</strong>. Bem, para todos os casos eu precisaria de um SHRINK, mas o TEMPDB dá uma "carteirada" nas regras do SQL Server, e permite que façamos a diminuição dele via MODIFY FILE seguindo de um RESTART. </p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --></p>
+<p>Como diria Datena, bota imagem na tela...</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:list {"ordered":true} --></p>
+<ol>
+<!-- wp:list-item --></p>
+<li>Aqui temos o ambiente inicial, com arquivos em <strong>tamanhos diferentes</strong>:</li>
+<p><!-- /wp:list-item -->
+</ol>
+<p><!-- /wp:list --></p>
+<p><!-- wp:image {"id":3100,"sizeSlug":"full","linkDestination":"none"} --></p>
+<figure class="wp-block-image size-full"><img src="/assets/2020/08/image-13.png" alt="" class="wp-image-3100"></figure>
+<p><!-- /wp:image --></p>
+<p><!-- wp:paragraph --></p>
+<p>2. Quero padronizar todos os arquivos de dados para 20 MB, e pra isso vou utilizar o MODIFY FILE. Bem, para qualquer outro banco de dados de usuário, se você tentar MODIFICAR o tamanho do arquivo para um tamanho MENOR, vai <strong>pipocar sem dó o seguinte erro na sua tela</strong>:</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --></p>
+<p><code>ALTER DATABASE AdventureWorks2022 MODIFY FILE<br>(NAME='AdventureWorks2022', SIZE = 20 MB)</code></p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:image {"id":3103,"sizeSlug":"full","linkDestination":"none"} --></p>
+<figure class="wp-block-image size-full"><img src="/assets/2020/08/image-16.png" alt="" class="wp-image-3103"></figure>
+<p><!-- /wp:image --></p>
+<p><!-- wp:paragraph --></p>
+<p>Shrink também não é efetivo, já que não é possível reduzir o arquivo para um valor menor do que o que está sendo utilizado:</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:image {"id":3104,"sizeSlug":"full","linkDestination":"none"} --></p>
+<figure class="wp-block-image size-full"><img src="/assets/2020/08/image-17.png" alt="" class="wp-image-3104"></figure>
+<p><!-- /wp:image --></p>
+<p><!-- wp:paragraph --></p>
+<p>E faz sentido certo? Esse comportamento inclusive está bem documentado no comando <a href="https://docs.microsoft.com/pt-br/sql/t-sql/statements/alter-database-transact-sql?view=sql-server-ver15">ALTER DATABASE</a>, e também em documentação ensinando como diminui o tamanho do TEMPDB (https://learn.microsoft.com/pt-br/sql/relational-databases/databases/shrink-tempdb-database?view=sql-server-ver16).</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --></p>
+<p>Então, Será que o MODIFY FILE para um tamanho menor funciona no TEMPDB?</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:image {"id":3101,"sizeSlug":"full","linkDestination":"none"} --></p>
+<figure class="wp-block-image size-full"><img src="/assets/2020/08/image-14.png" alt="" class="wp-image-3101"></figure>
+<p><!-- /wp:image --></p>
+<p><!-- wp:paragraph --></p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --></p>
+<p>O comando é executado com sucesso, mas note que <span class="has-inline-color has-luminous-vivid-orange-color">o tamanho atual dos arquivos permanece o mesmo</span>. E sim, você pode dar um MODIFY pra "um tamanho menor que o atual" independente se tiver muita ou pouca atividade no seu servidor se você estiver se perguntando sobre workload (rolou essa pergunta numa call e achei legal colocar aqui).</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --></p>
+<p>Nada acontece feijoada? O SQL Server "configurou" os novos tamanhos e a alteração vai surtir efeito quando o TEMPDB for recriado, e sabemos que ele <strong>sempre </strong>é recriado durante um <em>restart </em>da instância. Vamos agora à pegadinha do malandro do dia:</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:image {"id":3105,"sizeSlug":"full","linkDestination":"none"} --></p>
+<figure class="wp-block-image size-full"><img src="/assets/2020/08/image-18.png" alt="" class="wp-image-3105"><br />
+<figcaption class="wp-element-caption">Tamanhos diferentes!</figcaption>
+</figure>
+<p><!-- /wp:image --></p>
+<p><!-- wp:paragraph --></p>
+<p>Note que o tamanho atual dos arquivos ainda estão diferentes na <em>database_files</em> que reflete corretamente o tamanho atual. Já na <em>master_files </em>está diferente, <em>pois ela mostra os tamanhos configurados</em> (nem sempre bate com o tamanho atual). Imagino que essa informação não tenha feito muito sentido no exemplo da alternativa #1 <em>Shrink</em>, mas espero que aqui tenha feito total sentido pra você, leitor.</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --></p>
+<p>Vamos então reiniciar a instância e conferir se os arquivos de fato são reduzidos, e como o MSSQL e o Windows enxergam o tamanho:</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:image {"id":3106,"sizeSlug":"full","linkDestination":"none"} --></p>
+<figure class="wp-block-image size-full"><img src="/assets/2020/08/image-19.png" alt="" class="wp-image-3106"></figure>
+<p><!-- /wp:image --></p>
+<p><!-- wp:image {"id":3107,"sizeSlug":"full","linkDestination":"none"} --></p>
+<figure class="wp-block-image size-full"><img src="/assets/2020/08/image-20.png" alt="" class="wp-image-3107"></figure>
+<p><!-- /wp:image --></p>
+<p><!-- wp:paragraph --></p>
+<p><span class="has-inline-color has-luminous-vivid-orange-color">Missão cumprida</span>! O tamanho configurado foi, no final das contas, o tamanho reconfigurado no TEMPDB. Essa solução de fato foi utilizada em um ambiente transacional e de produção, com <em>workload </em>considerável mesmo durante a madrugada, onde um <em>restart </em>é negociável. Muito melhor, mais prático e menos dor de cabeça em comparação com a solução de SHRINK, que acaba sendo a solução do dia a dia de muitos DBA's.</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:heading --></p>
+<h2 class="wp-block-heading">Conclusão</h2>
+<p><!-- /wp:heading --></p>
+<p><!-- wp:paragraph --></p>
+<p>Gostou do post, quer comentar que falei besteira, quer acrescentar algo ou compartilhar alguma experiência sobre o assunto? Fique a vontade e use a caixa de comentário. Agradeço demais pela leitura se você chegou até aqui e peço perdão pelo tamanho do post. Juro que tentei fazer um post menor, escrever (e falar) menos tem sido um objetivo, mas falhei que nem o SHRINK no meio do dia.</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --></p>
+<p>[]'s</p>
+<p><!-- /wp:paragraph --><br />
+</body></html></p>
+
+  </div><a class="u-url" href="/equalizar-arquivos-tempdb/" hidden></a>
+</article>
+
+      </div>
+    </main><footer class="site-footer h-card">
+  <data class="u-url" href="/"></data>
+
+  <div class="wrapper">
+
+    <h2 class="footer-heading">Renato Siqueira</h2>
+
+    <div class="footer-col-wrapper">
+      <div class="footer-col footer-col-1">
+        <ul class="contact-list">
+          <li class="p-name">Renato Siqueira</li><li><a class="u-email" href="mailto:rad_renato@hotmail.com">rad_renato@hotmail.com</a></li></ul>
+      </div>
+
+      <div class="footer-col footer-col-2"><ul class="social-media-list"><li><a href="https://github.com/renatomsq"><svg class="svg-icon"><use xlink:href="/assets/minima-social-icons.svg#github"></use></svg> <span class="username">renatomsq</span></a></li><li><a href="https://www.twitter.com/naotenhomais"><svg class="svg-icon"><use xlink:href="/assets/minima-social-icons.svg#twitter"></use></svg> <span class="username">naotenhomais</span></a></li></ul>
+</div>
+
+      <div class="footer-col footer-col-3">
+        <p>Meu blog de artigo técnico sobre banco de dados e carreira.</p>
+      </div>
+    </div>
+
+  </div>
+
+</footer>
+</body>
+
+</html>

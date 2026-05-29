@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1"><!-- Begin Jekyll SEO tag v2.9.0 -->
+<title>Desafio #1 - Data Compression Labs | Renato Siqueira</title>
+<meta name="generator" content="Jekyll v4.4.1" />
+<meta property="og:title" content="Desafio #1 - Data Compression Labs" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="&lt;!DOCTYPE html PUBLIC &quot;-//W3C//DTD HTML 4.0 Transitional//EN&quot; &quot;http://www.w3.org/TR/REC-html40/loose.dtd&quot;&gt; &lt;/p&gt; Oi, Antes de começar o próximo post do Compression Labs, tenho um pequeno e humilde desafio pra quem se interessar a responder (e eu até poderia dizer que estou fazendo isso pra ganhar  tempo fazendo de fazer um post direito, mas estaria sendo estupidamente honesto)...Vamos utilizar o script do Compression Labs #1 adaptado para montar o cenário: vamos criar desta vez duas tabelas, sendo que uma delas vai levar compressão de página. Os testes foram realizados no SQL Server 2008 R2 Enterprise, mas valem também 2012 e 2014 Enterprise e similares (aka Developer e Evaluation)." />
+<meta name="twitter:description" property="og:description" content="&lt;!DOCTYPE html PUBLIC &quot;-//W3C//DTD HTML 4.0 Transitional//EN&quot; &quot;http://www.w3.org/TR/REC-html40/loose.dtd&quot;&gt; &lt;/p&gt; Oi, Antes de começar o próximo post do Compression Labs, tenho um pequeno e humilde desafio pra quem se interessar a responder (e eu até poderia dizer que estou fazendo isso pra ganhar  tempo fazendo de fazer um post direito, mas estaria sendo estupidamente honesto)...Vamos utilizar o script do Compression Labs #1 adaptado para montar o cenário: vamos criar desta vez duas tabelas, sendo que uma delas vai levar compressão de página. Os testes foram realizados no SQL Server 2008 R2 Enterprise, mas valem também 2012 e 2014 Enterprise e similares (aka Developer e Evaluation)." />
+<link rel="canonical" href="http://localhost:4000/desafio-1-data-compression-labs/" />
+<meta property="og:url" content="http://localhost:4000/desafio-1-data-compression-labs/" />
+<meta property="og:site_name" content="Renato Siqueira" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2014-10-15T22:52:18-03:00" />
+<meta property="article:modified_time" content="2014-10-15T22:52:18-03:00" />
+<meta name="twitter:card" content="summary" />
+<meta name="twitter:title" content="Desafio #1 - Data Compression Labs" />
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"BlogPosting","dateModified":"2014-10-15T22:52:18-03:00","datePublished":"2014-10-15T22:52:18-03:00","description":"&lt;!DOCTYPE html PUBLIC &quot;-//W3C//DTD HTML 4.0 Transitional//EN&quot; &quot;http://www.w3.org/TR/REC-html40/loose.dtd&quot;&gt; &lt;/p&gt; Oi, Antes de começar o próximo post do Compression Labs, tenho um pequeno e humilde desafio pra quem se interessar a responder (e eu até poderia dizer que estou fazendo isso pra ganhar  tempo fazendo de fazer um post direito, mas estaria sendo estupidamente honesto)...Vamos utilizar o script do Compression Labs #1 adaptado para montar o cenário: vamos criar desta vez duas tabelas, sendo que uma delas vai levar compressão de página. Os testes foram realizados no SQL Server 2008 R2 Enterprise, mas valem também 2012 e 2014 Enterprise e similares (aka Developer e Evaluation).","headline":"Desafio #1 - Data Compression Labs","mainEntityOfPage":{"@type":"WebPage","@id":"http://localhost:4000/desafio-1-data-compression-labs/"},"url":"http://localhost:4000/desafio-1-data-compression-labs/"}</script>
+<!-- End Jekyll SEO tag -->
+<link rel="stylesheet" href="/assets/main.css"><link type="application/atom+xml" rel="alternate" href="http://localhost:4000/feed.xml" title="Renato Siqueira" /></head>
+<body><header class="site-header" role="banner">
+
+  <div class="wrapper"><a class="site-title" rel="author" href="/">Renato Siqueira</a><nav class="site-nav">
+        <input type="checkbox" id="nav-trigger" class="nav-trigger" />
+        <label for="nav-trigger">
+          <span class="menu-icon">
+            <svg viewBox="0 0 18 15" width="18px" height="15px">
+              <path d="M18,1.484c0,0.82-0.665,1.484-1.484,1.484H1.484C0.665,2.969,0,2.304,0,1.484l0,0C0,0.665,0.665,0,1.484,0 h15.032C17.335,0,18,0.665,18,1.484L18,1.484z M18,7.516C18,8.335,17.335,9,16.516,9H1.484C0.665,9,0,8.335,0,7.516l0,0 c0-0.82,0.665-1.484,1.484-1.484h15.032C17.335,6.031,18,6.696,18,7.516L18,7.516z M18,13.516C18,14.335,17.335,15,16.516,15H1.484 C0.665,15,0,14.335,0,13.516l0,0c0-0.82,0.665-1.483,1.484-1.483h15.032C17.335,12.031,18,12.695,18,13.516L18,13.516z"/>
+            </svg>
+          </span>
+        </label>
+
+        <div class="trigger"><a class="page-link" href="/about/">About</a></div>
+      </nav></div>
+</header>
+<main class="page-content" aria-label="Content">
+      <div class="wrapper">
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+
+  <header class="post-header">
+    <h1 class="post-title p-name" itemprop="name headline">Desafio #1 - Data Compression Labs</h1>
+    <p class="post-meta">
+      <time class="dt-published" datetime="2014-10-15T22:52:18-03:00" itemprop="datePublished">Oct 15, 2014
+      </time>• <span itemprop="author" itemscope itemtype="http://schema.org/Person"><span class="p-author h-card" itemprop="name">{"login" => "Renato Siqueira", "email" => "", "display_name" => "Renato Siqueira", "first_name" => "", "last_name" => ""}</span></span></p>
+  </header>
+
+  <div class="post-content e-content" itemprop="articleBody">
+    <p><!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN" "http://www.w3.org/TR/REC-html40/loose.dtd"><br />
+<html><body><br />
+<a href="http://renatomsiqueira.com.br/wp-content/uploads/2014/10/books1.jpg"><img class="aligncenter size-full wp-image-2014" src="/assets/2014/10/books1.jpg" alt="Books" width="600" height="337"></a></p>
+<p>Oi,</p>
+<p>Antes de começar o próximo post do Compression Labs, tenho um pequeno e humilde desafio pra quem se interessar a responder (e eu até poderia dizer que estou fazendo isso pra ganhar  tempo fazendo de fazer um post direito, mas estaria sendo estupidamente honesto)...Vamos utilizar o script do <a href="http://renatomsiqueira.com.br/2014/10/03/data-compression-labs-1-tipagem-inteligente-e-paginas-zumbis/">Compression Labs #1</a> adaptado para montar o cenário: vamos criar desta vez duas tabelas, sendo que uma delas vai levar compressão de página.</p>
+<p><!--more--></p>
+<p>Os testes foram realizados no SQL Server 2008 R2 Enterprise, mas valem também 2012 e 2014 Enterprise e similares (aka Developer e Evaluation).</p>
+<pre> 
+
+USE MASTER
+
+GO
+
+IF EXISTS (SELECT NAME FROM SYS.DATABASES WHERE NAME LIKE '%DComp%')
+BEGIN
+
+ALTER DATABASE DComp SET RESTRICTED_USER;
+DROP DATABASE  DComp;
+
+END
+
+GO
+
+CREATE DATABASE DComp
+GO
+
+USE DComp
+GO
+
+CREATE TABLE dbo.Pessoa
+(
+ID INT IDENTITY (1,1) PRIMARY KEY NOT NULL,
+NOME VARCHAR(50) NULL DEFAULT 'Nome de alguém',
+DESCRICAO CHAR(8000) NULL DEFAULT REPLICATE('A',8000),
+IDADE INT NULL
+);
+
+INSERT INTO DBO.PESSOA (NOME, DESCRICAO, IDADE) VALUES ('Quico','Realizando o teste da compressão',9);
+INSERT INTO DBO.PESSOA (NOME, DESCRICAO, IDADE) VALUES ('Seu Madruga','Realizando o teste da compressão',50);
+INSERT INTO DBO.PESSOA (NOME, DESCRICAO, IDADE) VALUES ('Chaves','Realizando o teste da compressão',8);
+INSERT INTO DBO.PESSOA (NOME, DESCRICAO, IDADE) VALUES ('Chiquinha','Realizando o teste da compressão',7);
+INSERT INTO DBO.PESSOA (NOME, DESCRICAO, IDADE) VALUES ('Bruxa do 71','Realizando o teste da compressão',50);
+
+CREATE TABLE dbo.Pessoa2
+(
+ID INT IDENTITY (1,1) PRIMARY KEY NOT NULL,
+NOME VARCHAR(50) NULL DEFAULT 'Nome de alguém',
+DESCRICAO CHAR(8000) NULL DEFAULT REPLICATE('A',8000),
+IDADE INT NULL
+);
+
+INSERT INTO DBO.PESSOA2 (NOME, DESCRICAO, IDADE) VALUES ('Quico','Realizando o teste da compressão',9);
+INSERT INTO DBO.PESSOA2 (NOME, DESCRICAO, IDADE) VALUES ('Seu Madruga','Realizando o teste da compressão',50);
+INSERT INTO DBO.PESSOA2 (NOME, DESCRICAO, IDADE) VALUES ('Chaves','Realizando o teste da compressão',8);
+INSERT INTO DBO.PESSOA2 (NOME, DESCRICAO, IDADE) VALUES ('Chiquinha','Realizando o teste da compressão',7);
+INSERT INTO DBO.PESSOA2 (NOME, DESCRICAO, IDADE) VALUES ('Bruxa do 71','Realizando o teste da compressão',50);
+
+ALTER TABLE dbo.Pessoa2 REBUILD WITH (DATA_COMPRESSION=PAGE);
+</pre>
+<p>Tem uma DMF  bem interessante que verifica as propriedades físicas de um índice, a <a href="http://msdn.microsoft.com/pt-br/library/ms188917.aspx">sys.dm_db_index_physical_stats</a>, o que inclui não apenas informações sobre fragmentação, mas também sobre quantidade de páginas, e pra ser mais específico, também nos informa a quantidade de páginas comprimidas, através da coluna compressed_page_count. Segue informações do BOL.</p>
+<p><a href="http://renatomsiqueira.com.br/wp-content/uploads/2014/10/compressed11.png"><img class="aligncenter size-full wp-image-2011" src="/assets/2014/10/compressed11.png" alt="Compressed1" width="600" height="109"></a></p>
+<p>Sabemos que a DMF possui três modos: LIMITED, SAMPLED E DETAILED. Vamos usar DETAILED pra apresentar algumas informações bem específicas dos índices, das duas tabelas.</p>
+<p>Segue consulta:</p>
+<pre>
+
+SELECT
+OBJECT_NAME(object_id) AS [Tabela],
+INDEX_ID as indid,
+INDEX_TYPE_DESC,
+INDEX_DEPTH,
+INDEX_LEVEL,
+AVG_FRAGMENTATION_IN_PERCENT as [AVG_FRAG_IN_%],
+PAGE_COUNT AS [PAGES],
+AVG_PAGE_SPACE_USED_IN_PERCENT as [AVG_PAGE_SPACE_USED_IN_%],
+RECORD_COUNT as [RECORDS],
+-- MIN_RECORD_SIZE_IN_BYTES,
+MAX_RECORD_SIZE_IN_BYTES,
+-- AVG_RECORD_SIZE_IN_BYTES,
+COMPRESSED_PAGE_COUNT
+
+FROM sys.dm_db_index_physical_stats
+(DB_ID(), null, NULL, NULL , 'DETAILED')
+WHERE OBJECT_NAME(OBJECT_ID) IN ('Pessoa','Pessoa2')
+
+</pre>
+<p>Resultado:</p>
+<p><a href="http://renatomsiqueira.com.br/wp-content/uploads/2014/10/resultadoindex1.png"><img class="aligncenter size-full wp-image-2013" src="/assets/2014/10/resultadoindex1.png" alt="ResultadoIndex" width="600" height="62"></a></p>
+<p>As perguntas:</p>
+<p>1) Se nossa tabela é um índice cluster, porque temos apenas dois níveis na tabela Pessoa, e, mais estranho ainda, um nível na tabela Pessoa2? Que b+tree é essa que não tem raíz, nível intermediário e folha?</p>
+<p>2)Porque a <em>compression_page_count </em>não retorna absolutamente nada pra tabela Pessoa2 sendo que temos página comprimida?</p>
+<p>As perguntas não são difíceis (principalmente a primeira), mas também não estão "de graça" (acho, rs).<br />
+Desafio lançado está e até a próxima.</p>
+<p>[]'s</body></html></p>
+
+  </div><a class="u-url" href="/desafio-1-data-compression-labs/" hidden></a>
+</article>
+
+      </div>
+    </main><footer class="site-footer h-card">
+  <data class="u-url" href="/"></data>
+
+  <div class="wrapper">
+
+    <h2 class="footer-heading">Renato Siqueira</h2>
+
+    <div class="footer-col-wrapper">
+      <div class="footer-col footer-col-1">
+        <ul class="contact-list">
+          <li class="p-name">Renato Siqueira</li><li><a class="u-email" href="mailto:rad_renato@hotmail.com">rad_renato@hotmail.com</a></li></ul>
+      </div>
+
+      <div class="footer-col footer-col-2"><ul class="social-media-list"><li><a href="https://github.com/renatomsq"><svg class="svg-icon"><use xlink:href="/assets/minima-social-icons.svg#github"></use></svg> <span class="username">renatomsq</span></a></li><li><a href="https://www.twitter.com/naotenhomais"><svg class="svg-icon"><use xlink:href="/assets/minima-social-icons.svg#twitter"></use></svg> <span class="username">naotenhomais</span></a></li></ul>
+</div>
+
+      <div class="footer-col footer-col-3">
+        <p>Meu blog de artigo técnico sobre banco de dados e carreira.</p>
+      </div>
+    </div>
+
+  </div>
+
+</footer>
+</body>
+
+</html>

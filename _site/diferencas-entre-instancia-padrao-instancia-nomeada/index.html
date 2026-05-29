@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1"><!-- Begin Jekyll SEO tag v2.9.0 -->
+<title>Diferenças entre Instância Padrão x Instância Nomeada | Renato Siqueira</title>
+<meta name="generator" content="Jekyll v4.4.1" />
+<meta property="og:title" content="Diferenças entre Instância Padrão x Instância Nomeada" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="&lt;!DOCTYPE html PUBLIC &quot;-//W3C//DTD HTML 4.0 Transitional//EN&quot; &quot;http://www.w3.org/TR/REC-html40/loose.dtd&quot;&gt; &lt;/p&gt; Olá, Mais um fast-post (postagem rapidona, tradução livre) pra ilustrar um cenário bem comum para quem usa SQL Server eventualmente: o conceito de instâncias nomeadas e instâncias padrão (default). Peço que tenham paciência pois irei partir do começo, e quando digo &quot;começo&quot;, eu falo da parte de instalação do SQL Server. O processo de instalação é relativamente simples (quer aprender como faz utilizando as melhores práticas?) e não será detalhado aqui. Recomendo este vídeo no MVA especialmente pois ilustra uma instalação completa. A tela que define a configuração de sua instância é…" />
+<meta name="twitter:description" property="og:description" content="&lt;!DOCTYPE html PUBLIC &quot;-//W3C//DTD HTML 4.0 Transitional//EN&quot; &quot;http://www.w3.org/TR/REC-html40/loose.dtd&quot;&gt; &lt;/p&gt; Olá, Mais um fast-post (postagem rapidona, tradução livre) pra ilustrar um cenário bem comum para quem usa SQL Server eventualmente: o conceito de instâncias nomeadas e instâncias padrão (default). Peço que tenham paciência pois irei partir do começo, e quando digo &quot;começo&quot;, eu falo da parte de instalação do SQL Server. O processo de instalação é relativamente simples (quer aprender como faz utilizando as melhores práticas?) e não será detalhado aqui. Recomendo este vídeo no MVA especialmente pois ilustra uma instalação completa. A tela que define a configuração de sua instância é…" />
+<link rel="canonical" href="http://localhost:4000/diferencas-entre-instancia-padrao-instancia-nomeada/" />
+<meta property="og:url" content="http://localhost:4000/diferencas-entre-instancia-padrao-instancia-nomeada/" />
+<meta property="og:site_name" content="Renato Siqueira" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2014-01-31T17:42:44-03:00" />
+<meta property="article:modified_time" content="2014-01-31T17:42:44-03:00" />
+<meta name="twitter:card" content="summary" />
+<meta name="twitter:title" content="Diferenças entre Instância Padrão x Instância Nomeada" />
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"BlogPosting","dateModified":"2014-01-31T17:42:44-03:00","datePublished":"2014-01-31T17:42:44-03:00","description":"&lt;!DOCTYPE html PUBLIC &quot;-//W3C//DTD HTML 4.0 Transitional//EN&quot; &quot;http://www.w3.org/TR/REC-html40/loose.dtd&quot;&gt; &lt;/p&gt; Olá, Mais um fast-post (postagem rapidona, tradução livre) pra ilustrar um cenário bem comum para quem usa SQL Server eventualmente: o conceito de instâncias nomeadas e instâncias padrão (default). Peço que tenham paciência pois irei partir do começo, e quando digo &quot;começo&quot;, eu falo da parte de instalação do SQL Server. O processo de instalação é relativamente simples (quer aprender como faz utilizando as melhores práticas?) e não será detalhado aqui. Recomendo este vídeo no MVA especialmente pois ilustra uma instalação completa. A tela que define a configuração de sua instância é…","headline":"Diferenças entre Instância Padrão x Instância Nomeada","mainEntityOfPage":{"@type":"WebPage","@id":"http://localhost:4000/diferencas-entre-instancia-padrao-instancia-nomeada/"},"url":"http://localhost:4000/diferencas-entre-instancia-padrao-instancia-nomeada/"}</script>
+<!-- End Jekyll SEO tag -->
+<link rel="stylesheet" href="/assets/main.css"><link type="application/atom+xml" rel="alternate" href="http://localhost:4000/feed.xml" title="Renato Siqueira" /></head>
+<body><header class="site-header" role="banner">
+
+  <div class="wrapper"><a class="site-title" rel="author" href="/">Renato Siqueira</a><nav class="site-nav">
+        <input type="checkbox" id="nav-trigger" class="nav-trigger" />
+        <label for="nav-trigger">
+          <span class="menu-icon">
+            <svg viewBox="0 0 18 15" width="18px" height="15px">
+              <path d="M18,1.484c0,0.82-0.665,1.484-1.484,1.484H1.484C0.665,2.969,0,2.304,0,1.484l0,0C0,0.665,0.665,0,1.484,0 h15.032C17.335,0,18,0.665,18,1.484L18,1.484z M18,7.516C18,8.335,17.335,9,16.516,9H1.484C0.665,9,0,8.335,0,7.516l0,0 c0-0.82,0.665-1.484,1.484-1.484h15.032C17.335,6.031,18,6.696,18,7.516L18,7.516z M18,13.516C18,14.335,17.335,15,16.516,15H1.484 C0.665,15,0,14.335,0,13.516l0,0c0-0.82,0.665-1.483,1.484-1.483h15.032C17.335,12.031,18,12.695,18,13.516L18,13.516z"/>
+            </svg>
+          </span>
+        </label>
+
+        <div class="trigger"><a class="page-link" href="/about/">About</a></div>
+      </nav></div>
+</header>
+<main class="page-content" aria-label="Content">
+      <div class="wrapper">
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+
+  <header class="post-header">
+    <h1 class="post-title p-name" itemprop="name headline">Diferenças entre Instância Padrão x Instância Nomeada</h1>
+    <p class="post-meta">
+      <time class="dt-published" datetime="2014-01-31T17:42:44-03:00" itemprop="datePublished">Jan 31, 2014
+      </time>• <span itemprop="author" itemscope itemtype="http://schema.org/Person"><span class="p-author h-card" itemprop="name">{"login" => "Renato Siqueira", "email" => "", "display_name" => "Renato Siqueira", "first_name" => "", "last_name" => ""}</span></span></p>
+  </header>
+
+  <div class="post-content e-content" itemprop="articleBody">
+    <p><!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN" "http://www.w3.org/TR/REC-html40/loose.dtd"><br />
+<html><body></p>
+<p>Olá,</p>
+<p>Mais um fast-post (postagem rapidona, tradução livre) pra ilustrar um cenário bem comum para quem usa SQL Server eventualmente: o conceito de instâncias nomeadas e instâncias padrão (default). Peço que tenham paciência pois irei partir do começo, e quando digo "começo", eu falo da parte de instalação do SQL Server.</p>
+<p>O processo de instalação é relativamente simples (<a href="http://www.microsoftvirtualacademy.com/training-courses/melhores-praticas-para-sql-server#?fbid=nSmKzvBvvrW">quer aprender como faz utilizando as melhores práticas?</a>) e não será detalhado aqui. <a href="http://channel9.msdn.com/Blogs/TechNet-Brasil-Cursos-de-Infraestrutura/Melhores-prticas-na-Instalao">Recomendo este vídeo no MVA</a> especialmente pois ilustra uma instalação completa.</p>
+<p>A tela que define a configuração de sua instância é essa aqui:</p>
+<p><img class="alignnone" src="/assets/2014/01/Y69vnz3.jpg" alt="Padrão ou nomeada?" width="821" height="621"></p>
+<p>Assumo que você já conhece o conceito de instância do SQL Server e por isso vamos abordar três tópicos:</p>
+<ul>
+<li> Instância padrão</li>
+<li>Instância nomeada</li>
+<li>SQL Server Express</li>
+</ul>
+<p><strong>Instância padrão</strong></p>
+<p>A lei suprema do universo é que, em determinada máquina, só pode ter uma e apenas uma (e apenas uma e apenas uma e apenas u...) instância padrão (Default Instance). Jamais, em hipótese alguma, você poderá ter mais de uma instância padrão na mesma máquina, mesmo se você instalar várias instâncias de versões do SQL Server diferentes.</p>
+<p>Por exemplo, se você instalou uma <strong>instância padrão</strong> do SQL Server 2008 R2 em sua máquina, e deseja instalar uma instância do SQL Server 2012 pra testes, você <strong>não pode instalar uma instância padrão, a mesma PRECISA ser nomeada.</strong></p>
+<p>Depois de instalado, se o serviço do SQL Server estiver online (pode ser conferido no SQL Server Configuration Manager ou em services.msc do Windows), como logamos?</p>
+<p>Assim:</p>
+<p><img class="alignnone" src="/assets/2014/01/PROy4BA.jpg" alt="" width="423" height="318"></p>
+<p>Opções para logar em uma instância padrão:</p>
+<ul>
+<li>
+<strong>(local)</strong> - Como ilustrado na imagem acima;</li>
+<li>
+<strong>.</strong> - Também conhecido como ponto.  Puro unix-pattern :)</li>
+<li>
+<strong>NOMEDASUAMAQUINA - </strong>A sua máquina só pode possuir uma instância padrão, logo,</li>
+<li>
+<strong>MSSQLSERVER - </strong>Aponta também para a instância padrão. Note que no ato da instalação, quando se seleciona default, esse é o nome que aparece (Instância padrão) .</li>
+</ul>
+<p><strong>Instância nomeada</strong></p>
+<p>Enquanto você só pode ter uma instância padrão em uma máquina, poderá ter N instâncias nomeadas. Olha como é criada uma instância nomeada:</p>
+<p><img class="alignnone" src="/assets/2014/01/jeztV1s.jpg" alt="nomeada" width="820" height="609"></p>
+<p>E como logamos em uma instância nomeada?</p>
+<p><img class="alignnone" src="/assets/2014/01/L49Xsfy.jpg" alt="Instância nomeada" width="424" height="321"></p>
+<p>Ou seja: <strong>NomeDaMaquina\NomeInstancia</strong></p>
+<p><strong>E o que tem haver o SQL Server Express?</strong></p>
+<p>É o campeão em frustar recém-chegados ao SQL Server :)</p>
+<p>O motivo é a edição EXPRESS, que é bastante baixada seja por desenvolvedores ou para quem está pegando o jeito com o SQL Server, obrigatoriamente é nomeada.</p>
+<p>E como logar? Usando um dos  nomes abaixo:</p>
+<ul>
+<li>NomeDaSuaMaquina\SQLEXPRESS;</li>
+<li>.\SQLEXPRESS</li>
+</ul>
+<p>Porque achei interessante mencionar o SQL Express? Porque um amigo meu topou com essa dificuldade e talvez outra pessoa também tope.</p>
+<p><strong>E qual a diferença entre instâncias padrão e nomeada?</strong></p>
+<p>Basicamente configurações de <strong>conectividade </strong>(leia-se: nome do servidor e porta).</p>
+<p>Porta pode se tornar um fator problemático  (sem devido conhecimento) se você estiver conectando em uma instância nomeada e o SQL Server Browser não está habilitado nela. Mas isso é assunto pra outro post :)</p>
+<p><strong>Referência:</strong> http://technet.microsoft.com/en-us/library/ms165614(v=sql.90).aspx</p>
+<p> </p>
+<p>[]'s</p>
+<p> </body></html></p>
+
+  </div><a class="u-url" href="/diferencas-entre-instancia-padrao-instancia-nomeada/" hidden></a>
+</article>
+
+      </div>
+    </main><footer class="site-footer h-card">
+  <data class="u-url" href="/"></data>
+
+  <div class="wrapper">
+
+    <h2 class="footer-heading">Renato Siqueira</h2>
+
+    <div class="footer-col-wrapper">
+      <div class="footer-col footer-col-1">
+        <ul class="contact-list">
+          <li class="p-name">Renato Siqueira</li><li><a class="u-email" href="mailto:rad_renato@hotmail.com">rad_renato@hotmail.com</a></li></ul>
+      </div>
+
+      <div class="footer-col footer-col-2"><ul class="social-media-list"><li><a href="https://github.com/renatomsq"><svg class="svg-icon"><use xlink:href="/assets/minima-social-icons.svg#github"></use></svg> <span class="username">renatomsq</span></a></li><li><a href="https://www.twitter.com/naotenhomais"><svg class="svg-icon"><use xlink:href="/assets/minima-social-icons.svg#twitter"></use></svg> <span class="username">naotenhomais</span></a></li></ul>
+</div>
+
+      <div class="footer-col footer-col-3">
+        <p>Meu blog de artigo técnico sobre banco de dados e carreira.</p>
+      </div>
+    </div>
+
+  </div>
+
+</footer>
+</body>
+
+</html>

@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1"><!-- Begin Jekyll SEO tag v2.9.0 -->
+<title>Error: Windows cannot find the Microsoft Software License Terms. Make sure the installation sources are valid and restart the installation. | Renato Siqueira</title>
+<meta name="generator" content="Jekyll v4.4.1" />
+<meta property="og:title" content="Error: Windows cannot find the Microsoft Software License Terms. Make sure the installation sources are valid and restart the installation." />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="&lt;!DOCTYPE html PUBLIC &quot;-//W3C//DTD HTML 4.0 Transitional//EN&quot; &quot;http://www.w3.org/TR/REC-html40/loose.dtd&quot;&gt; &lt;/p&gt; Olá pessoal, mais um post rápido pra documentar um pequeno e simples troubleshooting encontrado ao configurar ambientes  com Virtualbox e o Windows Server 2016. Não é sempre que posto erros relacionados a S.O, mas tem tudo a ver com SQL Server porque geralmente andam lado a lado.Apesar disto, o erro não é restrito à máquinas virtuais e nem especificamente o Hypervisor em questão. Mensagem de erro A mensagem erro ocorre praticamente no início do processo de instalação do Sistema Operacional, com a seguinte mensagem: Windows cannot find the Microsoft Software License…" />
+<meta name="twitter:description" property="og:description" content="&lt;!DOCTYPE html PUBLIC &quot;-//W3C//DTD HTML 4.0 Transitional//EN&quot; &quot;http://www.w3.org/TR/REC-html40/loose.dtd&quot;&gt; &lt;/p&gt; Olá pessoal, mais um post rápido pra documentar um pequeno e simples troubleshooting encontrado ao configurar ambientes  com Virtualbox e o Windows Server 2016. Não é sempre que posto erros relacionados a S.O, mas tem tudo a ver com SQL Server porque geralmente andam lado a lado.Apesar disto, o erro não é restrito à máquinas virtuais e nem especificamente o Hypervisor em questão. Mensagem de erro A mensagem erro ocorre praticamente no início do processo de instalação do Sistema Operacional, com a seguinte mensagem: Windows cannot find the Microsoft Software License…" />
+<link rel="canonical" href="http://localhost:4000/error-windows-cannot-find-the-microsoft-software-license-terms-make-sure-the-installation-sources-are-valid-and-restart-the-installation/" />
+<meta property="og:url" content="http://localhost:4000/error-windows-cannot-find-the-microsoft-software-license-terms-make-sure-the-installation-sources-are-valid-and-restart-the-installation/" />
+<meta property="og:site_name" content="Renato Siqueira" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2018-08-19T03:00:55-03:00" />
+<meta property="article:modified_time" content="2018-08-19T03:00:55-03:00" />
+<meta name="twitter:card" content="summary" />
+<meta name="twitter:title" content="Error: Windows cannot find the Microsoft Software License Terms. Make sure the installation sources are valid and restart the installation." />
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"BlogPosting","dateModified":"2018-08-19T03:00:55-03:00","datePublished":"2018-08-19T03:00:55-03:00","description":"&lt;!DOCTYPE html PUBLIC &quot;-//W3C//DTD HTML 4.0 Transitional//EN&quot; &quot;http://www.w3.org/TR/REC-html40/loose.dtd&quot;&gt; &lt;/p&gt; Olá pessoal, mais um post rápido pra documentar um pequeno e simples troubleshooting encontrado ao configurar ambientes  com Virtualbox e o Windows Server 2016. Não é sempre que posto erros relacionados a S.O, mas tem tudo a ver com SQL Server porque geralmente andam lado a lado.Apesar disto, o erro não é restrito à máquinas virtuais e nem especificamente o Hypervisor em questão. Mensagem de erro A mensagem erro ocorre praticamente no início do processo de instalação do Sistema Operacional, com a seguinte mensagem: Windows cannot find the Microsoft Software License…","headline":"Error: Windows cannot find the Microsoft Software License Terms. Make sure the installation sources are valid and restart the installation.","mainEntityOfPage":{"@type":"WebPage","@id":"http://localhost:4000/error-windows-cannot-find-the-microsoft-software-license-terms-make-sure-the-installation-sources-are-valid-and-restart-the-installation/"},"url":"http://localhost:4000/error-windows-cannot-find-the-microsoft-software-license-terms-make-sure-the-installation-sources-are-valid-and-restart-the-installation/"}</script>
+<!-- End Jekyll SEO tag -->
+<link rel="stylesheet" href="/assets/main.css"><link type="application/atom+xml" rel="alternate" href="http://localhost:4000/feed.xml" title="Renato Siqueira" /></head>
+<body><header class="site-header" role="banner">
+
+  <div class="wrapper"><a class="site-title" rel="author" href="/">Renato Siqueira</a><nav class="site-nav">
+        <input type="checkbox" id="nav-trigger" class="nav-trigger" />
+        <label for="nav-trigger">
+          <span class="menu-icon">
+            <svg viewBox="0 0 18 15" width="18px" height="15px">
+              <path d="M18,1.484c0,0.82-0.665,1.484-1.484,1.484H1.484C0.665,2.969,0,2.304,0,1.484l0,0C0,0.665,0.665,0,1.484,0 h15.032C17.335,0,18,0.665,18,1.484L18,1.484z M18,7.516C18,8.335,17.335,9,16.516,9H1.484C0.665,9,0,8.335,0,7.516l0,0 c0-0.82,0.665-1.484,1.484-1.484h15.032C17.335,6.031,18,6.696,18,7.516L18,7.516z M18,13.516C18,14.335,17.335,15,16.516,15H1.484 C0.665,15,0,14.335,0,13.516l0,0c0-0.82,0.665-1.483,1.484-1.483h15.032C17.335,12.031,18,12.695,18,13.516L18,13.516z"/>
+            </svg>
+          </span>
+        </label>
+
+        <div class="trigger"><a class="page-link" href="/about/">About</a></div>
+      </nav></div>
+</header>
+<main class="page-content" aria-label="Content">
+      <div class="wrapper">
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+
+  <header class="post-header">
+    <h1 class="post-title p-name" itemprop="name headline">Error: Windows cannot find the Microsoft Software License Terms. Make sure the installation sources are valid and restart the installation.</h1>
+    <p class="post-meta">
+      <time class="dt-published" datetime="2018-08-19T03:00:55-03:00" itemprop="datePublished">Aug 19, 2018
+      </time>• <span itemprop="author" itemscope itemtype="http://schema.org/Person"><span class="p-author h-card" itemprop="name">{"login" => "Renato Siqueira", "email" => "", "display_name" => "Renato Siqueira", "first_name" => "", "last_name" => ""}</span></span></p>
+  </header>
+
+  <div class="post-content e-content" itemprop="articleBody">
+    <p><!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN" "http://www.w3.org/TR/REC-html40/loose.dtd"><br />
+<html><body></p>
+<p>Olá pessoal, mais um post rápido pra documentar um pequeno e simples troubleshooting encontrado ao configurar ambientes  com Virtualbox e o Windows Server 2016. Não <a href="http://renatomsiqueira.com.br/category/erros/">é sempre que posto erros relacionados a S.O</a>, mas tem tudo a ver com SQL Server porque geralmente andam lado a lado.Apesar disto, o erro não é restrito à máquinas virtuais e nem especificamente o Hypervisor em questão.</p>
+<h2><strong>Mensagem de erro</strong></h2>
+<p>A mensagem erro ocorre praticamente no início do processo de instalação do Sistema Operacional, com a seguinte mensagem:</p>
+<p><em>Windows cannot find the Microsoft Software License Terms. Make sure the installation sources are valid and restart the installation.</em></p>
+<h2><strong>Cenário (como simulei o problema)</strong></h2>
+<p>Instalando o Windows Server 2016 em uma VM (Virtualbox), selecionei a edição desejada (Desktop Experience)  e prossegui com a instalação utilizando as configurações padrões do Virtualbox. No momento em que o contrato de licença deveria ser carregado, um erro selvagem aparece  e impede a instalação. Abaixo duas telas que indicam como simular o problema:</p>
+<p>[caption id="attachment_2618" align="alignnone" width="770"]<img class="wp-image-2618 size-large" src="/assets/2018/08/1-1024x669.jpg" alt=" Windows cannot find the Microsoft Software License Terms  - Gerando mensagem" width="770" height="503"> Selecionando a mídia de instalação[/caption]</p>
+<p>[caption id="attachment_2619" align="alignnone" width="963"]<img class="wp-image-2619 size-full" src="/assets/2018/08/2.jpg" alt="Windows cannot find the Microsoft Software License Terms - Gerando mensagem de erro" width="963" height="648"> Mensagem de erro gerada com sucesso[/caption]</p>
+<p><em>Windows cannot find the Microsoft Software License Terms. Make sure the installation sources are valid and restart the installation.</em></p>
+<h2><strong>Resolução do problema </strong></h2>
+<p>Descartei a possibilidade da ISO utilizada para instalação estar corrompida porque já tinha realizado uma instalação usando a mesma dias antes do problema. Também refiz o procedimento quatro (4) vezes, e apenas uma vez o instalador pode prosseguir, então parece ser um intermitemente e não mídia corrompida. Parti pra documentação oficial do S.O pra ver se achava alguma pista nos requerimentos de instalação do servidor, e bingo:</p>
+<ul>
+<li>
+<span style="color: #800000;">[PT-BR]</span> https://docs.microsoft.com/pt-br/windows-server/get-started/system-requirements</li>
+<li>
+<span style="color: #800000;">[EN-US]</span> https://docs.microsoft.com/en-us/windows-server/get-started/system-requirements</li>
+</ul>
+<p>O texto abaixo descreve o problema de fato que estava encarando. Criei o servidor com o padrão de memória no Virtualbox que é de 512MB, que se encaixava neste cenário de inconformidade com os requisitos mínimos de hardware:</p>
+<blockquote><p>If you create a virtual machine with the minimum supported hardware parameters (1 processor core and 512 MB RAM) and then attempt to install this release on the virtual machine, Setup will fail.</p>
+<p>To avoid this, do one of the following:</p></blockquote>
+<ul>
+<li>
+<blockquote><p>Allocate more than 800 MB RAM to the virtual machine you intend to install this release on. Once Setup has completed, you can change the allocation to as little as 512 MB RAM, depending on the actual server configuration.</p></blockquote>
+</li>
+<li class="">
+<blockquote><p>Interrupt the boot process of this release on the virtual machine with SHIFT+F10. In the command prompt that opens, use Diskpart.exe to create and format an installation partition. Run <strong>Wpeutil createpagefile /path=C:\pf.sys</strong> (assuming the installation partition you created was C:). Close the command prompt and proceed with Setup.</p></blockquote>
+</li>
+</ul>
+<h2><strong>Conclusão</strong></h2>
+<p>A solução foi ajustar a memória da VM pra acima de 800MB que é um valor de memória aceitável e refazer a instalação para resolver o erro. Trata-se de uma mensagem de erro interessante, pois tudo parece indicar que a mídia de instalação está inválida de alguma forma quando na verdade é um comportamento já documentado pela Microsoft.</p>
+<p>Achou interessante o problema, ou já topou com ele em outro cenário diferente do que foi descrito aqui? Fique à vontade para comentar.</body></html></p>
+
+  </div><a class="u-url" href="/error-windows-cannot-find-the-microsoft-software-license-terms-make-sure-the-installation-sources-are-valid-and-restart-the-installation/" hidden></a>
+</article>
+
+      </div>
+    </main><footer class="site-footer h-card">
+  <data class="u-url" href="/"></data>
+
+  <div class="wrapper">
+
+    <h2 class="footer-heading">Renato Siqueira</h2>
+
+    <div class="footer-col-wrapper">
+      <div class="footer-col footer-col-1">
+        <ul class="contact-list">
+          <li class="p-name">Renato Siqueira</li><li><a class="u-email" href="mailto:rad_renato@hotmail.com">rad_renato@hotmail.com</a></li></ul>
+      </div>
+
+      <div class="footer-col footer-col-2"><ul class="social-media-list"><li><a href="https://github.com/renatomsq"><svg class="svg-icon"><use xlink:href="/assets/minima-social-icons.svg#github"></use></svg> <span class="username">renatomsq</span></a></li><li><a href="https://www.twitter.com/naotenhomais"><svg class="svg-icon"><use xlink:href="/assets/minima-social-icons.svg#twitter"></use></svg> <span class="username">naotenhomais</span></a></li></ul>
+</div>
+
+      <div class="footer-col footer-col-3">
+        <p>Meu blog de artigo técnico sobre banco de dados e carreira.</p>
+      </div>
+    </div>
+
+  </div>
+
+</footer>
+</body>
+
+</html>

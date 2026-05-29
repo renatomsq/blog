@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1"><!-- Begin Jekyll SEO tag v2.9.0 -->
+<title>Conversa sobre a cláusula GO | Renato Siqueira</title>
+<meta name="generator" content="Jekyll v4.4.1" />
+<meta property="og:title" content="Conversa sobre a cláusula GO" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="&lt;!DOCTYPE html PUBLIC &quot;-//W3C//DTD HTML 4.0 Transitional//EN&quot; &quot;http://www.w3.org/TR/REC-html40/loose.dtd&quot;&gt; Vamos falar um pouco sobre o comando GO? Duas pequenas observações antes de começar o artigo:&lt;/p&gt; 1) Nada nessa vida, nem uma cláusula de programação, é por acaso; 2) GO não é um comando T-SQL, muito menos SQL padronizado...É um comando usado pelo client para separação de batch (lote). Introdução O GO não é um comando T-SQL e também não é reconhecido como padrão na linguagem SQL. É um comando usado pelos aplicativos ‘clients’ que se conectam à instâncias do  SQL Server, como, por exemplo, o  sqlcmd e o Management Studio, que…" />
+<meta name="twitter:description" property="og:description" content="&lt;!DOCTYPE html PUBLIC &quot;-//W3C//DTD HTML 4.0 Transitional//EN&quot; &quot;http://www.w3.org/TR/REC-html40/loose.dtd&quot;&gt; Vamos falar um pouco sobre o comando GO? Duas pequenas observações antes de começar o artigo:&lt;/p&gt; 1) Nada nessa vida, nem uma cláusula de programação, é por acaso; 2) GO não é um comando T-SQL, muito menos SQL padronizado...É um comando usado pelo client para separação de batch (lote). Introdução O GO não é um comando T-SQL e também não é reconhecido como padrão na linguagem SQL. É um comando usado pelos aplicativos ‘clients’ que se conectam à instâncias do  SQL Server, como, por exemplo, o  sqlcmd e o Management Studio, que…" />
+<link rel="canonical" href="http://localhost:4000/conversa-sobre-a-clausula-go/" />
+<meta property="og:url" content="http://localhost:4000/conversa-sobre-a-clausula-go/" />
+<meta property="og:site_name" content="Renato Siqueira" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2013-09-08T22:14:32-03:00" />
+<meta property="article:modified_time" content="2013-09-08T22:14:32-03:00" />
+<meta name="twitter:card" content="summary" />
+<meta name="twitter:title" content="Conversa sobre a cláusula GO" />
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"BlogPosting","dateModified":"2013-09-08T22:14:32-03:00","datePublished":"2013-09-08T22:14:32-03:00","description":"&lt;!DOCTYPE html PUBLIC &quot;-//W3C//DTD HTML 4.0 Transitional//EN&quot; &quot;http://www.w3.org/TR/REC-html40/loose.dtd&quot;&gt; Vamos falar um pouco sobre o comando GO? Duas pequenas observações antes de começar o artigo:&lt;/p&gt; 1) Nada nessa vida, nem uma cláusula de programação, é por acaso; 2) GO não é um comando T-SQL, muito menos SQL padronizado...É um comando usado pelo client para separação de batch (lote). Introdução O GO não é um comando T-SQL e também não é reconhecido como padrão na linguagem SQL. É um comando usado pelos aplicativos ‘clients’ que se conectam à instâncias do  SQL Server, como, por exemplo, o  sqlcmd e o Management Studio, que…","headline":"Conversa sobre a cláusula GO","mainEntityOfPage":{"@type":"WebPage","@id":"http://localhost:4000/conversa-sobre-a-clausula-go/"},"url":"http://localhost:4000/conversa-sobre-a-clausula-go/"}</script>
+<!-- End Jekyll SEO tag -->
+<link rel="stylesheet" href="/assets/main.css"><link type="application/atom+xml" rel="alternate" href="http://localhost:4000/feed.xml" title="Renato Siqueira" /></head>
+<body><header class="site-header" role="banner">
+
+  <div class="wrapper"><a class="site-title" rel="author" href="/">Renato Siqueira</a><nav class="site-nav">
+        <input type="checkbox" id="nav-trigger" class="nav-trigger" />
+        <label for="nav-trigger">
+          <span class="menu-icon">
+            <svg viewBox="0 0 18 15" width="18px" height="15px">
+              <path d="M18,1.484c0,0.82-0.665,1.484-1.484,1.484H1.484C0.665,2.969,0,2.304,0,1.484l0,0C0,0.665,0.665,0,1.484,0 h15.032C17.335,0,18,0.665,18,1.484L18,1.484z M18,7.516C18,8.335,17.335,9,16.516,9H1.484C0.665,9,0,8.335,0,7.516l0,0 c0-0.82,0.665-1.484,1.484-1.484h15.032C17.335,6.031,18,6.696,18,7.516L18,7.516z M18,13.516C18,14.335,17.335,15,16.516,15H1.484 C0.665,15,0,14.335,0,13.516l0,0c0-0.82,0.665-1.483,1.484-1.483h15.032C17.335,12.031,18,12.695,18,13.516L18,13.516z"/>
+            </svg>
+          </span>
+        </label>
+
+        <div class="trigger"><a class="page-link" href="/about/">About</a></div>
+      </nav></div>
+</header>
+<main class="page-content" aria-label="Content">
+      <div class="wrapper">
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+
+  <header class="post-header">
+    <h1 class="post-title p-name" itemprop="name headline">Conversa sobre a cláusula GO</h1>
+    <p class="post-meta">
+      <time class="dt-published" datetime="2013-09-08T22:14:32-03:00" itemprop="datePublished">Sep 8, 2013
+      </time>• <span itemprop="author" itemscope itemtype="http://schema.org/Person"><span class="p-author h-card" itemprop="name">{"login" => "Renato Siqueira", "email" => "", "display_name" => "Renato Siqueira", "first_name" => "", "last_name" => ""}</span></span></p>
+  </header>
+
+  <div class="post-content e-content" itemprop="articleBody">
+    <p><!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN" "http://www.w3.org/TR/REC-html40/loose.dtd"><br />
+<html><body><br />
+<a href="http://renatomsiqueira.com.br/wp-content/uploads/2013/09/s101.png"><img class="aligncenter size-full wp-image-888" alt="Cláusula GO, funcionamento básico e seus conceitos" src="/assets/2013/09/s101.png" width="470" height="147"></a><br />
+Vamos falar um pouco sobre o comando GO?<br />
+Duas pequenas observações antes de começar o artigo:</p>
+<p>1) Nada nessa vida, nem uma cláusula de programação, é por acaso;</p>
+<p>2) GO não é um comando T-SQL, muito menos SQL padronizado...É um comando usado pelo client para separação de batch (lote).</p>
+<p><b>Introdução</b></p>
+<p>O GO não é um comando T-SQL e também não é reconhecido como padrão na linguagem SQL. É um comando usado pelos aplicativos ‘clients’ que se conectam à instâncias do  SQL Server, como, por exemplo, o  <b>sqlcmd</b> e o <b>Management Studio</b>, que entendem o GO como um separador de instruções, e por isso enviam o código  de modo organizado, por sequência, usando GO como um separador. Se você usar o GO em qualquer client que não tenha suporte à cláusula, o seu código dará erro.</p>
+<p>Pra ilustrar o que é batch e como o GO age no SQL Server, vamos a um exemplo básico:</p>
+<p><a href="http://renatomsiqueira.com.br/wp-content/uploads/2013/09/go11.png"><img class="size-full wp-image-891 aligncenter" alt="Cláusula Go 1" src="/assets/2013/09/go11.png" width="470" height="206"></a></p>
+<p>O segundo SELECT dará erro por motivos óbvios. Alguns pensam “mas esse erro não tem lógica! Eu já declarei a variável na janelinha do Management Studio e a janelinha representa uma sessão aberta (até aqui correto), então, a variável, já que foi declarada na sessão, deveria ser reconhecida em qualquer parte da sessão (e aqui mora o erro). Engano clássico.</p>
+<p>É justamente este pensamento  que possibilita a ocorrência de uma quantidade assustadora de erros em programação T-SQL, simplesmente por ignorar que existem escopos e escopos.</p>
+<p>Ilustrando da melhor forma possível como funciona a separação de lotes a mesma consulta acima:</p>
+<p><a href="http://renatomsiqueira.com.br/wp-content/uploads/2013/09/go21.png"><img class="aligncenter size-full wp-image-893" alt="go2" src="/assets/2013/09/go21.png" width="470" height="170"></a></p>
+<p>Perceba que o GO delimita um lote de código de acordo com sua declaração, considerando qualquer código até que haja outro GO, que é a delimitação deste comando.O Management Studio, nesse caso, diz pra cada lote até onde ele deve executar. Em declarações de variáveis com o uso de GO, o Management Studio limita o escopo (alcance) da variável @data.</p>
+<p>Outro detalhe, o comando GO precisa estar sozinho na linha, caso contrário, dará erro. Se quiser pode testar deixando um GO mesmo antecedido com ponto e vírgula (;) e notará que dará erro. Só comprova que ele é um comando com característica procedural, daqueles da moda antiga, que gostam realmente de separar instruções por lote de código (lote =  batch):</p>
+<p><b>E pra que eu uso o GO afinal sendo que ele pode me levar à erros?</b></p>
+<p>O comando tem uma propriedade de contador (inteiro). Isso pode ser usado em nosso favor quando usamos um client com suporte à cláusula. Segue um exemplo fantasioso que preenche uma tabela com registros totalmente aleatórios. Agora, vamos trabalhar com o modo de separação que é nativo do GO além do atributo de repetição.</p>
+<p><a href="http://renatomsiqueira.com.br/wp-content/uploads/2013/09/go31.png"><img class="size-full wp-image-894 alignleft" alt="go3" src="/assets/2013/09/go31.png" width="382" height="281"></a></p>
+<p>Basicamente, o GO vai executar 1000 vezes as instruções que foram declaradas desde o último GO.  Agora, uma pergunta. Se você der um F5, CTRL+E, PLAY, o que seja, pra executar o código, o que acontece?</p>
+<p>a)      Um erro;</p>
+<p>b)      O SQL Server cria a tabela #serial e insere mil vezes nessa tabela através do comando INSERT INTO;</p>
+<p>c)       Vai  executar MIL VEZES o comando SELECT * from #serial;</p>
+<p>d)      Vai dar USE no banco MASTER mil vezes;</p>
+<p>Imagine mentalmente o GO dizendo assim: "Quero executar TUDO que tá emcima de mim. Tudo é meu, ATÉ QUE EU ENCONTRE OUTRO GO, aí o lote de código não é meu. Irmão não invade território de irmão!".</p>
+<p>Aliás, de curiosidade,  saiba  que o comando GO possui implícitamente a forma<strong> GO 1</strong>, pois ele só executa aquela instrução de código uma vez. Resumindo o que acontece na questão...</p>
+<p>- O primeiro GO vai executar uma vez  o comando USE máster</p>
+<p>-  O segundo GO vai executar o comando CREATE TABLE #serial e o INSERT mil vezes e...</p>
+<p>Isso mesmo. A opção correta era a A. Ele vai criar a tabela, inserir uma vez e vai voltar de novo no loop, só que na segunda vez, ele vai voltar pro primeiro comando do lote que é um CREATE TABLE, porém como a tabela já existe, vai dar erro.</p>
+<blockquote><p>Msg 2714, Level 16, State 6, Line 3</p>
+<p>There is already an object named '#serial' in the database.</p>
+<p>** An error was encountered during execution of batch. Continuing.</p></blockquote>
+<p>Batch deu erro e foi abortado. Simples assim. Então, imagine que você não tem essa tabela #serial. Drope-a:</p>
+<blockquote><p>DROP TABLE #serial</p></blockquote>
+<p>Repare a diferença testando o código abaixo (Não liga para os rabiscos paint-fast-like):</p>
+<p><a href="http://renatomsiqueira.com.br/wp-content/uploads/2013/09/go41.png"><img alt="go4" src="/assets/2013/09/go41.png" width="432" height="346"></a></p>
+<p>O código acima irá funcionar. Vai executar <strong>apenas</strong> o INSERT (e não o CREATE) mil vezes. Simples assim.</p>
+<p><b>FAQ (Recapitulando)</b></p>
+<p><strong>É certo dizer que GO é um comando?</strong></p>
+<p>Reposta: É sim.</p>
+<p><strong>Mas você disse que ele não é um comando..</strong></p>
+<p>Resposta: De novo, é um comando sim, relaxa. Do <i>client</i>, e não do SQL  ANSI ou T-SQL. Tanto que se você tentar executar uma procedure com GO, dará erro, porque o SQL Server é um Server e não sabe o que significa a cláusula GO.</p>
+<p><strong>Posso executar código por código então, sem usar o GO, uma porção de cada vez, no mouse, sabe, na mão?</strong></p>
+<p>Claro que pode. E isso, inclusive, é execução em "batch" também (teoricamente). A diferença é que você está fazendo sua própria separação de lotes, mas repare que o conceito é o mesmo.</p>
+<p><b>Para maiores dúvidas:</b></p>
+<p><b>GO:</b> <a href="http://msdn.microsoft.com/en-US/library/ms188037%28v=SQL.90%29.aspx">Documentação do próprio MSDN </a></p>
+<p><b>Batch:</b><a href="http://msdn.microsoft.com/en-US/library/ms175502(v=sql.90).aspx"> Documentação do próprio MSDN</a></p>
+<p>Qualquer dúvida, feedback, sugestão, sinta-se à vontade para comentar.</body></html></p>
+
+  </div><a class="u-url" href="/conversa-sobre-a-clausula-go/" hidden></a>
+</article>
+
+      </div>
+    </main><footer class="site-footer h-card">
+  <data class="u-url" href="/"></data>
+
+  <div class="wrapper">
+
+    <h2 class="footer-heading">Renato Siqueira</h2>
+
+    <div class="footer-col-wrapper">
+      <div class="footer-col footer-col-1">
+        <ul class="contact-list">
+          <li class="p-name">Renato Siqueira</li><li><a class="u-email" href="mailto:rad_renato@hotmail.com">rad_renato@hotmail.com</a></li></ul>
+      </div>
+
+      <div class="footer-col footer-col-2"><ul class="social-media-list"><li><a href="https://github.com/renatomsq"><svg class="svg-icon"><use xlink:href="/assets/minima-social-icons.svg#github"></use></svg> <span class="username">renatomsq</span></a></li><li><a href="https://www.twitter.com/naotenhomais"><svg class="svg-icon"><use xlink:href="/assets/minima-social-icons.svg#twitter"></use></svg> <span class="username">naotenhomais</span></a></li></ul>
+</div>
+
+      <div class="footer-col footer-col-3">
+        <p>Meu blog de artigo técnico sobre banco de dados e carreira.</p>
+      </div>
+    </div>
+
+  </div>
+
+</footer>
+</body>
+
+</html>

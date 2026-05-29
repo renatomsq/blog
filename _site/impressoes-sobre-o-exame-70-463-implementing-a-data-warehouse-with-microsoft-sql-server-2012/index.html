@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1"><!-- Begin Jekyll SEO tag v2.9.0 -->
+<title>Impressões sobre o exame 70-463: Implementing a Data Warehouse with Microsoft SQL Server 2012 | Renato Siqueira</title>
+<meta name="generator" content="Jekyll v4.4.1" />
+<meta property="og:title" content="Impressões sobre o exame 70-463: Implementing a Data Warehouse with Microsoft SQL Server 2012" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="&lt;!DOCTYPE html PUBLIC &quot;-//W3C//DTD HTML 4.0 Transitional//EN&quot; &quot;http://www.w3.org/TR/REC-html40/loose.dtd&quot;&gt; &lt;/p&gt; Boa noite, Fechando a trilogia MCSA, posto aqui minhas impressões sobre o assunto: Opinião geral Consegui aprovação no último exame da trilogia MCSA SQL Server 2012, que é a prova de &quot;BI&quot; , onde seus conhecimentos sobre ETL (principalmente) e Data Quality serão avaliados. A impressão que tive do exame, é que a MS testou um profissional que trabalha ostensivamente com SSIS, usando boa parte dos recursos disponíveis na ferramenta Data Tools. Um pouco de MDS  e DQS também, mas SSIS principalmente. Sinceramente... Eu já li em vários lugares sobre a decisão da MS de…" />
+<meta name="twitter:description" property="og:description" content="&lt;!DOCTYPE html PUBLIC &quot;-//W3C//DTD HTML 4.0 Transitional//EN&quot; &quot;http://www.w3.org/TR/REC-html40/loose.dtd&quot;&gt; &lt;/p&gt; Boa noite, Fechando a trilogia MCSA, posto aqui minhas impressões sobre o assunto: Opinião geral Consegui aprovação no último exame da trilogia MCSA SQL Server 2012, que é a prova de &quot;BI&quot; , onde seus conhecimentos sobre ETL (principalmente) e Data Quality serão avaliados. A impressão que tive do exame, é que a MS testou um profissional que trabalha ostensivamente com SSIS, usando boa parte dos recursos disponíveis na ferramenta Data Tools. Um pouco de MDS  e DQS também, mas SSIS principalmente. Sinceramente... Eu já li em vários lugares sobre a decisão da MS de…" />
+<link rel="canonical" href="http://localhost:4000/impressoes-sobre-o-exame-70-463-implementing-a-data-warehouse-with-microsoft-sql-server-2012/" />
+<meta property="og:url" content="http://localhost:4000/impressoes-sobre-o-exame-70-463-implementing-a-data-warehouse-with-microsoft-sql-server-2012/" />
+<meta property="og:site_name" content="Renato Siqueira" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2013-10-03T16:20:37-03:00" />
+<meta property="article:modified_time" content="2013-10-03T16:20:37-03:00" />
+<meta name="twitter:card" content="summary" />
+<meta name="twitter:title" content="Impressões sobre o exame 70-463: Implementing a Data Warehouse with Microsoft SQL Server 2012" />
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"BlogPosting","dateModified":"2013-10-03T16:20:37-03:00","datePublished":"2013-10-03T16:20:37-03:00","description":"&lt;!DOCTYPE html PUBLIC &quot;-//W3C//DTD HTML 4.0 Transitional//EN&quot; &quot;http://www.w3.org/TR/REC-html40/loose.dtd&quot;&gt; &lt;/p&gt; Boa noite, Fechando a trilogia MCSA, posto aqui minhas impressões sobre o assunto: Opinião geral Consegui aprovação no último exame da trilogia MCSA SQL Server 2012, que é a prova de &quot;BI&quot; , onde seus conhecimentos sobre ETL (principalmente) e Data Quality serão avaliados. A impressão que tive do exame, é que a MS testou um profissional que trabalha ostensivamente com SSIS, usando boa parte dos recursos disponíveis na ferramenta Data Tools. Um pouco de MDS  e DQS também, mas SSIS principalmente. Sinceramente... Eu já li em vários lugares sobre a decisão da MS de…","headline":"Impressões sobre o exame 70-463: Implementing a Data Warehouse with Microsoft SQL Server 2012","mainEntityOfPage":{"@type":"WebPage","@id":"http://localhost:4000/impressoes-sobre-o-exame-70-463-implementing-a-data-warehouse-with-microsoft-sql-server-2012/"},"url":"http://localhost:4000/impressoes-sobre-o-exame-70-463-implementing-a-data-warehouse-with-microsoft-sql-server-2012/"}</script>
+<!-- End Jekyll SEO tag -->
+<link rel="stylesheet" href="/assets/main.css"><link type="application/atom+xml" rel="alternate" href="http://localhost:4000/feed.xml" title="Renato Siqueira" /></head>
+<body><header class="site-header" role="banner">
+
+  <div class="wrapper"><a class="site-title" rel="author" href="/">Renato Siqueira</a><nav class="site-nav">
+        <input type="checkbox" id="nav-trigger" class="nav-trigger" />
+        <label for="nav-trigger">
+          <span class="menu-icon">
+            <svg viewBox="0 0 18 15" width="18px" height="15px">
+              <path d="M18,1.484c0,0.82-0.665,1.484-1.484,1.484H1.484C0.665,2.969,0,2.304,0,1.484l0,0C0,0.665,0.665,0,1.484,0 h15.032C17.335,0,18,0.665,18,1.484L18,1.484z M18,7.516C18,8.335,17.335,9,16.516,9H1.484C0.665,9,0,8.335,0,7.516l0,0 c0-0.82,0.665-1.484,1.484-1.484h15.032C17.335,6.031,18,6.696,18,7.516L18,7.516z M18,13.516C18,14.335,17.335,15,16.516,15H1.484 C0.665,15,0,14.335,0,13.516l0,0c0-0.82,0.665-1.483,1.484-1.483h15.032C17.335,12.031,18,12.695,18,13.516L18,13.516z"/>
+            </svg>
+          </span>
+        </label>
+
+        <div class="trigger"><a class="page-link" href="/about/">About</a></div>
+      </nav></div>
+</header>
+<main class="page-content" aria-label="Content">
+      <div class="wrapper">
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+
+  <header class="post-header">
+    <h1 class="post-title p-name" itemprop="name headline">Impressões sobre o exame 70-463: Implementing a Data Warehouse with Microsoft SQL Server 2012</h1>
+    <p class="post-meta">
+      <time class="dt-published" datetime="2013-10-03T16:20:37-03:00" itemprop="datePublished">Oct 3, 2013
+      </time>• <span itemprop="author" itemscope itemtype="http://schema.org/Person"><span class="p-author h-card" itemprop="name">{"login" => "Renato Siqueira", "email" => "", "display_name" => "Renato Siqueira", "first_name" => "", "last_name" => ""}</span></span></p>
+  </header>
+
+  <div class="post-content e-content" itemprop="articleBody">
+    <p><!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN" "http://www.w3.org/TR/REC-html40/loose.dtd"><br />
+<html><body><br />
+<a href="http://renatomsiqueira.com.br/wp-content/uploads/2013/09/s271.png"><img class="aligncenter size-full wp-image-946" alt="Nova seção de scripts!" src="/assets/2013/10/s271.png" width="470" height="147"></a></p>
+<p>Boa noite,</p>
+<p>Fechando a trilogia MCSA, posto aqui minhas impressões sobre o assunto:</p>
+<p><strong>Opinião geral</strong></p>
+<p>Consegui aprovação no último exame da trilogia MCSA SQL Server 2012, que é a prova de "BI" , onde seus conhecimentos sobre ETL (principalmente) e Data Quality serão avaliados. A impressão que tive do exame, é que a MS testou um profissional que trabalha ostensivamente com SSIS, usando boa parte dos recursos disponíveis na ferramenta Data Tools. Um pouco de MDS  e DQS também, mas SSIS principalmente.</p>
+<p>Sinceramente... Eu já li em vários lugares sobre a decisão da MS de incluir um exame de BI pra MCSA e na teoria é interessante, o profissional fica mais generalista no sentido de lidar com quase toda a plataforma SQL Server principalmente o BI da Microsoft que sofre um pouco de preconceito, mas....na prática, eu <del>atualmente</del> não mexo com SSIS e foi legal aprender uns truques novos (e reforçar uns velhos) mas, na boa, achei bola fora por parte da MS tirar o foco dos tios que trabalham com DEV e ADM, pra estudar como se depura um pacote, loga execuções ou configurar o DQS. O assunto é legal, mas definitivamente não devia ser obrigatório.</p>
+<p><strong>Opinião sobre o exame</strong></p>
+<p>Foram 79 questões, muitas delas cansativas pois falar de SSIS de modo textual. Teve uma quantidade boa de questões de clicar em interface, de arrastar a task correta pra criar um ETL, tais questões foram bem legais, e acredito que poderiam ter sido aplicado em maior quantidade.</p>
+<p>Passei dificuldades por não fazer deploy de pacotes e nem logging ao longo da vida de ETL e sofri bastante com várias destas questões textuais.</p>
+<p>Achei a prova difícil, pois o que sei de BI/ETL foi algum tempo trabalhando com o BIDS e um pouco de estudo. Inclusive passei por pouco =p</p>
+<p>Pra material de estudo, usei o Training Kit (70-463) cobre muito bem a prova e o<em> Introducing SQL Server 2012</em>, a parte que fala  de DQS e de SSIS é sensacional. Esse livro me ajudou mais que o próprio Training, já que DQS é uma novidade do 2012  e tem um capítulo só pra isso e a parte de deploy de SSIS é bem explicada neste livro. Sem contar que o livro é Free, você pode conferi-lo <a href="http://www.google.com.br/url?sa=t&amp;rct=j&amp;q=&amp;esrc=s&amp;frm=1&amp;source=web&amp;cd=1&amp;cad=rja&amp;ved=0CCwQFjAA&amp;url=http%3A%2F%2Fdownload.microsoft.com%2Fdownload%2FF%2FF%2F6%2FFF62CAE0-CE38-4228-9025-FBF729312698%2FMicrosoft_Press_eBook_Introducing_Microsoft_SQL_Server_2012_PDF.pdf&amp;ei=BTJMUtX8IY3I9QS-7ICYBg&amp;usg=AFQjCNHknz_H0bgdMSS6f9BpV_IxmIxcQg&amp;sig2=vb4ZcVyo-ThO19GF9ZxjIw">aqui</a>. Aliás, recomendo esse livro também pra 70-462 (cobre muito bem as novidades).</p>
+<p><strong>Sobre o exame</strong></p>
+<p>Falar um pouco sobre o que lembro (e posso passar por aqui):</p>
+<p><em><strong>Design and implement a data warehouse</strong></em></p>
+<p>As questões mais legais da prova e a única parte que fui bem, hehe:</p>
+<p>-<a href="http://msdn.microsoft.com/en-us/library/aa226252(v=sql.70).aspx"> A visão que a MS tem sobre BI</a> é importante em várias questões de design;</p>
+<p>- <a href="https://social.technet.microsoft.com/wiki/contents/articles/9251.entendendo-o-column-store-index-no-sql-server-2012-pt-br.aspx">Columnstore Index</a>: Saber quantos você pode criar por tabela, suas restrições (no 2012!!!) e como criar da melhor forma (ocupando menos espaço...);</p>
+<p>- Conceitos de <a href="http://www.katieandemil.com/ssis-scd-slowly-changing-dimension-transformation-example">Slow Changing Dimension</a> voltando ao banco (estrutura) com SSIS (Tipos 1, 2 e 3)</p>
+<p>- Conceito de FK na tabela Fato é cobrada em algumas questões;</p>
+<p><em><strong>Extract and transform data +  (Load Data)</strong></em></p>
+<p>- <a href="http://technet.microsoft.com/en-us/library/ms139892.aspx">Tasks </a>que caem na prova (control e data flow): Fuzzy Lookup, Derived Column, Merge, Merge Join, Union All, Sort (atenção), Script Tasks e Expressions Tasks. Dê uma olhada que cai na certa.</p>
+<p>- Paralelismo ao rodar pacote de carga se baseando em um modelo Snow Flake (essa questão é bem legal);</p>
+<p>- Fluxos de erro e <a href="https://www.simple-talk.com/sql/ssis/ssis-event-handlers-basics/">event handler</a> são de importância extrema;</p>
+<p>- Task de Container aqui vale ouro. Dê uma olhada no que ela realmente pode fazer em critérios de organização e seu uso + EventHandler;</p>
+<p>- Surpresinha: Cai uma questão de <a href="http://msdn.microsoft.com/pt-br/library/bb510625.aspx">MERGE </a>no T-SQL. Cai também de tasks Merge, Merge ALL e Union ALL. Mas eu tô dizendo é sobre o MERGE em T-SQL mesmo.</p>
+<p><em><strong>Configure and deploy SSIS Solutions</strong></em></p>
+<p>A maioria das questões é drag in drop ou de múltipla resposta:</p>
+<p>- Estude <a href="http://technet.microsoft.com/en-us/library/ms138020(v=sql.105).aspx"><em>logging</em></a>, com carinho. Todas as configurações, todas as formas possíveis de log. Inclusive usando SSIS catalog;</p>
+<p>- O conceito de <a href="http://www.rad.pasfu.com/index.php?/archives/73-SSIS-Catalog-Part-1-What-is-the-Catalog.html">SSIS Catalog</a>, variáveis e parâmetros é fundamental e isso é essencial pra passar na prova;</p>
+<p>- Falando em SSIS Catalog, dê uma olhada nas views mais importantes;</p>
+<p>- Saiba onde os pacotes .dtsx podem ser implantados (TODOS os meios de armazenamento, desde file system até SSISDB);</p>
+<p><em><strong>Build Data Quality Solutions</strong></em></p>
+<p>Parte surpresa da prova! Caiu muito sobre <a href="http://technet.microsoft.com/pt-br/library/ee633763.aspx">MDS</a>, inclusive plugins de Excel, assim como caiu algumas questões sobre como configura-se o Data Quality Server e Client (saber os pré-requisitos é fundamental em várias questões). Saber sobre as roles do DQS é importante também.</p>
+<p>----</p>
+<p><strong>Conclusão + Offtopic</strong></p>
+<p>É isso. Feliz por ter passado no exame porque queria estudar ADM de novo e o ETL não tava deixando. Pensa na felicidade!  Agora, vou estudar o que gosto (e quero) e blogar um pouco mais que o normal (pois, finalmente, não estou focado em um exame em específico). Uma felicidade, também particular, foi de saber que o tempo dedicado aos estudos (e uns finais de semana com ssms) deu certo! Aprendi muita coisa desde que comecei a estudar pra certificações, e, de novo, recomendo que seu principal foco seja para aprendizado.</p>
+<p>Next Step: <em>MCSE</em>, os dois exames (Design e Developing). Mas até lá, tenho outros objetivos. Tem uns livros de SQL Server aí no meio, além de muito estudo e laboratório (fora uns projetos meio doidos que eu tô tendo, talvez dê certo, só o futuro dirá). Enfim, me preparar por mais tempo o/</body></html></p>
+
+  </div><a class="u-url" href="/impressoes-sobre-o-exame-70-463-implementing-a-data-warehouse-with-microsoft-sql-server-2012/" hidden></a>
+</article>
+
+      </div>
+    </main><footer class="site-footer h-card">
+  <data class="u-url" href="/"></data>
+
+  <div class="wrapper">
+
+    <h2 class="footer-heading">Renato Siqueira</h2>
+
+    <div class="footer-col-wrapper">
+      <div class="footer-col footer-col-1">
+        <ul class="contact-list">
+          <li class="p-name">Renato Siqueira</li><li><a class="u-email" href="mailto:rad_renato@hotmail.com">rad_renato@hotmail.com</a></li></ul>
+      </div>
+
+      <div class="footer-col footer-col-2"><ul class="social-media-list"><li><a href="https://github.com/renatomsq"><svg class="svg-icon"><use xlink:href="/assets/minima-social-icons.svg#github"></use></svg> <span class="username">renatomsq</span></a></li><li><a href="https://www.twitter.com/naotenhomais"><svg class="svg-icon"><use xlink:href="/assets/minima-social-icons.svg#twitter"></use></svg> <span class="username">naotenhomais</span></a></li></ul>
+</div>
+
+      <div class="footer-col footer-col-3">
+        <p>Meu blog de artigo técnico sobre banco de dados e carreira.</p>
+      </div>
+    </div>
+
+  </div>
+
+</footer>
+</body>
+
+</html>

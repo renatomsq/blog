@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1"><!-- Begin Jekyll SEO tag v2.9.0 -->
+<title>Analogia - Users e Logins | Renato Siqueira</title>
+<meta name="generator" content="Jekyll v4.4.1" />
+<meta property="og:title" content="Analogia - Users e Logins" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="&lt;!DOCTYPE html PUBLIC &quot;-//W3C//DTD HTML 4.0 Transitional//EN&quot; &quot;http://www.w3.org/TR/REC-html40/loose.dtd&quot;&gt; &lt;/p&gt; Bom dia pessoal, A analogia de hoje esclarece muitas dúvidas em relação ao conceito de Login e Usuário no contexto do SQL Server. Você acaba de chegar no clube Northwind.  Nota que na entrada, uma pessoa está resmungando com o segurança pois não pôde passar na catraca, pois o guarda pediu a carteirinha do sujeito e o mesmo não tinha. A recomendação do guarda, é que, se ele realmente tem permissão de entrar no clube, que ele localize sua carteirinha e volte depois. E foi o que o campeão fez. Xingou…" />
+<meta name="twitter:description" property="og:description" content="&lt;!DOCTYPE html PUBLIC &quot;-//W3C//DTD HTML 4.0 Transitional//EN&quot; &quot;http://www.w3.org/TR/REC-html40/loose.dtd&quot;&gt; &lt;/p&gt; Bom dia pessoal, A analogia de hoje esclarece muitas dúvidas em relação ao conceito de Login e Usuário no contexto do SQL Server. Você acaba de chegar no clube Northwind.  Nota que na entrada, uma pessoa está resmungando com o segurança pois não pôde passar na catraca, pois o guarda pediu a carteirinha do sujeito e o mesmo não tinha. A recomendação do guarda, é que, se ele realmente tem permissão de entrar no clube, que ele localize sua carteirinha e volte depois. E foi o que o campeão fez. Xingou…" />
+<link rel="canonical" href="http://localhost:4000/analogia-1-users-e-logins/" />
+<meta property="og:url" content="http://localhost:4000/analogia-1-users-e-logins/" />
+<meta property="og:site_name" content="Renato Siqueira" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2013-02-20T04:47:22-03:00" />
+<meta property="article:modified_time" content="2013-02-20T04:47:22-03:00" />
+<meta name="twitter:card" content="summary" />
+<meta name="twitter:title" content="Analogia - Users e Logins" />
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"BlogPosting","dateModified":"2013-02-20T04:47:22-03:00","datePublished":"2013-02-20T04:47:22-03:00","description":"&lt;!DOCTYPE html PUBLIC &quot;-//W3C//DTD HTML 4.0 Transitional//EN&quot; &quot;http://www.w3.org/TR/REC-html40/loose.dtd&quot;&gt; &lt;/p&gt; Bom dia pessoal, A analogia de hoje esclarece muitas dúvidas em relação ao conceito de Login e Usuário no contexto do SQL Server. Você acaba de chegar no clube Northwind.  Nota que na entrada, uma pessoa está resmungando com o segurança pois não pôde passar na catraca, pois o guarda pediu a carteirinha do sujeito e o mesmo não tinha. A recomendação do guarda, é que, se ele realmente tem permissão de entrar no clube, que ele localize sua carteirinha e volte depois. E foi o que o campeão fez. Xingou…","headline":"Analogia - Users e Logins","mainEntityOfPage":{"@type":"WebPage","@id":"http://localhost:4000/analogia-1-users-e-logins/"},"url":"http://localhost:4000/analogia-1-users-e-logins/"}</script>
+<!-- End Jekyll SEO tag -->
+<link rel="stylesheet" href="/assets/main.css"><link type="application/atom+xml" rel="alternate" href="http://localhost:4000/feed.xml" title="Renato Siqueira" /></head>
+<body><header class="site-header" role="banner">
+
+  <div class="wrapper"><a class="site-title" rel="author" href="/">Renato Siqueira</a><nav class="site-nav">
+        <input type="checkbox" id="nav-trigger" class="nav-trigger" />
+        <label for="nav-trigger">
+          <span class="menu-icon">
+            <svg viewBox="0 0 18 15" width="18px" height="15px">
+              <path d="M18,1.484c0,0.82-0.665,1.484-1.484,1.484H1.484C0.665,2.969,0,2.304,0,1.484l0,0C0,0.665,0.665,0,1.484,0 h15.032C17.335,0,18,0.665,18,1.484L18,1.484z M18,7.516C18,8.335,17.335,9,16.516,9H1.484C0.665,9,0,8.335,0,7.516l0,0 c0-0.82,0.665-1.484,1.484-1.484h15.032C17.335,6.031,18,6.696,18,7.516L18,7.516z M18,13.516C18,14.335,17.335,15,16.516,15H1.484 C0.665,15,0,14.335,0,13.516l0,0c0-0.82,0.665-1.483,1.484-1.483h15.032C17.335,12.031,18,12.695,18,13.516L18,13.516z"/>
+            </svg>
+          </span>
+        </label>
+
+        <div class="trigger"><a class="page-link" href="/about/">About</a></div>
+      </nav></div>
+</header>
+<main class="page-content" aria-label="Content">
+      <div class="wrapper">
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+
+  <header class="post-header">
+    <h1 class="post-title p-name" itemprop="name headline">Analogia - Users e Logins</h1>
+    <p class="post-meta">
+      <time class="dt-published" datetime="2013-02-20T04:47:22-03:00" itemprop="datePublished">Feb 20, 2013
+      </time>• <span itemprop="author" itemscope itemtype="http://schema.org/Person"><span class="p-author h-card" itemprop="name">{"login" => "Renato Siqueira", "email" => "", "display_name" => "Renato Siqueira", "first_name" => "", "last_name" => ""}</span></span></p>
+  </header>
+
+  <div class="post-content e-content" itemprop="articleBody">
+    <p><!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN" "http://www.w3.org/TR/REC-html40/loose.dtd"><br />
+<html><body><br />
+<a href="http://renatomsiqueira.com.br/wp-content/uploads/2013/04/guarda1.png"><img class="aligncenter size-full wp-image-379" alt="Guarda" src="/assets/2013/02/guarda1.png" width="470" height="203"></a></p>
+<p>Bom dia pessoal,</p>
+<p>A analogia de hoje esclarece muitas dúvidas em relação ao conceito de Login e Usuário no contexto do SQL Server.</p>
+<blockquote><p>Você acaba de chegar no clube Northwind.  Nota que na entrada, uma pessoa está resmungando com o segurança pois não pôde passar na catraca, pois o guarda pediu a carteirinha do sujeito e o mesmo não tinha. A recomendação do guarda, é que, se ele realmente tem permissão de entrar no clube, que ele localize sua carteirinha e volte depois. E foi o que o campeão fez. Xingou o guarda, deu meia volta, disse que ia no carro, e depois de quinze minutos voltou com... a carteirinha e mostrou ao guarda, que liberou a passagem.</p>
+<p>Bem, lá dentro, já autenticado, o cara sorri e diz que "tá em casa rsrs" e de fato está. Ele se autenticou, sua credencial está cadastrada e ele conseguiu comprovar isso com a carteirinha. Lá dentro, ele é o <strong>salva-vidas</strong> da maior piscina do clube.</p></blockquote>
+<dl class="wp-caption  aligncenter" style="width:360px;">
+<dt class="wp-caption-dt"><strong>Moral da história no contexto do SQL Server</strong></dt>
+</dl>
+<p><strong>Login remete ao conceito de autenticação: Estou autorizado a entrar? O login na analogia era a carteirinha, </strong>que no caso é a forma de autenticação usada no sistema do clube. Se ele perdesse a carteirinha, teria que tirar outra ou participar de outros procedimentos (no caso do SQL Server, uma troca de senha realizada por um sysadmin resolveria, ou criar outro login, depende do caso). Meu amigo, o cara podia ser o Chuck Norris, mas se ele não tivesse cadastro no sistema do clube dificilmente ele entraria por meios pacíficos sem se autenticar (risos). Pro guarda, não interessa se ele é o Chuck Norris (Usuário), e sim se ele pode entrar ali ou não.</p>
+<p>User (Usuários) possuem alguma função dentro de um sistema, no caso do SQL Server. No caso do clube ele era o salva vidas, mas dentro de um banco de dados SQL Server, o cara poderia ser um dos administradores internos (sysadmin) ou até mesmo o cara que salva vidas (backupoperator, que inclusive faz backups). Note que é importante saber o que um user pode fazer, e os mapeamentos que ele possui dentro de um banco de dados. E isso nos leva ao conceito de.... Usuários!</p>
+<p><strong>Usuários remetem ao conceito de Autorização: O que fulano pode ou não fazer? Qual o seu papel no sistema? Até onde ele pode ir dentro do clube? </strong></p>
+<p>Como o post já é auto-explicativo, a única recomendação que dou é cuidar bem da sua carteirinha pra que você não perca o acesso ou que ela caia em mãos de pessoas más-intencionadas. Imagina se um cara parecido com o fulano da analogia é um serial killer, furta a carteirinha do dono e consegue entrar no clube se passando pelo salva-vidas (isso é assunto pra outro post, o impersonation)? Tá, exemplo exagerado, mas não pensei em nada mais suave, talvez seja a o sono e a falta do café. E bem, talvez seja por isso que eu não usei exemplos mais óbvios, como por exemplo, a entrada em um estádio de futebol ou num evento qualquer.</p>
+<p>Abs!</body></html></p>
+
+  </div><a class="u-url" href="/analogia-1-users-e-logins/" hidden></a>
+</article>
+
+      </div>
+    </main><footer class="site-footer h-card">
+  <data class="u-url" href="/"></data>
+
+  <div class="wrapper">
+
+    <h2 class="footer-heading">Renato Siqueira</h2>
+
+    <div class="footer-col-wrapper">
+      <div class="footer-col footer-col-1">
+        <ul class="contact-list">
+          <li class="p-name">Renato Siqueira</li><li><a class="u-email" href="mailto:rad_renato@hotmail.com">rad_renato@hotmail.com</a></li></ul>
+      </div>
+
+      <div class="footer-col footer-col-2"><ul class="social-media-list"><li><a href="https://github.com/renatomsq"><svg class="svg-icon"><use xlink:href="/assets/minima-social-icons.svg#github"></use></svg> <span class="username">renatomsq</span></a></li><li><a href="https://www.twitter.com/naotenhomais"><svg class="svg-icon"><use xlink:href="/assets/minima-social-icons.svg#twitter"></use></svg> <span class="username">naotenhomais</span></a></li></ul>
+</div>
+
+      <div class="footer-col footer-col-3">
+        <p>Meu blog de artigo técnico sobre banco de dados e carreira.</p>
+      </div>
+    </div>
+
+  </div>
+
+</footer>
+</body>
+
+</html>

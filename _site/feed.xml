@@ -1,0 +1,1000 @@
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.4.1">Jekyll</generator><link href="http://localhost:4000/feed.xml" rel="self" type="application/atom+xml" /><link href="http://localhost:4000/" rel="alternate" type="text/html" /><updated>2026-05-29T00:19:46-03:00</updated><id>http://localhost:4000/feed.xml</id><title type="html">Renato Siqueira</title><subtitle>Meu blog de artigo técnico sobre banco de dados e carreira.</subtitle><entry><title type="html">Welcome to Jekyll!</title><link href="http://localhost:4000/jekyll/update/2026/05/28/welcome-to-jekyll.html" rel="alternate" type="text/html" title="Welcome to Jekyll!" /><published>2026-05-28T23:34:47-03:00</published><updated>2026-05-28T23:34:47-03:00</updated><id>http://localhost:4000/jekyll/update/2026/05/28/welcome-to-jekyll</id><content type="html" xml:base="http://localhost:4000/jekyll/update/2026/05/28/welcome-to-jekyll.html"><![CDATA[<p>You’ll find this post in your <code class="language-plaintext highlighter-rouge">_posts</code> directory. Go ahead and edit it and re-build the site to see your changes. You can rebuild the site in many different ways, but the most common way is to run <code class="language-plaintext highlighter-rouge">jekyll serve</code>, which launches a web server and auto-regenerates your site when a file is updated.</p>
+
+<p>Jekyll requires blog post files to be named according to the following format:</p>
+
+<p><code class="language-plaintext highlighter-rouge">YEAR-MONTH-DAY-title.MARKUP</code></p>
+
+<p>Where <code class="language-plaintext highlighter-rouge">YEAR</code> is a four-digit number, <code class="language-plaintext highlighter-rouge">MONTH</code> and <code class="language-plaintext highlighter-rouge">DAY</code> are both two-digit numbers, and <code class="language-plaintext highlighter-rouge">MARKUP</code> is the file extension representing the format used in the file. After that, include the necessary front matter. Take a look at the source for this post to get an idea about how it works.</p>
+
+<p>Jekyll also offers powerful support for code snippets:</p>
+
+<figure class="highlight"><pre><code class="language-ruby" data-lang="ruby"><span class="k">def</span> <span class="nf">print_hi</span><span class="p">(</span><span class="nb">name</span><span class="p">)</span>
+  <span class="nb">puts</span> <span class="s2">"Hi, </span><span class="si">#{</span><span class="nb">name</span><span class="si">}</span><span class="s2">"</span>
+<span class="k">end</span>
+<span class="n">print_hi</span><span class="p">(</span><span class="s1">'Tom'</span><span class="p">)</span>
+<span class="c1">#=&gt; prints 'Hi, Tom' to STDOUT.</span></code></pre></figure>
+
+<p>Check out the <a href="https://jekyllrb.com/docs/home">Jekyll docs</a> for more info on how to get the most out of Jekyll. File all bugs/feature requests at <a href="https://github.com/jekyll/jekyll">Jekyll’s GitHub repo</a>. If you have questions, you can ask them on <a href="https://talk.jekyllrb.com/">Jekyll Talk</a>.</p>]]></content><author><name></name></author><category term="jekyll" /><category term="update" /><summary type="html"><![CDATA[You’ll find this post in your _posts directory. Go ahead and edit it and re-build the site to see your changes. You can rebuild the site in many different ways, but the most common way is to run jekyll serve, which launches a web server and auto-regenerates your site when a file is updated.]]></summary></entry><entry><title type="html">Delete em lotes no SQL Server e Postgres</title><link href="http://localhost:4000/delete-em-lotes-no-sql-server-e-postgres/" rel="alternate" type="text/html" title="Delete em lotes no SQL Server e Postgres" /><published>2025-08-15T14:45:58-03:00</published><updated>2025-08-15T14:45:58-03:00</updated><id>http://localhost:4000/delete-em-lotes-no-sql-server-e-postgres</id><content type="html" xml:base="http://localhost:4000/delete-em-lotes-no-sql-server-e-postgres/"><![CDATA[<p><!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN" "http://www.w3.org/TR/REC-html40/loose.dtd"><br />
+<!-- wp:image {"id":3178,"sizeSlug":"full","linkDestination":"none"} --><html><body></p>
+<figure class="wp-block-image size-full"><img src="/assets/2025/08/borracha_apagando_banco_de_dados.png" alt="" class="wp-image-3178"></figure>
+<p><!-- /wp:image --></p>
+<p><!-- wp:paragraph --></p>
+<p>Olá! Sextou com dica.</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --></p>
+<p>Tem horas que deletar um grande volume de dados é necessário e deve ficar no radar de toda empresa, já que dados tem ciclo de vida e muitas vezes não faz sentido ficar disponível em produção. Portanto o post de hoje é uma dica de como realizar este tipo de técnica (expurgo).</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --></p>
+<p>Pode ser que a tabela que você precise expurgar seja extremamente concorrida e rodar aquele DELETE "pesado" pode ser uma má ideia, não só pela possibilidade de bloqueios mas também por abrir uma transação grande (que pode reter log e gerar outros problemas, dependendo do banco envolvido).</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --></p>
+<p>O código abaixo é um exemplo de como deletar em lotes em uma tabela específica no MSDB mas você pode aplicar em qualquer outra coisa, basta adaptar o código.</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:code --></p>
+<pre class="wp-block-code"><code>USE msdb;
+GO
+
+DECLARE @Batch INT = 1000; -- vai deletar de quanto em quanto
+DECLARE @DataCorte INT = 30;   -- data de corte do expurgo
+
+WHILE 1=1
+BEGIN
+    DELETE TOP (@Batch)
+    FROM sysmail_mailitems
+    WHERE send_request_date &lt; DATEADD(DAY, -@DataCorte, GETDATE());
+
+    IF @@ROWCOUNT = 0 BREAK;
+
+    WAITFOR DELAY '00:00:01'; -- Break para aliviar carga
+END</code></pre>
+<p><!-- /wp:code --></p>
+<p><!-- wp:paragraph --></p>
+<p>Esse é um bom exemplo pois MSDB que faz muito uso de envio de e-mail geralmente é um bom candidato para acrescentar em rotina de expurgo, mas ele traz uma outra técnica que pode funcionar bem em alguns cenário de deleção que é DELEÇÃO EM VIEW, que por vezes é uma boa ideia para realizar a deleção em mais de uma tabela e manter integridade referencial se tiver.</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --></p>
+<p>No Postgres uma implementação de delete em lote similar (ajuste as colunas e o intervalo, no script abaixo está 3 dias):</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:code --></p>
+<pre class="wp-block-code"><code>DECLARE
+    v_deletadas BIGINT;
+    v_total BIGINT := 0;
+    v_lote INTEGER := 5000; -- tamanho do lote
+BEGIN
+    LOOP
+        DELETE FROM public.tabela_qualquer
+        WHERE ctid IN (
+            SELECT ctid
+            FROM public.tabela_qualquer
+            WHERE dt_validade &lt; CURRENT_DATE - INTERVAL '3 days'
+            ORDER BY dt_validade
+            LIMIT v_lote
+        );
+
+        GET DIAGNOSTICS v_deletadas = ROW_COUNT;
+        v_total := v_total + v_deletadas;
+
+        EXIT WHEN v_deletadas = 0;
+        COMMIT;
+    END LOOP;
+
+    RAISE NOTICE 'Total de linhas deletadas: %', v_total;
+</code></pre>
+<p><!-- /wp:code --></p>
+<p><!-- wp:paragraph --></p>
+<p>Existem várias formas e estratégias de expurgo (incluindo arquivamento). O objetivo deste post foi ser bem simples para compartilhar o conceito e que pode ajudar no dia a dia de um DBA.</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --></p>
+<p>[]s</p>
+<p><!-- /wp:paragraph --><br />
+</body></html></p>]]></content><author><name>{&quot;login&quot; =&gt; &quot;renatomsiq@gmail.com&quot;, &quot;email&quot; =&gt; &quot;renatomsiq@gmail.com&quot;, &quot;display_name&quot; =&gt; &quot;renatomsiq@gmail.com&quot;, &quot;first_name&quot; =&gt; &quot;&quot;, &quot;last_name&quot; =&gt; &quot;&quot;}</name><email>renatomsiq@gmail.com</email></author><summary type="html"><![CDATA[Olá! Sextou com dica. Tem horas que deletar um grande volume de dados é necessário e deve ficar no radar de toda empresa, já que dados tem ciclo de vida e muitas vezes não faz sentido ficar disponível em produção. Portanto o post de hoje é uma dica de como realizar este tipo de técnica (expurgo). Pode ser que a tabela que você precise expurgar seja extremamente concorrida e rodar aquele DELETE "pesado" pode ser uma má ideia, não só pela possibilidade de bloqueios mas também por abrir uma transação grande (que pode reter log e gerar outros problemas, dependendo do banco envolvido). O código abaixo é um exemplo de como deletar em lotes em uma tabela específica no MSDB mas você pode aplicar em qualquer outra coisa, basta adaptar o código. USE msdb; GO]]></summary></entry><entry><title type="html">Exercício SQL #1 - Ajuda minha lojinha</title><link href="http://localhost:4000/exercicio-sql-1-ajuda-minha-lojinha/" rel="alternate" type="text/html" title="Exercício SQL #1 - Ajuda minha lojinha" /><published>2025-03-11T18:58:15-03:00</published><updated>2025-03-11T18:58:15-03:00</updated><id>http://localhost:4000/exercicio-sql-1-ajuda-minha-lojinha</id><content type="html" xml:base="http://localhost:4000/exercicio-sql-1-ajuda-minha-lojinha/"><![CDATA[<p><!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN" "http://www.w3.org/TR/REC-html40/loose.dtd"><br />
+<!-- wp:image {"id":3157,"sizeSlug":"large","linkDestination":"none"} --><html><body></p>
+<figure class="wp-block-image size-large"><img src="/assets/2025/03/wexor-tmg-L-2p8fapOA8-unsplash-1024x640.jpg" alt="" class="wp-image-3157"></figure>
+<p><!-- /wp:image --></p>
+<p><!-- wp:paragraph --></p>
+<p>Olá! Carnaval passou e o ano começou daquele jeitão, certo? Aproveitei a oportunidade então para tirar as teias do blog e postar exercícios que eu tenho certeza que vão te ajudar a praticar não somente SQL mas também um pouco de lógica. Então sendo direto ao ponto, este post é para quem: </p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:list --></p>
+<ul class="wp-block-list">
+<!-- wp:list-item --></p>
+<li>Está aprendendo SQL;</li>
+<p><!-- /wp:list-item --></p>
+<p><!-- wp:list-item --></p>
+<li>Quer um exercício com dados de negócio real e que fazem algum sentido;</li>
+<p><!-- /wp:list-item --></p>
+<p><!-- wp:list-item --></p>
+<li>Quer se divertir sei lá porque motivos além dos citados acima;</li>
+<p><!-- /wp:list-item -->
+</ul>
+<p><!-- /wp:list --></p>
+<p><!-- wp:paragraph --></p>
+<p>Caso você já seja sinistro(a) em SQL mas ainda assim quer dar uma brincada, além de responder as perguntas de negócio, você pode responder as perguntas com gráficos (quanto mais simples, melhor!) ou pode fazer a ingestão dessa tabela em outras tecnologias e brincar por lá também adaptando o que for necessário (lembrando que o script abaixo e os exercícios foram feitos no SQL Server).</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --></p>
+<p><strong>INTRODUÇÃO</strong></p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --></p>
+<p>Você é o(a) analista de dados que contratei para me ajudar em análises de uma loja virtual  que abri tem pouco tempo. Estou vendendo igual uma "metralhadora do rambo" e não quero perder meu tempo analisando dados, prefiro focar no negócio e contratar alguém (VOCÊ) para fazer isso por mim. Sem mais delongas, aqui está uma amostra da minha tabela:</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:code --></p>
+<pre class="wp-block-code"><code>/* Tabela para a gente brincar */
+CREATE TABLE [dbo].[Sales](
+	[SalesId] smallint identity (1,1) Primary key,
+	[SalesDate] DATE NULL,
+	[FreightType] VARCHAR(100),
+	[Freight] DECIMAL(12,2) NULL,
+	[Total] DECIMAL(12,2) NULL,
+	[Buyer] varchar(100) NULL,
+	[City] varchar(100) NULL,
+	[State] CHAR(2) NULL,
+	[Status] VARCHAR(20) NULL
+) ON [PRIMARY]
+GO
+
+/* Os dados obviamente, sem eles nada acontece feijoada */ 
+ 
+INSERT [dbo].[Sales] ([SalesDate], FreightType, [Freight], [Total], [Buyer], City, [State], [Status]) VALUES ('2025/02/20', 'Frete combinado com o vendedor', '0.01', '48.01', 'Samurai', 'João Pessoa - PB', 'PB', 'Recebido')
+GO
+INSERT [dbo].[Sales] ([SalesDate], FreightType, [Freight], [Total], [Buyer], City, [State], [Status]) VALUES ('2025/02/19', 'Frete Fixo com rastreio', '12', '50', 'ExDeath', 'Batatais - SP', 'SP', 'Cancelado')
+GO
+INSERT [dbo].[Sales] ([SalesDate], FreightType, [Freight], [Total], [Buyer], City, [State], [Status]) VALUES ('2025/02/14', 'Frete combinado com o vendedor', '0.1', '85', 'Dante', 'João Pessoa - PB', 'PB', 'Recebido')
+GO
+INSERT [dbo].[Sales] ([SalesDate], FreightType, [Freight], [Total], [Buyer], City, [State], [Status]) VALUES ('2025/02/11', 'Frete Fixo com rastreio', '12', '63', 'Lenna', 'Niterói - RJ', 'RJ', 'Recebido')
+GO
+INSERT [dbo].[Sales] ([SalesDate], FreightType, [Freight], [Total], [Buyer], City, [State], [Status]) VALUES ('2025/02/09', 'Frete Fixo com rastreio', '12', '56.7', 'Samus', 'Belo Horizonte - MG', 'MG', 'Recebido')
+GO
+INSERT [dbo].[Sales] ([SalesDate], FreightType, [Freight], [Total], [Buyer], City, [State], [Status]) VALUES ('2025/02/09', 'Frete Fixo com rastreio', '12', '52', 'Geralt', 'Petrolina - PE', 'PE', 'Recebido')
+GO
+INSERT [dbo].[Sales] ([SalesDate], FreightType, [Freight], [Total], [Buyer], City, [State], [Status]) VALUES ('2025/02/06', 'Frete Fixo com rastreio', '12', '50', 'Aloy', 'Vila Velha - ES', 'ES', 'Recebido')
+GO
+INSERT [dbo].[Sales] ([SalesDate], FreightType, [Freight], [Total], [Buyer], City, [State], [Status]) VALUES ('2025/02/06', 'Frete Fixo com rastreio', '12', '102', 'Ryu', 'Rio de Janeiro - RJ', 'RJ', 'Recebido')
+GO
+INSERT [dbo].[Sales] ([SalesDate], FreightType, [Freight], [Total], [Buyer], City, [State], [Status]) VALUES ('2025/02/04', 'Frete Fixo com rastreio', '12', '183.89', 'Scorpion', 'Brasília - DF', 'DF', 'Recebido')
+GO
+INSERT [dbo].[Sales] ([SalesDate], FreightType, [Freight], [Total], [Buyer], City, [State], [Status]) VALUES ('2025/02/03', 'Frete Fixo com rastreio', '12', '42', 'Sonic', 'Monte Alto - SP', 'SP', 'Recebido')
+GO
+INSERT [dbo].[Sales] ([SalesDate], FreightType, [Freight], [Total], [Buyer], City, [State], [Status]) VALUES ('2025/02/03', 'Frete Fixo com rastreio', '12', '86.9', 'Neo', 'Porto Alegre - RS', 'RS', 'Recebido')
+GO
+INSERT [dbo].[Sales] ([SalesDate], FreightType, [Freight], [Total], [Buyer], City, [State], [Status]) VALUES ('2025/02/02', 'Frete Fixo com rastreio', '12', '47', 'Yoda', 'João Pessoa - PB', 'PB', 'Recebido')
+GO
+INSERT [dbo].[Sales] ([SalesDate], FreightType, [Freight], [Total], [Buyer], City, [State], [Status]) VALUES ('2025/02/02', 'Frete Fixo com rastreio', '12', '36', 'Spock', 'Jundiaí - SP', 'SP', 'Recebido')
+GO
+INSERT [dbo].[Sales] ([SalesDate], FreightType, [Freight], [Total], [Buyer], City, [State], [Status]) VALUES ('2025/02/01', 'Frete combinado com o vendedor', '0.01', '54', 'Gandalf', 'Joo Pessoa - PB', 'PB', 'Recebido')
+GO
+INSERT [dbo].[Sales] ([SalesDate], FreightType, [Freight], [Total], [Buyer], City, [State], [Status]) VALUES ('2025/01/30', 'Frete Fixo com rastreio', '12', '94', 'Shanks', 'Fortaleza - CE', 'CE', 'Recebido')
+GO
+INSERT [dbo].[Sales] ([SalesDate], FreightType, [Freight], [Total], [Buyer], City, [State], [Status]) VALUES ('2025/01/29', 'Frete combinado com o vendedor', '0.01', '41.01', 'Daneedanee', 'Santa Rita - PB', 'PB', 'Recebido')
+GO
+INSERT [dbo].[Sales] ([SalesDate], FreightType, [Freight], [Total], [Buyer], City, [State], [Status]) VALUES ('2025/01/26', 'Frete Fixo com rastreio', '12', '55.1', 'Aeris', 'São Paulo - SP', 'SP', 'Recebido')
+GO
+INSERT [dbo].[Sales] ([SalesDate], FreightType, [Freight], [Total], [Buyer], City, [State], [Status]) VALUES ('2025/01/24', 'Frete Fixo com rastreio', '12', '74', 'Eleven', 'Itapevi - SP', 'SP', 'Recebido')
+GO
+INSERT [dbo].[Sales] ([SalesDate], FreightType, [Freight], [Total], [Buyer], City, [State], [Status]) VALUES ('2025/01/23', 'Frete Fixo com rastreio', '12', '52', 'Ripley', 'Rio de Janeiro - RJ', 'RJ', 'Recebido')
+GO
+INSERT [dbo].[Sales] ([SalesDate], FreightType, [Freight], [Total], [Buyer], City, [State], [Status]) VALUES ('2025/01/22', 'Frete Fixo com rastreio', '12', '115.3', 'Legolas', 'São João de Meriti - RJ', 'RJ', 'Recebido')
+GO
+INSERT [dbo].[Sales] ([SalesDate], FreightType, [Freight], [Total], [Buyer], City, [State], [Status]) VALUES ('2025/01/22', 'Frete Fixo com rastreio', '12', '47', 'Vader', 'Parambu - CE', 'CE', 'Cancelado')
+GO
+INSERT [dbo].[Sales] ([SalesDate], FreightType, [Freight], [Total], [Buyer], City, [State], [Status]) VALUES ('2025/01/21', 'Frete Fixo com rastreio', '12', '96.8', 'Logan', 'São Paulo - SP', 'SP', 'Recebido')
+GO
+INSERT [dbo].[Sales] ([SalesDate], FreightType, [Freight], [Total], [Buyer], City, [State], [Status]) VALUES ('2025/01/21', 'Frete Fixo com rastreio', '12', '47', 'Thanos', 'Fortaleza - CE', 'CE', 'Cancelado')
+GO
+INSERT [dbo].[Sales] ([SalesDate], FreightType, [Freight], [Total], [Buyer], City, [State], [Status]) VALUES ('2025/01/20', 'Frete Fixo com rastreio', '12', '175', 'Goku', 'Rio de Janeiro - RJ', 'RJ', 'Recebido')
+GO
+INSERT [dbo].[Sales] ([SalesDate], FreightType, [Freight], [Total], [Buyer], City, [State], [Status]) VALUES ('2025/01/13', 'Frete Fixo com rastreio', '12', '112', 'Naruto', 'Fortaleza - CE', 'CE', 'Recebido')
+GO
+INSERT [dbo].[Sales] ([SalesDate], FreightType, [Freight], [Total], [Buyer], City, [State], [Status]) VALUES ('2025/01/13', 'Frete combinado com o vendedor', '0.01', '31.01', 'Vegeta', 'João Pessoa - PB', 'PB', 'Recebido')
+GO
+INSERT [dbo].[Sales] ([SalesDate], FreightType, [Freight], [Total], [Buyer], City, [State], [Status]) VALUES ('2025/01/13', 'Frete combinado com o vendedor', '0.5', '5.5', 'Luffy', 'João Pessoa - PB', 'PB', 'Recebido')
+GO
+INSERT [dbo].[Sales] ([SalesDate], FreightType, [Freight], [Total], [Buyer], City, [State], [Status]) VALUES ('2025/01/13', 'Frete combinado com o vendedor', '0.01', '55.01', 'Gandalf', 'João Pessoa - PB', 'PB', 'Recebido')
+GO
+INSERT [dbo].[Sales] ([SalesDate], FreightType, [Freight], [Total], [Buyer], City, [State], [Status]) VALUES ('2025/01/13', 'Frete Fixo com rastreio', '12', '52', 'Kenshin', 'Teresina - PI', 'PI', 'Recebido')
+GO
+INSERT [dbo].[Sales] ([SalesDate], FreightType, [Freight], [Total], [Buyer], City, [State], [Status]) VALUES ('2025/02/20', 'Frete Fixo com rastreio', '12', '50.5', 'Spawn', 'Teresópolis - RJ', 'RJ', 'Recebido')
+GO
+INSERT [dbo].[Sales] ([SalesDate], FreightType, [Freight], [Total], [Buyer], City, [State], [Status]) VALUES ('2025/02/18', 'Frete Fixo com rastreio', '12', '196.88', 'Magneto', 'Florianópolis - SC', 'SC', 'Recebido')
+GO
+INSERT [dbo].[Sales] ([SalesDate], FreightType, [Freight], [Total], [Buyer], City, [State], [Status]) VALUES ('2025/02/12', 'Frete Fixo com rastreio', '12', '51.9', 'Hellboy', 'Ipojuca - PE', 'PE', 'Recebido')
+GO
+INSERT [dbo].[Sales] ([SalesDate], FreightType, [Freight], [Total], [Buyer], City, [State], [Status]) VALUES ('2025/02/11', 'Frete Fixo com rastreio', '12', '82', 'Mario', 'São Paulo - SP', 'SP', 'Recebido')
+GO
+INSERT [dbo].[Sales] ([SalesDate], FreightType, [Freight], [Total], [Buyer], City, [State], [Status]) VALUES ('2025/02/10', 'Frete combinado com o vendedor', '0.2', '31.2', 'Ash', 'Guarabira - PB', 'PB', 'Recebido')
+GO
+INSERT [dbo].[Sales] ([SalesDate], FreightType, [Freight], [Total], [Buyer], City, [State], [Status]) VALUES ('2025/02/07', 'Grátis', '0', '729', 'Seiya', 'Itajaí - SC', 'SC', 'Recebido')
+GO
+INSERT [dbo].[Sales] ([SalesDate], FreightType, [Freight], [Total], [Buyer], City, [State], [Status]) VALUES ('2025/02/26', 'Frete Fixo com rastreio', '12.00', '84.00', 'Shun', 'Duque de Caxias - RJ', 'RJ', 'Recebido')
+GO
+INSERT [dbo].[Sales] ([SalesDate], FreightType, [Freight], [Total], [Buyer], City, [State], [Status]) VALUES ('2025/02/26', 'Frete Fixo com rastreio', '12.00', '210.50', 'Omega', 'São Paulo - SP', 'SP', 'Recebido')
+GO
+INSERT [dbo].[Sales] ([SalesDate], FreightType, [Freight], [Total], [Buyer], City, [State], [Status]) VALUES ('2025/03/08', 'Frete Fixo com rastreio', '14.00', '48.00', 'Bartz', 'São Paulo - SP', 'SP', 'Recebido')
+GO
+INSERT [dbo].[Sales] ([SalesDate], FreightType, [Freight], [Total], [Buyer], City, [State], [Status]) VALUES ('2025/03/07', 'Grátis', '0.00', '351.49', 'Cloud', 'São Luís - MA', 'MA', 'Recebido')
+GO
+INSERT [dbo].[Sales] ([SalesDate], FreightType, [Freight], [Total], [Buyer], City, [State], [Status]) VALUES ('2025/03/07', 'Frete Fixo com rastreio', '14.00', '75.00', 'Sephiroth', 'Americana - SP', 'SP', 'Recebido')
+GO
+INSERT [dbo].[Sales] ([SalesDate], FreightType, [Freight], [Total], [Buyer], City, [State], [Status]) VALUES ('2025/03/07', 'Frete Fixo com rastreio', '14.00', '69.00', 'Tifa', 'São Paulo - SP', 'SP', 'Recebido')
+GO
+INSERT [dbo].[Sales] ([SalesDate], FreightType, [Freight], [Total], [Buyer], City, [State], [Status]) VALUES ('2025/03/01', 'Frete Fixo com rastreio', '14.00', '160.80', 'Barret', 'São Paulo - SP', 'SP', 'Recebido')
+GO
+INSERT [dbo].[Sales] ([SalesDate], FreightType, [Freight], [Total], [Buyer], City, [State], [Status]) VALUES ('2025/02/27', 'Frete Fixo com rastreio', '14.00', '73.98', 'Eleven', 'Itapevi - SP', 'SP', 'Recebido')
+GO
+INSERT [dbo].[Sales] ([SalesDate], FreightType, [Freight], [Total], [Buyer], City, [State], [Status]) VALUES ('2025/02/23', 'Frete Fixo com rastreio', '12.00', '112.50', 'Hyoga', 'Cachoeiro de Itapemirim - ES', 'ES', 'Recebido')
+GO
+</code></pre>
+<p><!-- /wp:code --></p>
+<p><!-- wp:paragraph --></p>
+<p>O conteúdo da tabela é mais ou menos esse:</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:image {"id":3158,"sizeSlug":"full","linkDestination":"none"} --></p>
+<figure class="wp-block-image size-full"><img src="/assets/2025/03/image.png" alt="" class="wp-image-3158"></figure>
+<p><!-- /wp:image --></p>
+<p><!-- wp:paragraph --></p>
+<p>ATENÇÃO!!!!! Os dados não têm muito segredo, mas perceba que as únicas vendas que realmente importam para mim foram as que aconteceram de fato (Status = 'Recebido'). Essa informação é MUITO importante, porque se você esquecer de filtrar o status correto, vai considerar nos cálculos vendas que não aconteceram. Portanto, errar isso compromete várias das perguntas. Para fins de cálculo considere sempre a coluna "Total" que é de fato o valor final da venda (somando o frete que nessa modelagem se chama 'Freight' thanks to duolingo).</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:list {"ordered":true} --></p>
+<ol class="wp-block-list">
+<!-- wp:list-item --></p>
+<li>Qual total de dinheiro que eu já faturei nas minhas vendas?</li>
+<p><!-- /wp:list-item --></p>
+<p><!-- wp:list-item --></p>
+<li>Qual total de dinheiro que eu já faturei nas minhas vendas por mês? Me mostre a query.</li>
+<p><!-- /wp:list-item --></p>
+<p><!-- wp:list-item --></p>
+<li>Preciso de uma consulta que mostre a venda com maior valor, a com menor valor e a média dos valores.  </li>
+<p><!-- /wp:list-item --></p>
+<p><!-- wp:list-item --></p>
+<li>Preciso saber quantas vendas por dia de semana aconteceram. A ideia é saber qual dia da semana (WEEKDAY) eu vendi mais vezes. Me mostre a query que traga essa agregação de dia de semana x quantidade de vendas efetuadas e ordene pelo maior número.</li>
+<p><!-- /wp:list-item --></p>
+<p><!-- wp:list-item --></p>
+<li>Tem algum cliente que comprou mais de uma vez comigo? Quais são eles e quantas vezes eles compraram?</li>
+<p><!-- /wp:list-item --></p>
+<p><!-- wp:list-item --></p>
+<li>Qual estado do Brasil que mais compra comigo?</li>
+<p><!-- /wp:list-item --></p>
+<p><!-- wp:list-item --></p>
+<li>Qual valor total das vendas que eu perdi?</li>
+<p><!-- /wp:list-item --></p>
+<p><!-- wp:list-item --></p>
+<li>Qual foi a quantidade de vendas realizadas por mês? Me mostre a query.</li>
+<p><!-- /wp:list-item --></p>
+<p><!-- wp:list-item --></p>
+<li>Esses dados de frete estão zoados. Todo frete grátis sai do bolso de alguém e nesse caso é o meu mesmo. Preciso saber quanto eu realmente gastei de frete como um todo. Onde tiver frete grátis, considere o valor de 15 reais.</li>
+<p><!-- /wp:list-item -->
+</ol>
+<p><!-- /wp:list --></p>
+<p><!-- wp:paragraph --></p>
+<p><strong>AGORA É COM VOCÊ</strong></p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --></p>
+<p>É isso. Dê o seu melhor e brinque com os dados. Se esforce ao máximo para fazer sem ajuda de IA.   Algumas perguntas são bem simples, outras nem tanto, mas a ideia é essa, faz até onde você conseguir e se precisar de alguma dica só avisar. Pode usar os comentários deste post mesmo, postar no git e colocar o link, "your choice".</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --></p>
+<p>Futuramente farei posts parecidos com este porque eu sei que eles podem ajudar pelo menos uma pessoa e com toda certeza, valeu todo o o investimento de tempo. Vamo que vamo. Abraço!</p>
+<p><!-- /wp:paragraph --><br />
+</body></html></p>]]></content><author><name>{&quot;login&quot; =&gt; &quot;renatomsiq@gmail.com&quot;, &quot;email&quot; =&gt; &quot;renatomsiq@gmail.com&quot;, &quot;display_name&quot; =&gt; &quot;renatomsiq@gmail.com&quot;, &quot;first_name&quot; =&gt; &quot;&quot;, &quot;last_name&quot; =&gt; &quot;&quot;}</name><email>renatomsiq@gmail.com</email></author><category term="exercicio" /><category term="pratica" /><category term="SQL" /><category term="TSQL" /><summary type="html"><![CDATA[Olá! Carnaval passou e o ano começou daquele jeitão, certo? Aproveitei a oportunidade então para tirar as teias do blog e postar exercícios que eu tenho certeza que vão te ajudar a praticar não somente SQL mas também um pouco de lógica. Então sendo direto ao ponto, este post é para quem: Está aprendendo SQL; Quer um exercício com dados de negócio real e que fazem algum sentido; Quer se divertir sei lá porque motivos além dos citados acima; Caso você já seja sinistro(a) em SQL mas ainda assim quer dar uma brincada, além de responder as perguntas de negócio, você pode responder as perguntas com gráficos (quanto mais simples, melhor!) ou pode fazer a ingestão dessa tabela em outras tecnologias e brincar por lá também adaptando o que for necessário (lembrando que o script abaixo e os exercícios foram feitos no SQL Server). INTRODUÇÃO Você é o(a) analista de dados que contratei para me ajudar em análises de uma loja virtual que abri tem pouco tempo. Estou vendendo igual uma "metralhadora do rambo" e não quero perder meu tempo analisando dados, prefiro focar no negócio e contratar alguém (VOCÊ) para fazer isso por mim. Sem mais delongas, aqui está uma amostra da minha tabela: /* Tabela para a gente brincar */ CREATE TABLE [dbo].[Sales]( [SalesId] smallint identity (1,1) Primary key, [SalesDate] DATE NULL, [FreightType] VARCHAR(100), [Freight] DECIMAL(12,2) NULL, [Total] DECIMAL(12,2) NULL, [Buyer] varchar(100) NULL, [City] varchar(100) NULL, [State] CHAR(2) NULL, [Status] VARCHAR(20) NULL ) ON [PRIMARY] GO]]></summary></entry><entry><title type="html">Reflexões de 2024</title><link href="http://localhost:4000/reflexoes-de-2024/" rel="alternate" type="text/html" title="Reflexões de 2024" /><published>2025-01-01T03:38:32-03:00</published><updated>2025-01-01T03:38:32-03:00</updated><id>http://localhost:4000/reflexoes-de-2024</id><content type="html" xml:base="http://localhost:4000/reflexoes-de-2024/"><![CDATA[<p><!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN" "http://www.w3.org/TR/REC-html40/loose.dtd"><br />
+<!-- wp:image {"id":3135,"sizeSlug":"large","linkDestination":"none"} --><html><body></p>
+<figure class="wp-block-image size-large"><img src="/assets/2025/01/6caf0a4d-a0ca-4bf1-948b-934d19507886-1024x768.jpeg" alt="" class="wp-image-3135"></figure>
+<p><!-- /wp:image --></p>
+<p><!-- wp:paragraph --></p>
+<p>Salve! Mais um post não-técnico onde eu me divirto documentando algumas opiniões e impressões que eu tive ao longo do ano. Minha maior diversão inclusive é ler as "reflexões" do ano passado e refletir se os planos e ações ainda estão alinhados (spoiler: estão). </p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --></p>
+<p>Portanto como é o último dia do ano, seguem os tópicos que gostaria de comentar do ano que passou e por fim, perspectivas para o futuro. <strong>Lembrando que este blog é meu, as opiniões colocadas aqui são totalmente minhas e minha preocupação em desagradar alguém é zero. </strong>Introdução dada, vamos às reflexões.</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:separator --></p>
+<hr class="wp-block-separator has-alpha-channel-opacity">
+<!-- /wp:separator --></p>
+<p><!-- wp:paragraph --></p>
+<p><strong>Sobre fogo amigo nas empresas</strong></p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --></p>
+<p>Papo "Elefante branco no meio da sala" mas passou da hora de escrever sobre isso. Se você está trabalhando e não está fazendo a sua parte como deveria, seja porque tem mais de um emprego e não está conseguindo lidar com as demandas direito (overemployed), ou porque quer ser demitido aos poucos (quiet quitting) ou por qualquer outra razão (raramente o motivo importa), <strong>saiba que você está prejudicando diretamente seus pares e sua equipe (no mínimo), e de propósito.</strong> É fogo amigo com silenciador.</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --></p>
+<p>Se você é esse tipo de pessoa, SUGIRO que se esforce urgente para mudar ou resolva de vez sua situação com suas obrigações, as pessoas não são burras e elas eventualmente percebem o que está acontecendo e todo mundo (inclusive você) sai prejudicado nessa história. </p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --></p>
+<p><strong>O ano da IA</strong></p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --></p>
+<p>Sem sombra de dúvida o assunto do ano. Muito ruído, muito hype e uma tecnologia que veio para ficar. É muito divertido gerar música ou imagem por IA mas o real valor dela, ao meu ver, é utilizá-la como ferramenta de apoio/automação e análise de dados principalmente os não-estruturados (!!!). É um tópico que não pode ser ignorado e deve seguir assim em 2025 (inclusive o hype).</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --></p>
+<p><strong>Investimentos</strong></p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --></p>
+<p>O país está passando economicamente por um momento ruim/complexo porém que abre muitas, mas muitas oportunidades de investimento (o rentista pira com IPCA+7, SELIC passando de 12%, algumas ações e FII's derretendo). Dito tudo isso, excelente momento não só para investir nessas coisas e até no exterior se possível (dolarizando ou via cripto), porém não esqueça que <strong>o maior investimento possível é investir em você mesmo(a)</strong>: um novo idioma (preferencialmente inglês), mais conhecimento técnico para ser ainda melhor na sua área de trabalho, uma boa saúde mental e física, investir em tempo de lazer principalmente com as pessoas que te fazem bem, e por aí vai. Priorize sempre você.</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --></p>
+<p><strong>Gratidão</strong></p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --></p>
+<p>É incrível como a gratidão é poderosa e com certeza deveria ser a regra e não a exceção. A cada levantar temos um fôlego de vida, novas oportunidades para evoluir e fazer o bem de algum modo, de acertar, de passar mais tempo com os nossos. Gratidão deveria ser a norma desde a hora que levantamos da cama.</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --></p>
+<p>Em tempos de rede social principalmente em um mundo vitrine pautado por sentimentos ruins (sendo a inveja o pior e o mais comum deles), muito se reclama e pouco se agradece. Nós temos mesmo tantos motivos para reclamar e inclusive, mais motivos para reclamar do que agradecer? Exercitar gratidão é um conselho poderoso demais para ser ignorado.</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --></p>
+<p><strong>Olho no mundo</strong></p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --></p>
+<p>O Brasil em geral é muito rico e diverso, mas nossa atenção não deve ser 100% focada aqui. Eu sei, "Para que focar lá fora sendo que eu moro aqui etc etc". Existem vários motivos mas dois deles importantes é que o Brasil (assim como outros países do mundo) tem o hábito quase inconsciente de copiar os EUA em muitos aspectos (isso sendo bem simplista), e entender essa dinâmica abre uma série de oportunidades para nossos projetos por aqui, principalmente implementar ideias novas (que lá não são tão novas assim) e se adiantar ao que eventualmente chegará por aqui. O segundo motivo é saber que o mundo está constantemente envolvido por guerras/conflitos. Já parou pra pensar que o atual embate da Rússia e Ucrânia vai fazer 3 anos em fevereiro? Que loucura. Conflitos e demais relações entre países afetam direta e indiretamente nossas vidas, é bom estar ciente dessas coisas mesmo que elas estejam 100% fora do nosso controle. Somos cidadãos do mesmo lugar.</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --></p>
+<p><strong>Sobre o blog, projetos e futuro para 2025</strong></p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --></p>
+<p>Fiz uma retrospectiva desde 2012 até o dia atual e tirei muitas conclusões interessantes (quem sabe um dia vira post), recomendo fortemente esse exercício que pode transformar o obscuro em óbvio, mas enfim, quero voltar a compartilhar e contribuir com alguma comunidade técnica que tanto me ajudou no passado, levando em conta meu perfil discreto. Não sei sinceramente se vou continuar postando neste blog ou puxo alguma outra coisa no wordpress.com mesmo, decisões que devo tomar ao longo dos dois primeiros meses. Vou deixar minhas ações falarem dessa vez :p</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --></p>
+<p>Sobre projetos, em breve vou tirar um período sabático para preparações intensas porque 2025 vai ser insano (no sentido positivo), e por esse motivo, <strong>vou encerrar no início do ano até final de janeiro todos os projetos no qual estou envolvido como consultor/apoio</strong>. Agradecendo já por todas as parcerias realizadas até aqui! Essa decisão é necessária e estratégica para que eu me posicione melhor (e de uma forma precisa) no mercado de trabalho a partir de 2025.</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --></p>
+<p>__</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --></p>
+<p>Agradeço a Deus por mais um ano de vida, pelas oportunidades dadas, pelas amizades mantidas e que seja um ano incrível não só para mim mas para você que está lendo também! Feliz 2025!</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --></p>
+<p>[]'s</p>
+<p><!-- /wp:paragraph --><br />
+</body></html></p>]]></content><author><name>{&quot;login&quot; =&gt; &quot;renatomsiq@gmail.com&quot;, &quot;email&quot; =&gt; &quot;renatomsiq@gmail.com&quot;, &quot;display_name&quot; =&gt; &quot;renatomsiq@gmail.com&quot;, &quot;first_name&quot; =&gt; &quot;&quot;, &quot;last_name&quot; =&gt; &quot;&quot;}</name><email>renatomsiq@gmail.com</email></author><summary type="html"><![CDATA[Salve! Mais um post não-técnico onde eu me divirto documentando algumas opiniões e impressões que eu tive ao longo do ano. Minha maior diversão inclusive é ler as "reflexões" do ano passado e refletir se os planos e ações ainda estão alinhados (spoiler: estão). Portanto como é o último dia do ano, seguem os tópicos que gostaria de comentar do ano que passou e por fim, perspectivas para o futuro. Lembrando que este blog é meu, as opiniões colocadas aqui são totalmente minhas e minha preocupação em desagradar alguém é zero. Introdução dada, vamos às reflexões. Sobre fogo amigo nas empresas Papo "Elefante branco no meio da sala" mas passou da hora de escrever sobre isso. Se você está trabalhando e não está fazendo a sua parte como deveria, seja porque tem mais de um emprego e não está conseguindo lidar com as demandas direito (overemployed), ou porque quer ser demitido aos poucos (quiet quitting) ou por qualquer outra razão (raramente o motivo importa), saiba que você está prejudicando diretamente seus pares e sua equipe (no mínimo), e de propósito. É fogo amigo com silenciador. Se você é esse tipo de pessoa, SUGIRO que se esforce urgente para mudar ou resolva de vez sua situação com suas obrigações, as pessoas não são burras e elas eventualmente percebem o que está acontecendo e todo mundo (inclusive você) sai prejudicado nessa história. O ano da IA Sem sombra de dúvida o assunto do ano. Muito ruído, muito hype e uma tecnologia que veio para ficar. É muito divertido gerar música ou imagem por IA mas o real valor dela, ao meu ver, é utilizá-la como ferramenta de apoio/automação e análise de dados principalmente os não-estruturados (!!!). É um tópico que não pode ser ignorado e deve seguir assim em 2025 (inclusive o hype). Investimentos O país está passando economicamente por um momento ruim/complexo porém que abre muitas, mas muitas oportunidades de investimento (o rentista pira com IPCA+7, SELIC passando de 12%, algumas ações e FII's derretendo). Dito tudo isso, excelente momento não só para investir nessas coisas e até no exterior se possível (dolarizando ou via cripto), porém não esqueça que o maior investimento possível é investir em você mesmo(a): um novo idioma (preferencialmente inglês), mais conhecimento técnico para ser ainda melhor na sua área de trabalho, uma boa saúde mental e física, investir em tempo de lazer principalmente com as pessoas que te fazem bem, e por aí vai. Priorize sempre você. Gratidão É incrível como a gratidão é poderosa e com certeza deveria ser a regra e não a exceção. A cada levantar temos um fôlego de vida, novas oportunidades para evoluir e fazer o bem de algum modo, de acertar, de passar mais tempo com os nossos. Gratidão deveria ser a norma desde a hora que levantamos da cama. Em tempos de rede social principalmente em um mundo vitrine pautado por sentimentos ruins (sendo a inveja o pior e o mais comum deles), muito se reclama e pouco se agradece. Nós temos mesmo tantos motivos para reclamar e inclusive, mais motivos para reclamar do que agradecer? Exercitar gratidão é um conselho poderoso demais para ser ignorado. Olho no mundo O Brasil em geral é muito rico e diverso, mas nossa atenção não deve ser 100% focada aqui. Eu sei, "Para que focar lá fora sendo que eu moro aqui etc etc". Existem vários motivos mas dois deles importantes é que o Brasil (assim como outros países do mundo) tem o hábito quase inconsciente de copiar os EUA em muitos aspectos (isso sendo bem simplista), e entender essa dinâmica abre uma série de oportunidades para nossos projetos por aqui, principalmente implementar ideias novas (que lá não são tão novas assim) e se adiantar ao que eventualmente chegará por aqui. O segundo motivo é saber que o mundo está constantemente envolvido por guerras/conflitos. Já parou pra pensar que o atual embate da Rússia e Ucrânia vai fazer 3 anos em fevereiro? Que loucura. Conflitos e demais relações entre países afetam direta e indiretamente nossas vidas, é bom estar ciente dessas coisas mesmo que elas estejam 100% fora do nosso controle. Somos cidadãos do mesmo lugar. Sobre o blog, projetos e futuro para 2025 Fiz uma retrospectiva desde 2012 até o dia atual e tirei muitas conclusões interessantes (quem sabe um dia vira post), recomendo fortemente esse exercício que pode transformar o obscuro em óbvio, mas enfim, quero voltar a compartilhar e contribuir com alguma comunidade técnica que tanto me ajudou no passado, levando em conta meu perfil discreto. Não sei sinceramente se vou continuar postando neste blog ou puxo alguma outra coisa no wordpress.com mesmo, decisões que devo tomar ao longo dos dois primeiros meses. Vou deixar minhas ações falarem dessa vez :p Sobre projetos, em breve vou tirar um período sabático para preparações intensas porque 2025 vai ser insano (no sentido positivo), e por esse motivo, vou encerrar no início do ano até final de janeiro todos os projetos no qual estou envolvido como consultor/apoio. Agradecendo já por todas as parcerias realizadas até aqui! Essa decisão é necessária e estratégica para que eu me posicione melhor (e de uma forma precisa) no mercado de trabalho a partir de 2025. __ Agradeço a Deus por mais um ano de vida, pelas oportunidades dadas, pelas amizades mantidas e que seja um ano incrível não só para mim mas para você que está lendo também! Feliz 2025! []'s]]></summary></entry><entry><title type="html">MongoDB - Perguntas de entrevista técnica</title><link href="http://localhost:4000/mongodb-perguntas-de-entrevista-tecnica/" rel="alternate" type="text/html" title="MongoDB - Perguntas de entrevista técnica" /><published>2024-12-04T15:52:14-03:00</published><updated>2024-12-04T15:52:14-03:00</updated><id>http://localhost:4000/mongodb-perguntas-de-entrevista-tecnica</id><content type="html" xml:base="http://localhost:4000/mongodb-perguntas-de-entrevista-tecnica/"><![CDATA[<p><!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN" "http://www.w3.org/TR/REC-html40/loose.dtd"><br />
+<!-- wp:image {"id":3117,"sizeSlug":"full","linkDestination":"none"} --><html><body></p>
+<figure class="wp-block-image size-full"><img src="/assets/2024/12/image-1.png" alt="" class="wp-image-3117"></figure>
+<p><!-- /wp:image --></p>
+<p><!-- wp:paragraph --></p>
+<p>Segue abaixo uma relação de perguntas relacionadas a MongoDB que eu já presenciei em algumas entrevistas. Não é uma lista exaustiva apesar do tamanho (a única coisa gerada por IA neste post é a imagem mesmo) mas cobre bastante do que é perguntado.</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --></p>
+<p>Lembrando, são perguntas genéricas partindo de pontos técnicos. Sempre dá pra apimentar e ir mais deep em assuntos de interesse (arquiteturais por exemplo) e a maior parte do tempo são perguntas do que você sabe e o que você fez com Mongo, que são perguntas mais abertas e que dizem muito sobre os candidatos. Sem mais delongas:</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --></p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:list {"ordered":true} --></p>
+<ol class="wp-block-list">
+<!-- wp:list-item --></p>
+<li>O que é NoSQL? </li>
+<p><!-- /wp:list-item --></p>
+<p><!-- wp:list-item --></p>
+<li>Qual diferença do MongoDB para outras soluções NoSQL?</li>
+<p><!-- /wp:list-item --></p>
+<p><!-- wp:list-item --></p>
+<li>Qual diferença do MongoDB para outras soluções de bancos relacionais?</li>
+<p><!-- /wp:list-item --></p>
+<p><!-- wp:list-item --></p>
+<li>Como funciona a Replicação do MongoDB? (Leia-se Replicaset)</li>
+<p><!-- /wp:list-item --></p>
+<p><!-- wp:list-item --></p>
+<li>Como funciona o Particionamento do MongoDB? (Leia-se Sharding)</li>
+<p><!-- /wp:list-item --></p>
+<p><!-- wp:list-item --></p>
+<li>Como você faz o MongoDB escalar verticalmente? </li>
+<p><!-- /wp:list-item --></p>
+<p><!-- wp:list-item --></p>
+<li>Como você faz o MongoDB escalar horizontalmente?</li>
+<p><!-- /wp:list-item --></p>
+<p><!-- wp:list-item --></p>
+<li>Para que serve o Mongod.conf ?</li>
+<p><!-- /wp:list-item --></p>
+<p><!-- wp:list-item --></p>
+<li>Como você monitora o MongoDB do seu ambiente? </li>
+<p><!-- /wp:list-item --></p>
+<p><!-- wp:list-item --></p>
+<li>Como você faz backup do MongoDB do seu ambiente?</li>
+<p><!-- /wp:list-item --></p>
+<p><!-- wp:list-item --></p>
+<li>Como funciona um índice no MongoDB e quais tipos?</li>
+<p><!-- /wp:list-item --></p>
+<p><!-- wp:list-item --></p>
+<li>Como funciona o Write-Concern?</li>
+<p><!-- /wp:list-item --></p>
+<p><!-- wp:list-item --></p>
+<li>O MongoDB suporta transações? </li>
+<p><!-- /wp:list-item --></p>
+<p><!-- wp:list-item --></p>
+<li>O MongoDB suporta transações multi-documento?</li>
+<p><!-- /wp:list-item --></p>
+<p><!-- wp:list-item --></p>
+<li>Como faço join entre collections diferentes no MongoDB?</li>
+<p><!-- /wp:list-item --></p>
+<p><!-- wp:list-item --></p>
+<li>Qual a diferença entre mongos, mongod e mongoshell.</li>
+<p><!-- /wp:list-item --></p>
+<p><!-- wp:list-item --></p>
+<li>Quais opções de backup existe no MongoDB?</li>
+<p><!-- /wp:list-item --></p>
+<p><!-- wp:list-item --></p>
+<li>O que é oplog?</li>
+<p><!-- /wp:list-item --></p>
+<p><!-- wp:list-item --></p>
+<li>O que é sharding e para que serve?</li>
+<p><!-- /wp:list-item --></p>
+<p><!-- wp:list-item --></p>
+<li>Explique a topologia de um Sharding</li>
+<p><!-- /wp:list-item --></p>
+<p><!-- wp:list-item --></p>
+<li>O que é uma shark Key</li>
+<p><!-- /wp:list-item --></p>
+<p><!-- wp:list-item --></p>
+<li>Como você aplicaria atualizações de versão no MongoDB?</li>
+<p><!-- /wp:list-item --></p>
+<p><!-- wp:list-item --></p>
+<li>O que é documento e coleção no MongoDB?</li>
+<p><!-- /wp:list-item --></p>
+<p><!-- wp:list-item --></p>
+<li>(Conte uma história de algum problema real) -Você usaria MongoDB para resolver esse problema ou usaria outra solução? </li>
+<p><!-- /wp:list-item --></p>
+<p><!-- wp:list-item --></p>
+<li>O que é WiredTiger?</li>
+<p><!-- /wp:list-item --></p>
+<p><!-- wp:list-item --></p>
+<li>O que é MongoDB Compass?</li>
+<p><!-- /wp:list-item --></p>
+<p><!-- wp:list-item --></p>
+<li>O que é MongoDB Ops Manager?</li>
+<p><!-- /wp:list-item --></p>
+<p><!-- wp:list-item --></p>
+<li>O que é journaling?</li>
+<p><!-- /wp:list-item --></p>
+<p><!-- wp:list-item --></p>
+<li>O que é readConcern?</li>
+<p><!-- /wp:list-item --></p>
+<p><!-- wp:list-item --></p>
+<li>Como funciona a autenticação e autorização no Mongodb?</li>
+<p><!-- /wp:list-item --></p>
+<p><!-- wp:list-item --></p>
+<li>O que é MongoDB Atlas?</li>
+<p><!-- /wp:list-item --></p>
+<p><!-- wp:list-item --></p>
+<li>Porque usar Atlas e não MongoDB em alguma EC2/VM?</li>
+<p><!-- /wp:list-item -->
+</ol>
+<p><!-- /wp:list --></p>
+<p><!-- wp:paragraph --></p>
+<p>Fique à vontade para acrescentar alguma questão se quiser ou compartilhar algo sobre este assunto.</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --></p>
+<p>Paz!</p>
+<p><!-- /wp:paragraph --><br />
+</body></html></p>]]></content><author><name>{&quot;login&quot; =&gt; &quot;renatomsiq@gmail.com&quot;, &quot;email&quot; =&gt; &quot;renatomsiq@gmail.com&quot;, &quot;display_name&quot; =&gt; &quot;renatomsiq@gmail.com&quot;, &quot;first_name&quot; =&gt; &quot;&quot;, &quot;last_name&quot; =&gt; &quot;&quot;}</name><email>renatomsiq@gmail.com</email></author><category term="entrevista" /><category term="mongodb" /><category term="replicaset" /><summary type="html"><![CDATA[Segue abaixo uma relação de perguntas relacionadas a MongoDB que eu já presenciei em algumas entrevistas. Não é uma lista exaustiva apesar do tamanho (a única coisa gerada por IA neste post é a imagem mesmo) mas cobre bastante do que é perguntado. Lembrando, são perguntas genéricas partindo de pontos técnicos. Sempre dá pra apimentar e ir mais deep em assuntos de interesse (arquiteturais por exemplo) e a maior parte do tempo são perguntas do que você sabe e o que você fez com Mongo, que são perguntas mais abertas e que dizem muito sobre os candidatos. Sem mais delongas: O que é NoSQL? Qual diferença do MongoDB para outras soluções NoSQL? Qual diferença do MongoDB para outras soluções de bancos relacionais? Como funciona a Replicação do MongoDB? (Leia-se Replicaset) Como funciona o Particionamento do MongoDB? (Leia-se Sharding) Como você faz o MongoDB escalar verticalmente? Como você faz o MongoDB escalar horizontalmente? Para que serve o Mongod.conf ? Como você monitora o MongoDB do seu ambiente? Como você faz backup do MongoDB do seu ambiente? Como funciona um índice no MongoDB e quais tipos? Como funciona o Write-Concern? O MongoDB suporta transações? O MongoDB suporta transações multi-documento? Como faço join entre collections diferentes no MongoDB? Qual a diferença entre mongos, mongod e mongoshell. Quais opções de backup existe no MongoDB? O que é oplog? O que é sharding e para que serve? Explique a topologia de um Sharding O que é uma shark Key Como você aplicaria atualizações de versão no MongoDB? O que é documento e coleção no MongoDB? (Conte uma história de algum problema real) -Você usaria MongoDB para resolver esse problema ou usaria outra solução? O que é WiredTiger? O que é MongoDB Compass? O que é MongoDB Ops Manager? O que é journaling? O que é readConcern? Como funciona a autenticação e autorização no Mongodb? O que é MongoDB Atlas? Porque usar Atlas e não MongoDB em alguma EC2/VM? Fique à vontade para acrescentar alguma questão se quiser ou compartilhar algo sobre este assunto. Paz!]]></summary></entry><entry><title type="html">Reflexões de 2023 – WIP</title><link href="http://localhost:4000/reflexoes-de-2023-wip/" rel="alternate" type="text/html" title="Reflexões de 2023 – WIP" /><published>2023-12-31T20:18:57-03:00</published><updated>2023-12-31T20:18:57-03:00</updated><id>http://localhost:4000/reflexoes-de-2023-wip</id><content type="html" xml:base="http://localhost:4000/reflexoes-de-2023-wip/"><![CDATA[<p><!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN" "http://www.w3.org/TR/REC-html40/loose.dtd"><br />
+<!-- wp:paragraph --><html><body></p>
+<p>Bem, post feito no último dia do ano (31.12.23) e editado no primeiro dia do ano (01.01.24) só pra não perder o hábito :D</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --></p>
+<p>2023 foi um ano muito interessante, ano de mais acertos que vacilos, e principalmente um ano de "preparação" para 2024. Um ano onde só posso agradecer a Deus por tudo o que ocorreu. Segue uma série de frases soltas que resumem as minhas percepções deste ano que passou:</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:list --></p>
+<ul>
+<!-- wp:list-item --></p>
+<li>Rede de apoio é uma das coisas mais importantes nesta vida.</li>
+<p><!-- /wp:list-item --></p>
+<p><!-- wp:list-item --></p>
+<li>Saúde mental e física == top 1 prioridade, principalmente a mental - sem ela <strong>tudo </strong>desanda.</li>
+<p><!-- /wp:list-item --></p>
+<p><!-- wp:list-item --></p>
+<li>Carregar o próprio peso é o mínimo necessário para não fazer a vida dos outros (bem) mais pesada...</li>
+<p><!-- /wp:list-item --></p>
+<p><!-- wp:list-item --></p>
+<li>Empreender no Brasil é complexo, mais complexo ainda é "tentar entender" a demonização de quem empreende. Brasil é estranho as vezes.</li>
+<p><!-- /wp:list-item --></p>
+<p><!-- wp:list-item --></p>
+<li>Se o mundo acabasse em 2024/2025, valeria a pena moldar uma vida pensando 10 ou 15 anos na frente? Equilibro aqui é vital. </li>
+<p><!-- /wp:list-item --></p>
+<p><!-- wp:list-item --></p>
+<li>Por bem ou por mal, cada um está pensando no seu próprio umbigo. Isso explica um monte de coisa absurda e que causa indignação e infelizmente é como a vida funciona.</li>
+<p><!-- /wp:list-item --></p>
+<p><!-- wp:list-item --></p>
+<li>"Liberdade possível" foi o tapa da cara do ano kkkkk</li>
+<p><!-- /wp:list-item -->
+</ul>
+<p><!-- /wp:list --></p>
+<p><!-- wp:paragraph --></p>
+<p><strong>Plano de ano novo? </strong></p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --></p>
+<p><strong>Técnico: </strong>Powershell, AWS, Programming, etc</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --></p>
+<p><strong>Estudos:</strong> Foco absoluto no inglês dessa vez. </p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --></p>
+<p><strong>Pessoal: </strong>Fazer uma viagem internacional. Japão talvez? <em>I wish so</em></p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --></p>
+<p><strong>Meta:</strong> "Fix it" - Colocar as coisas no lugar</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --></p>
+<p><strong>Planos para o blog?</strong></p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --></p>
+<p>Sim, mas dessa vez eu não vou planejar nada, só fazer</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --></p>
+<p>Pra encerrar uma imagem de fogos da passagem de ano (Cabedelo/PB):</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:image {"id":3083,"sizeSlug":"large","linkDestination":"none"} --></p>
+<figure class="wp-block-image size-large"><img src="/assets/2023/12/ebd99d08-85e1-4266-8ec7-b8c29926ed2b-768x1024.jpeg" alt="" class="wp-image-3083"></figure>
+<p><!-- /wp:image --></p>
+<p><!-- wp:paragraph --></p>
+<p>Feliz ano novo a todos e que seja um ano de ação pra quem quer tirar do papel e seguir em frente.</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --></p>
+<p>[]'s</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --></p>
+<p><!-- /wp:paragraph --><br />
+</body></html></p>]]></content><author><name>{&quot;login&quot; =&gt; &quot;renatomsiq@gmail.com&quot;, &quot;email&quot; =&gt; &quot;renatomsiq@gmail.com&quot;, &quot;display_name&quot; =&gt; &quot;renatomsiq@gmail.com&quot;, &quot;first_name&quot; =&gt; &quot;&quot;, &quot;last_name&quot; =&gt; &quot;&quot;}</name><email>renatomsiq@gmail.com</email></author><summary type="html"><![CDATA[Bem, post feito no último dia do ano (31.12.23) e editado no primeiro dia do ano (01.01.24) só pra não perder o hábito :D 2023 foi um ano muito interessante, ano de mais acertos que vacilos, e principalmente um ano de "preparação" para 2024. Um ano onde só posso agradecer a Deus por tudo o que ocorreu. Segue uma série de frases soltas que resumem as minhas percepções deste ano que passou: Rede de apoio é uma das coisas mais importantes nesta vida. Saúde mental e física == top 1 prioridade, principalmente a mental - sem ela tudo desanda. Carregar o próprio peso é o mínimo necessário para não fazer a vida dos outros (bem) mais pesada... Empreender no Brasil é complexo, mais complexo ainda é "tentar entender" a demonização de quem empreende. Brasil é estranho as vezes. Se o mundo acabasse em 2024/2025, valeria a pena moldar uma vida pensando 10 ou 15 anos na frente? Equilibro aqui é vital. Por bem ou por mal, cada um está pensando no seu próprio umbigo. Isso explica um monte de coisa absurda e que causa indignação e infelizmente é como a vida funciona. "Liberdade possível" foi o tapa da cara do ano kkkkk Plano de ano novo? Técnico: Powershell, AWS, Programming, etc Estudos: Foco absoluto no inglês dessa vez. Pessoal: Fazer uma viagem internacional. Japão talvez? I wish so Meta: "Fix it" - Colocar as coisas no lugar Planos para o blog? Sim, mas dessa vez eu não vou planejar nada, só fazer Pra encerrar uma imagem de fogos da passagem de ano (Cabedelo/PB): Feliz ano novo a todos e que seja um ano de ação pra quem quer tirar do papel e seguir em frente. []'s]]></summary></entry><entry><title type="html">Como é trabalhar com consultoria de TI? Parte 3 de 3</title><link href="http://localhost:4000/como-e-trabalhar-com-consultoria-de-ti-parte-3-de-3/" rel="alternate" type="text/html" title="Como é trabalhar com consultoria de TI? Parte 3 de 3" /><published>2023-01-02T11:00:20-03:00</published><updated>2023-01-02T11:00:20-03:00</updated><id>http://localhost:4000/como-e-trabalhar-com-consultoria-de-ti-parte-3-de-3</id><content type="html" xml:base="http://localhost:4000/como-e-trabalhar-com-consultoria-de-ti-parte-3-de-3/"><![CDATA[<p><!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN" "http://www.w3.org/TR/REC-html40/loose.dtd"><br />
+<!-- wp:image {"id":3025,"sizeSlug":"large","linkDestination":"none"} --><html><body></p>
+<figure class="wp-block-image size-large"><img src="/assets/2023/01/DALL%C2%B7E-2022-11-11-15.42.32-consultant-cat-working-on-office-1024x1024.png" alt="" class="wp-image-3025"></figure>
+<p><!-- /wp:image --></p>
+<p><!-- wp:paragraph --></p>
+<p>Olá,</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --></p>
+<p>Este post encerra a pequena série <strong>sobre minha opinião</strong> acerca de trabalhar com consultoria de TI, caso queira ler os posts passados:</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:list --></p>
+<ul>
+<!-- wp:list-item --></p>
+<li><a href="https://renatomsiqueira.com.br/trabalhar-com-consultoria-parte1/" target="_blank" rel="noreferrer noopener">https://renatomsiqueira.com.br/trabalhar-com-consultoria-parte1/</a></li>
+<p><!-- /wp:list-item --></p>
+<p><!-- wp:list-item --></p>
+<li><a href="https://renatomsiqueira.com.br/trabalhar-com-consultoria-parte2/">https://renatomsiqueira.com.br/trabalhar-com-consultoria-parte2/</a></li>
+<p><!-- /wp:list-item -->
+</ul>
+<p><!-- /wp:list --></p>
+<p><!-- wp:paragraph --></p>
+<p>Recapitulando os dois primeiros posts e adicionado certo "tempero" no que já foi publicado, <a href="https://renatomsiqueira.com.br/trabalhar-com-consultoria-parte1/">no primeiro  </a>faço uma analogia de consultoria com salão do tempo e trago a primeira opinião impopular (acredito): <strong>nem sempre mares agitados fazem sentido pra todo mundo em todos os momentos da vida</strong>. Porém sempre lembrando, cada <strong>escolha uma renúncia</strong> (JUNIOR, Charlie Brown) e naturalmente, quanto mais problema você resolve mais experiência você ganha e experiência aliada com conhecimento se tornam uma fonte de muito valor e é algo que ninguém tira de você. Como leitura complementar, deixo aqui um post recente do <a href="https://blogdojamal.wordpress.com/">Reginaldo Silva </a> chamado [<a href="https://www.linkedin.com/pulse/horas-de-voo-voc%25C3%25AA-precisa-voar-reginaldo-silva/?trackingId=Qxbfr8pXTIi8yqfy67jG4g%3D%3D">Horas de vôo - você precisa voar</a>] e o que diabos isso tem a ver com sua carreira, <strong>PRINCIPALMENTE SE VOCÊ QUER ENTRAR OU É NOVO(A) NA ÁREA DE TI</strong>. </p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --></p>
+<p>Relacionando o que já conversamos aqui com o post do Regis, é simples chegar na conclusão de que consultoria é um ambiente mais propicio para gerar mais oportunidades de "voar mais e as vezes até mais alto". Um DBA alocado também terá muitas oportunidades de crescimento mas vai depender <strong>muito </strong>do ambiente em que está (tecnologia, pessoas, etc) além de uma boa dose de proatividade, porém caso tenha interesse em se aprofundar no negócio em que está atuando (Ex: financeiro, saúde, indústria, etc) e/ou ainda na arquitetura geral, a tendência é que se torne um grande profissional no geral, naquela indústria específica (pense em um profissional com vasta experiência em ambientes financeiros, por exemplo). <strong>Entretanto, esse mesmo DBA alocado pode ganhar muita bagagem se estiver atuando com Cloud e/ou tiver uma atuação proveitosa como DBRE (ou similar) o que é uma vantagem muito grande por se tratar de uma tendência de mercado</strong>, que não é uma ocupação muito comum em consultorias.</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --></p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --></p>
+<p><a href="https://renatomsiqueira.com.br/trabalhar-com-consultoria-parte2/">O segundo post </a>falo sobre as habilidades de um consultor e o motivo de todos sermos vendedores no final das contas. Tem importantes mensagens neste post, algumas escritas nas entrelinhas. A conclusão do post é que <strong>prestar serviço é sobre vender algo de valor.</strong></p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:image {"id":3019,"sizeSlug":"full","linkDestination":"none"} --></p>
+<figure class="wp-block-image size-full"><img src="/assets/2023/01/image.png" alt="" class="wp-image-3019"></figure>
+<p><!-- /wp:image --></p>
+<p><!-- wp:paragraph --></p>
+<p>Com todas as informações acima devidamente entregues, o post de hoje é curto e simples, pra ajudar quem tem interesse em atuar como consultor:</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph {"fontSize":"x-large"} --></p>
+<p class="has-x-large-font-size">Quero trabalhar em consultoria e agora?</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --></p>
+<p>Existem três passos básicos:</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:list {"ordered":true} --></p>
+<ol>
+<!-- wp:list-item --></p>
+<li><strong> Identificar consultoria de interesse</strong></li>
+<p><!-- /wp:list-item -->
+</ol>
+<p><!-- /wp:list --></p>
+<p><!-- wp:paragraph --></p>
+<p>Primeiro passo possível é identificar quais consultorias você gostaria de trabalhar e ficar de olho quando pintar alguma vaga. Cito aqui duas consultorias que você muito provavelmente vai encontrar nas suas pesquisas:</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:list --></p>
+<ul>
+<!-- wp:list-item --></p>
+<li>
+<a href="https://www.dataside.com.br/">Dataside </a> (Dados em geral, incluindo Engenharia)</li>
+<p><!-- /wp:list-item --></p>
+<p><!-- wp:list-item --></p>
+<li>
+<a href="https://powertuning.com.br/#a-empresa">Powertuning</a> (Especialistas em SQL Server e BI)</li>
+<p><!-- /wp:list-item -->
+</ul>
+<p><!-- /wp:list --></p>
+<p><!-- wp:paragraph --></p>
+<p>Existem diversas  consultorias disponíveis, como por exemplo: Tecnisys, Nerv, DBACorp, Kumulus, CrespiDB, dentre outras. Algumas atuam com outros bancos além de SQL Server, fica aqui como extra. Aqui é trabalho de pesquisa.  Recomendo neste caso pesquisas básicas e trocar um papo com ex-funcionários ou atuais funcionários pra ter uma noção do que a empresa   pode fornecer pra te impulsionar ainda mais e sim, é uma recomendação genérica pra qualquer empresa seja consultoria ou não.</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --></p>
+<p><strong>2. Descobrir como as posições são postadas</strong></p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --></p>
+<p>O método de divulgação de vagas varia mas o que eu procuraria em ordem de prioridade:</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:list {"ordered":true} --></p>
+<ol>
+<!-- wp:list-item --></p>
+<li>Olhar o site da empresa/consultoria na seção de "Trabalhe Conosco" ou similar;</li>
+<p><!-- /wp:list-item --></p>
+<p><!-- wp:list-item --></p>
+<li>Seguir/Olhar a página da empresa ou dos principais profissionais ali (C-level, heads/leads, etc) pois ali eles anunciam abertura de vagas;</li>
+<p><!-- /wp:list-item --></p>
+<p><!-- wp:list-item --></p>
+<li>Algumas delas divulgam vagas também no Instagram. Raríssimos casos o Facebook é usado pra isso;</li>
+<p><!-- /wp:list-item -->
+</ol>
+<p><!-- /wp:list --></p>
+<p><!-- wp:paragraph --></p>
+<p>Ou, a forma mais efetiva de todas, é participando de grupos de vagas e/ou criando relação com pessoas que são da consultoria que você possui interesse, o que nos leva para o terceiro passo:</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --></p>
+<p><strong>3) Network</strong></p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --></p>
+<p>É o principal pra qualquer área mas principalmente na TI. O network te possibilita conhecer pessoas que respiram o que você respira no dia a dia e muitas oportunidades  que aparecem antes de procurar no mercado, são decididas antes mesmo da vaga se tornar pública. </p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --></p>
+<p><strong>Considerações finais</strong></p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --></p>
+<p>No mais, deixo uma leitura complementar muito interessante e que fala muito sobre a percepção de um DBA que acabou se tornando consultor (em inglês) <a href="https://desertdba.com/what-ive-learned-in-my-first-100-days-with-a-consulting-group/" title="https://desertdba.com/what-ive-learned-in-my-first-100-days-with-a-consulting-group/">https://desertdba.com/what-ive-learned-in-my-first-100-days-with-a-consulting-group/</a></p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --></p>
+<p>Muito do que precisava comentar, já o fiz nos primeiros dois posts. O resto são percepções pessoais que, convido você a tirar suas próprias conclusões sobre o que é de fato, trabalhar em consultoria. Desejo pra você que estiver lendo isso tudo de bom e tenha um excelente ano!</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --></p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --></p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --></p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --></p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --></p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --></p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --></p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --></p>
+<p><!-- /wp:paragraph --><br />
+</body></html></p>]]></content><author><name>{&quot;login&quot; =&gt; &quot;renatomsiq@gmail.com&quot;, &quot;email&quot; =&gt; &quot;renatomsiq@gmail.com&quot;, &quot;display_name&quot; =&gt; &quot;renatomsiq@gmail.com&quot;, &quot;first_name&quot; =&gt; &quot;&quot;, &quot;last_name&quot; =&gt; &quot;&quot;}</name><email>renatomsiq@gmail.com</email></author><summary type="html"><![CDATA[Olá, Este post encerra a pequena série sobre minha opinião acerca de trabalhar com consultoria de TI, caso queira ler os posts passados: https://renatomsiqueira.com.br/trabalhar-com-consultoria-parte1/ https://renatomsiqueira.com.br/trabalhar-com-consultoria-parte2/ Recapitulando os dois primeiros posts e adicionado certo "tempero" no que já foi publicado, no primeiro faço uma analogia de consultoria com salão do tempo e trago a primeira opinião impopular (acredito): nem sempre mares agitados fazem sentido pra todo mundo em todos os momentos da vida. Porém sempre lembrando, cada escolha uma renúncia (JUNIOR, Charlie Brown) e naturalmente, quanto mais problema você resolve mais experiência você ganha e experiência aliada com conhecimento se tornam uma fonte de muito valor e é algo que ninguém tira de você. Como leitura complementar, deixo aqui um post recente do Reginaldo Silva chamado [Horas de vôo - você precisa voar] e o que diabos isso tem a ver com sua carreira, PRINCIPALMENTE SE VOCÊ QUER ENTRAR OU É NOVO(A) NA ÁREA DE TI. Relacionando o que já conversamos aqui com o post do Regis, é simples chegar na conclusão de que consultoria é um ambiente mais propicio para gerar mais oportunidades de "voar mais e as vezes até mais alto". Um DBA alocado também terá muitas oportunidades de crescimento mas vai depender muito do ambiente em que está (tecnologia, pessoas, etc) além de uma boa dose de proatividade, porém caso tenha interesse em se aprofundar no negócio em que está atuando (Ex: financeiro, saúde, indústria, etc) e/ou ainda na arquitetura geral, a tendência é que se torne um grande profissional no geral, naquela indústria específica (pense em um profissional com vasta experiência em ambientes financeiros, por exemplo). Entretanto, esse mesmo DBA alocado pode ganhar muita bagagem se estiver atuando com Cloud e/ou tiver uma atuação proveitosa como DBRE (ou similar) o que é uma vantagem muito grande por se tratar de uma tendência de mercado, que não é uma ocupação muito comum em consultorias. O segundo post falo sobre as habilidades de um consultor e o motivo de todos sermos vendedores no final das contas. Tem importantes mensagens neste post, algumas escritas nas entrelinhas. A conclusão do post é que prestar serviço é sobre vender algo de valor. Com todas as informações acima devidamente entregues, o post de hoje é curto e simples, pra ajudar quem tem interesse em atuar como consultor: Quero trabalhar em consultoria e agora? Existem três passos básicos: Identificar consultoria de interesse Primeiro passo possível é identificar quais consultorias você gostaria de trabalhar e ficar de olho quando pintar alguma vaga. Cito aqui duas consultorias que você muito provavelmente vai encontrar nas suas pesquisas: Dataside (Dados em geral, incluindo Engenharia) Powertuning (Especialistas em SQL Server e BI) Existem diversas consultorias disponíveis, como por exemplo: Tecnisys, Nerv, DBACorp, Kumulus, CrespiDB, dentre outras. Algumas atuam com outros bancos além de SQL Server, fica aqui como extra. Aqui é trabalho de pesquisa. Recomendo neste caso pesquisas básicas e trocar um papo com ex-funcionários ou atuais funcionários pra ter uma noção do que a empresa pode fornecer pra te impulsionar ainda mais e sim, é uma recomendação genérica pra qualquer empresa seja consultoria ou não. 2. Descobrir como as posições são postadas O método de divulgação de vagas varia mas o que eu procuraria em ordem de prioridade: Olhar o site da empresa/consultoria na seção de "Trabalhe Conosco" ou similar; Seguir/Olhar a página da empresa ou dos principais profissionais ali (C-level, heads/leads, etc) pois ali eles anunciam abertura de vagas; Algumas delas divulgam vagas também no Instagram. Raríssimos casos o Facebook é usado pra isso; Ou, a forma mais efetiva de todas, é participando de grupos de vagas e/ou criando relação com pessoas que são da consultoria que você possui interesse, o que nos leva para o terceiro passo: 3) Network É o principal pra qualquer área mas principalmente na TI. O network te possibilita conhecer pessoas que respiram o que você respira no dia a dia e muitas oportunidades que aparecem antes de procurar no mercado, são decididas antes mesmo da vaga se tornar pública. Considerações finais No mais, deixo uma leitura complementar muito interessante e que fala muito sobre a percepção de um DBA que acabou se tornando consultor (em inglês) https://desertdba.com/what-ive-learned-in-my-first-100-days-with-a-consulting-group/ Muito do que precisava comentar, já o fiz nos primeiros dois posts. O resto são percepções pessoais que, convido você a tirar suas próprias conclusões sobre o que é de fato, trabalhar em consultoria. Desejo pra você que estiver lendo isso tudo de bom e tenha um excelente ano!]]></summary></entry><entry><title type="html">Reflexões de 2022 - Mudanças são necessárias</title><link href="http://localhost:4000/reflexoes-de-2022-mudancas-sao-necessarias/" rel="alternate" type="text/html" title="Reflexões de 2022 - Mudanças são necessárias" /><published>2022-12-31T21:35:10-03:00</published><updated>2022-12-31T21:35:10-03:00</updated><id>http://localhost:4000/reflexoes-de-2022-mudancas-sao-necessarias</id><content type="html" xml:base="http://localhost:4000/reflexoes-de-2022-mudancas-sao-necessarias/"><![CDATA[<p><!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN" "http://www.w3.org/TR/REC-html40/loose.dtd"><br />
+<!-- wp:paragraph --><html><body></p>
+<p>Resolvi escrever o último post do ano e vai ser não-técnico novamente, pois sinto que vai ser interessante reler isso  nos próximos anos e de fato, acho que algumas reflexões podem fazer sentido pra alguém que por um acaso estiver lendo este post de um humilde profissional que atua na área de TI.</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:image {"id":3029,"sizeSlug":"full","linkDestination":"none"} --></p>
+<figure class="wp-block-image size-full"><img src="/assets/2022/12/e1s_edited.jpg" alt="" class="wp-image-3029"></figure>
+<p><!-- /wp:image --></p>
+<p><!-- wp:heading --></p>
+<h2>Ano de mudanças</h2>
+<p><!-- /wp:heading --></p>
+<p><!-- wp:paragraph --></p>
+<p>Esse ano foi uma correria só, me mudei de Brasília-DF para João Pessoa-PB com minha esposa buscando uma maior qualidade de vida e não era de fato muito apegado ao DF: a  ÚNICA coisa que sinto falta pra ser bem sincero são os familiares e amigos. Foi um ano também que eu tive o prazer de trabalhar com pessoas espetaculares e me desenvolvi bastante em alguns assuntos técnicos e não-técnicos. Também foi o ano em que mais trabalhei e isso me rendeu além de muito conhecimento, muita dor de cabeça, que não vem ao caso agora, hehe.</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --></p>
+<p>O que quero dizer é, foi um ano de muita mudança, algumas deram muito certo, outras nem tanto, mas a vida é feita de altos e baixos. Isso vale pra vida humana, ou até pra uma ação em bolsa de valores. Progressão sem altos e baixos = morte, segue exemplos onde a ausência de linha reta indica que a vida está acontecendo (na primeira imagem é a cotação da BBSA3, na outra é um batimento cardíaco random):</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --></p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:image {"id":3030,"sizeSlug":"full","linkDestination":"none"} --></p>
+<figure class="wp-block-image size-full"><img src="/assets/2022/12/image.png" alt="" class="wp-image-3030"></figure>
+<p><!-- /wp:image --></p>
+<p><!-- wp:paragraph --></p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:image {"id":3031,"sizeSlug":"large","linkDestination":"none"} --></p>
+<figure class="wp-block-image size-large"><img src="/assets/2022/12/image-1-1024x378.png" alt="" class="wp-image-3031"></figure>
+<p><!-- /wp:image --></p>
+<p><!-- wp:paragraph --></p>
+<p>Foi também o ano que eu mais li conteúdo técnico e não técnico, fiz uma penca de cursos e também aprendi um pouco mais sobre mercado financeiro, o que foi na minha opinião a grande virada de chave e é uma pena que pouca gente tenha interesse neste assunto, que afeta diretamente suas vidas. Enfim, gostaria de comentar alguns assuntos bem rapidamente sem ordem de importância, para fins de documentação.</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:heading --></p>
+<h2>Reflexões aleatórias</h2>
+<p><!-- /wp:heading --></p>
+<p><!-- wp:paragraph --></p>
+<p><strong>Inglês</strong>:  Ter um segundo idioma  exige tempo e prática para ser desenvolvido. Como eu queria ter estudado mais inglês nesse ano! As barreiras que ligam o Brasil ao mundo se "afrouxaram" ainda mais em um mundo já globalizado com a pandemia e agora está mais fácil não somente trabalhar para fora, mas de ter experiências incríveis fora do Brasil (uma viagem a lazer ou intercâmbio, por exemplo). Quanto antes a prática começar, melhor. Aprendi também fazendo algumas aulas de inglês que o maior inimigo que prejudica na nossa evolução do idioma <strong>somos nós mesmos e nosso inexplicável medo</strong>: medo de parecer ridículo, de falar errado, de falar bobagem. O segundo inimigo é a falta de estudo e prática, que afeta na realidade qualquer coisa na vida. Mas o medo é de longe o pior inimigo, então fica aqui meu conselho neste ponto: estude (pra aumentar a segurança) e aprenda ignorar seu sistema de auto-defesa nessas horas. </p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --></p>
+<p><strong>Mercado de trabalho x Banco de Dados:</strong> Hoje, pouquíssimos ambientes possuem apenas uma tecnologia só de banco de dados. Se anos atrás era bastante comum vagas de DBA somente Oracle, somente SQL Server, com no máximo um puxadinho em MySQL e etc, esse cenário acabou. Hoje estar na <em>cloud </em>é o novo normal ou normal esperado e uma empresa ter múltiplos sabores de banco, também. Recentemente tive uma experiência incrível em uma corretora de valores mobiliários que possui pelo menos 5 SGBDs diferentes, e sei de concorrentes dela que tem mais que o dobro de tecnologias de banco diferentes. Aqui não tem paixão: vivemos pra resolver problemas independente da área e nem todo problema pode ser atendido por um banco x ou y (ou pelo menos não da melhor forma). Então essa pluralidade é normal e esperada e se traduz em grande oportunidade para quem quer desenhar um perfil profissional atual "generalista".</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --></p>
+<p> Ainda é possível encontrar posições de emprego como "especialista" em um banco de dados só (principalmente em empresas de consultoria como a Powertuning por exemplo, que contrata focada em SQL Server) <strong>porém elas não são mais a regra e sim a exceção.</strong> Então fica aqui algumas dicas bem descompromissadas sobre o assunto:</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --></p>
+<p>a) Valorizar aos fundamentos do que você atua hoje. Eles com 100% de certeza irão ajudar caso você precise aprender uma nova tecnologia.</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --></p>
+<p>b) Nunca deixe de estudar. O mercado de dados em geral está se movendo em uma velocidade anormal e acelerada e sempre tem coisa nova surgindo com muita frequência.  </p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --></p>
+<p>c) A obrigação de estudar é sua, não da empresa em que você está. Ela pode até te ajudar e incentivar (o que é excelente para ambas as partes e muito nobre por parte da empresa), mas lembre-se que a carreira é sua e somente você tem responsabilidade sobre ela. </p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --></p>
+<p><strong>Qualidade de Vida</strong>: Apesar de ter me mudado para João Pessoa pela qualidade de vida, eu não tinha os hábitos criados para de fato, aproveitar bastante esse ponto. Então sinto que vou fechar 2022 meio que em débito, porém devidamente direcionado em 2023. Estou aos poucos trabalhando a construção de hábitos que envolvam qualidade de vida (e está dando certo)  para que ano que vem seja um ano incrível. Uma excelente e inspiradora leitura sobre o assunto é <a href="https://www.amazon.com.br/H%C3%A1bitos-At%C3%B4micos-M%C3%A9todo-Comprovado-Livrar/dp/8550807567/ref=sr_1_1?__mk_pt_BR=%C3%85M%C3%85%C5%BD%C3%95%C3%91&amp;crid=1IE8IUMZ47DQG&amp;keywords=habitos+atomicos&amp;qid=1672532360&amp;sprefix=h%C3%A1bitos+at%C3%B4mico%2Caps%2C164&amp;sr=8-1" target="_blank" rel="noopener" title="Hábitos Atômicos">Hábitos Atômicos</a>, de James Clear, recomendo caso tenha interesse.</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --></p>
+<p><strong>Sobre finanças em geral: </strong>Foi pra mim a grande conquista de 2021/2022 ter estudado sobre algo que deveria ser ensinado nas escolas, que é educação financeira (acredito que não é de interesse do governo). Meu conselho aqui  é: estudar educação financeira é libertador, e como investir (renda fixa, ações, FII's) caso ainda não tenha feito. Investir significa possibilitar ou ainda, adiantar muitos sonhos de vida.</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --></p>
+<p><strong>TOP 3 frases que usei bastante esse ano:</strong> Usei durante o ano inteiro, em diferentes ocasiões, mas principalmente durante o trabalho ou nos momentos de lazer. Estou listando aqui em caráter de diversão:</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:list {"ordered":true} --></p>
+<ol>
+<!-- wp:list-item --></p>
+<li>Se tem placa, tem história</li>
+<p><!-- /wp:list-item --></p>
+<p><!-- wp:list-item --></p>
+<li>O óbvio precisa ser dito</li>
+<p><!-- /wp:list-item --></p>
+<p><!-- wp:list-item --></p>
+<li>Fechou igual boca de bode (crédito: Wigenes)</li>
+<p><!-- /wp:list-item -->
+</ol>
+<p><!-- /wp:list --></p>
+<p><!-- wp:paragraph --></p>
+<p><strong>Prioridades para 2023:</strong></p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --></p>
+<p>Coisas que eu gostaria de ter focado mais em 2022, porém não adianta chorar pela cerveja derramada e focarei em 2023:</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:list --></p>
+<ul>
+<!-- wp:list-item --></p>
+<li>Inglês;</li>
+<p><!-- /wp:list-item --></p>
+<p><!-- wp:list-item --></p>
+<li>Exercícios físicos;</li>
+<p><!-- /wp:list-item --></p>
+<p><!-- wp:list-item --></p>
+<li>SQL Server, MySQL, PostgreSQL, Oracle, NoSQL (MongoDB, Cassandra, Redis);</li>
+<p><!-- /wp:list-item --></p>
+<p><!-- wp:list-item --></p>
+<li>AWS/Azure, Devops em geral, DBRE/SRE;</li>
+<p><!-- /wp:list-item --></p>
+<p><!-- wp:list-item --></p>
+<li>Compartilhar conteúdo técnico (aqui está uma GRANDE falha e que pretendo reparar, já que grande parte do que eu sei, foi graças à comunidade técnica). </li>
+<p><!-- /wp:list-item --></p>
+<p><!-- wp:list-item --></p>
+<li>Compartilhar conteúdo não técnico (aqui vai ser pelo lazer, gosto de falar sobre outros assuntos e estou pensando em como fazer isso);</li>
+<p><!-- /wp:list-item -->
+</ul>
+<p><!-- /wp:list --></p>
+<p><!-- wp:paragraph --></p>
+<p><strong>Sobre mudanças:</strong> </p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --></p>
+<p>Aqui eu deixei o mais importante pro final se eu puder dar o papo mais reto possível (aqui a interpretação fica por cada um).</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --></p>
+<p>Ter medo de mudança é normal, mas não deixe isso te impedir de progredir. No final do dia, a vida é sua, e só você sabe onde o calo aperta. Tome decisões boas e ruins, mas nunca deixe de prosseguir. Aprenda principalmente com o que não deu certo, pra não fazer cagada novamente.</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --></p>
+<p>Porque estou falando isso? Bem, conheci e conheço algumas pessoas que perdem uma quantidade desmedida de tempo reclamando do governo, reclamando do chefe ou da empresa, reclamam de tudo, ou seja, apenas de coisas que elas não tem controle nenhum, mas pouco fazem pra mudar a si mesmas. Eu recomendo que mude<strong> se for realmente necessário</strong>. E se o "time estiver ganhando", continue evoluindo seu projeto, negócio, hábito, o que quer que seja, afinal evolução também é mudança.</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:separator --></p>
+<hr class="wp-block-separator has-alpha-channel-opacity">
+<!-- /wp:separator --></p>
+<p><!-- wp:paragraph --></p>
+<p>Enfim, post totalmente não-estruturado e que estou fazendo meio que às pressas antes de dar meia noite só pra dizer que postei ano passado.</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --></p>
+<p>Que 2023 seja um ano incrível para todos nós. Vamos em frente!</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --></p>
+<p>[]'s</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --></p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --></p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --></p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --></p>
+<p><!-- /wp:paragraph --><br />
+</body></html></p>]]></content><author><name>{&quot;login&quot; =&gt; &quot;renatomsiq@gmail.com&quot;, &quot;email&quot; =&gt; &quot;renatomsiq@gmail.com&quot;, &quot;display_name&quot; =&gt; &quot;renatomsiq@gmail.com&quot;, &quot;first_name&quot; =&gt; &quot;&quot;, &quot;last_name&quot; =&gt; &quot;&quot;}</name><email>renatomsiq@gmail.com</email></author><summary type="html"><![CDATA[Resolvi escrever o último post do ano e vai ser não-técnico novamente, pois sinto que vai ser interessante reler isso nos próximos anos e de fato, acho que algumas reflexões podem fazer sentido pra alguém que por um acaso estiver lendo este post de um humilde profissional que atua na área de TI. Ano de mudanças Esse ano foi uma correria só, me mudei de Brasília-DF para João Pessoa-PB com minha esposa buscando uma maior qualidade de vida e não era de fato muito apegado ao DF: a ÚNICA coisa que sinto falta pra ser bem sincero são os familiares e amigos. Foi um ano também que eu tive o prazer de trabalhar com pessoas espetaculares e me desenvolvi bastante em alguns assuntos técnicos e não-técnicos. Também foi o ano em que mais trabalhei e isso me rendeu além de muito conhecimento, muita dor de cabeça, que não vem ao caso agora, hehe. O que quero dizer é, foi um ano de muita mudança, algumas deram muito certo, outras nem tanto, mas a vida é feita de altos e baixos. Isso vale pra vida humana, ou até pra uma ação em bolsa de valores. Progressão sem altos e baixos = morte, segue exemplos onde a ausência de linha reta indica que a vida está acontecendo (na primeira imagem é a cotação da BBSA3, na outra é um batimento cardíaco random): Foi também o ano que eu mais li conteúdo técnico e não técnico, fiz uma penca de cursos e também aprendi um pouco mais sobre mercado financeiro, o que foi na minha opinião a grande virada de chave e é uma pena que pouca gente tenha interesse neste assunto, que afeta diretamente suas vidas. Enfim, gostaria de comentar alguns assuntos bem rapidamente sem ordem de importância, para fins de documentação. Reflexões aleatórias Inglês: Ter um segundo idioma exige tempo e prática para ser desenvolvido. Como eu queria ter estudado mais inglês nesse ano! As barreiras que ligam o Brasil ao mundo se "afrouxaram" ainda mais em um mundo já globalizado com a pandemia e agora está mais fácil não somente trabalhar para fora, mas de ter experiências incríveis fora do Brasil (uma viagem a lazer ou intercâmbio, por exemplo). Quanto antes a prática começar, melhor. Aprendi também fazendo algumas aulas de inglês que o maior inimigo que prejudica na nossa evolução do idioma somos nós mesmos e nosso inexplicável medo: medo de parecer ridículo, de falar errado, de falar bobagem. O segundo inimigo é a falta de estudo e prática, que afeta na realidade qualquer coisa na vida. Mas o medo é de longe o pior inimigo, então fica aqui meu conselho neste ponto: estude (pra aumentar a segurança) e aprenda ignorar seu sistema de auto-defesa nessas horas. Mercado de trabalho x Banco de Dados: Hoje, pouquíssimos ambientes possuem apenas uma tecnologia só de banco de dados. Se anos atrás era bastante comum vagas de DBA somente Oracle, somente SQL Server, com no máximo um puxadinho em MySQL e etc, esse cenário acabou. Hoje estar na cloud é o novo normal ou normal esperado e uma empresa ter múltiplos sabores de banco, também. Recentemente tive uma experiência incrível em uma corretora de valores mobiliários que possui pelo menos 5 SGBDs diferentes, e sei de concorrentes dela que tem mais que o dobro de tecnologias de banco diferentes. Aqui não tem paixão: vivemos pra resolver problemas independente da área e nem todo problema pode ser atendido por um banco x ou y (ou pelo menos não da melhor forma). Então essa pluralidade é normal e esperada e se traduz em grande oportunidade para quem quer desenhar um perfil profissional atual "generalista". Ainda é possível encontrar posições de emprego como "especialista" em um banco de dados só (principalmente em empresas de consultoria como a Powertuning por exemplo, que contrata focada em SQL Server) porém elas não são mais a regra e sim a exceção. Então fica aqui algumas dicas bem descompromissadas sobre o assunto: a) Valorizar aos fundamentos do que você atua hoje. Eles com 100% de certeza irão ajudar caso você precise aprender uma nova tecnologia. b) Nunca deixe de estudar. O mercado de dados em geral está se movendo em uma velocidade anormal e acelerada e sempre tem coisa nova surgindo com muita frequência. c) A obrigação de estudar é sua, não da empresa em que você está. Ela pode até te ajudar e incentivar (o que é excelente para ambas as partes e muito nobre por parte da empresa), mas lembre-se que a carreira é sua e somente você tem responsabilidade sobre ela. Qualidade de Vida: Apesar de ter me mudado para João Pessoa pela qualidade de vida, eu não tinha os hábitos criados para de fato, aproveitar bastante esse ponto. Então sinto que vou fechar 2022 meio que em débito, porém devidamente direcionado em 2023. Estou aos poucos trabalhando a construção de hábitos que envolvam qualidade de vida (e está dando certo) para que ano que vem seja um ano incrível. Uma excelente e inspiradora leitura sobre o assunto é Hábitos Atômicos, de James Clear, recomendo caso tenha interesse. Sobre finanças em geral: Foi pra mim a grande conquista de 2021/2022 ter estudado sobre algo que deveria ser ensinado nas escolas, que é educação financeira (acredito que não é de interesse do governo). Meu conselho aqui é: estudar educação financeira é libertador, e como investir (renda fixa, ações, FII's) caso ainda não tenha feito. Investir significa possibilitar ou ainda, adiantar muitos sonhos de vida. TOP 3 frases que usei bastante esse ano: Usei durante o ano inteiro, em diferentes ocasiões, mas principalmente durante o trabalho ou nos momentos de lazer. Estou listando aqui em caráter de diversão: Se tem placa, tem história O óbvio precisa ser dito Fechou igual boca de bode (crédito: Wigenes) Prioridades para 2023: Coisas que eu gostaria de ter focado mais em 2022, porém não adianta chorar pela cerveja derramada e focarei em 2023: Inglês; Exercícios físicos; SQL Server, MySQL, PostgreSQL, Oracle, NoSQL (MongoDB, Cassandra, Redis); AWS/Azure, Devops em geral, DBRE/SRE; Compartilhar conteúdo técnico (aqui está uma GRANDE falha e que pretendo reparar, já que grande parte do que eu sei, foi graças à comunidade técnica). Compartilhar conteúdo não técnico (aqui vai ser pelo lazer, gosto de falar sobre outros assuntos e estou pensando em como fazer isso); Sobre mudanças: Aqui eu deixei o mais importante pro final se eu puder dar o papo mais reto possível (aqui a interpretação fica por cada um). Ter medo de mudança é normal, mas não deixe isso te impedir de progredir. No final do dia, a vida é sua, e só você sabe onde o calo aperta. Tome decisões boas e ruins, mas nunca deixe de prosseguir. Aprenda principalmente com o que não deu certo, pra não fazer cagada novamente. Porque estou falando isso? Bem, conheci e conheço algumas pessoas que perdem uma quantidade desmedida de tempo reclamando do governo, reclamando do chefe ou da empresa, reclamam de tudo, ou seja, apenas de coisas que elas não tem controle nenhum, mas pouco fazem pra mudar a si mesmas. Eu recomendo que mude se for realmente necessário. E se o "time estiver ganhando", continue evoluindo seu projeto, negócio, hábito, o que quer que seja, afinal evolução também é mudança. Enfim, post totalmente não-estruturado e que estou fazendo meio que às pressas antes de dar meia noite só pra dizer que postei ano passado. Que 2023 seja um ano incrível para todos nós. Vamos em frente! []'s]]></summary></entry><entry><title type="html">Como é trabalhar com consultoria de TI? Parte 2 de 3</title><link href="http://localhost:4000/trabalhar-com-consultoria-parte2/" rel="alternate" type="text/html" title="Como é trabalhar com consultoria de TI? Parte 2 de 3" /><published>2021-10-21T01:57:17-03:00</published><updated>2021-10-21T01:57:17-03:00</updated><id>http://localhost:4000/trabalhar-com-consultoria-parte2</id><content type="html" xml:base="http://localhost:4000/trabalhar-com-consultoria-parte2/"><![CDATA[<p><!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN" "http://www.w3.org/TR/REC-html40/loose.dtd"><br />
+<!-- wp:image --><html><body></p>
+<figure class="wp-block-image"><img src="/assets/2021/10/5r8d0g.jpg" alt=""></figure>
+<p><!-- /wp:image --></p>
+<p><!-- wp:paragraph --></p>
+<p>Olá pessoal,</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --></p>
+<p>O post de hoje traz uma percepção que tive sobre um tópico importante como consultor que pra mim são as<em> soft skills</em>, porque elas são críticas pra gente de TI e de forma crucial pra quem quem mexe com consultoria, portanto não podem ser negligenciadas nem a pau.</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --></p>
+<p>Cabe aqui dizer que aprendi muito ao me tornar consultor e não sou um exemplo a ser seguido nos pontos que eu levanto aqui, mas a gente tenta melhorar aos poucos e na medida do possível.  </p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:heading --></p>
+<h2>Parte 2 de 3 - Você também é um vendedor (sobre soft skill)</h2>
+<p><!-- /wp:heading --></p>
+<p><!-- wp:paragraph --></p>
+<p>Na parte 1 foquei no tópico técnico - as chamadas hard skills(conhecimento técnico), que são acessíveis pra qualquer pessoa caso ela tenha interesse em desenvolver. Hard skill é importante pra que o consultor(a) cometa o menor número de erros possíveis (spoiler: pois ele VAI cometer), entregue a solução seja a melhor ou a mais aceitável possível  naquele período de tempo <strong>e</strong> que faça sentido pro negócio das empresas. Em suma, é <em>prestar serviço efetivo</em> que entrega valor, tem gente que vende produto e<em> tem gente que vende serviço</em> (a maioria de nós se encontra aqui).</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --></p>
+<p>Se vendemos serviço somos em essência vendedores, logo é de se imaginar que algumas soft skills são extremamente importantes para auxiliar o contato com o cliente. São várias as habilidades necessárias para vendedores de serviço, mas gostaria de citar três que eu acredito serem as principais:</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:list --></p>
+<ul>
+<li>
+<strong>Boa comunicação: </strong>Vale pra tudo na vida, mas ao lidar com cliente sobre prazos/planos, comunicar-se bem é fundamental pra evitar qualquer confusão sobre qual é o problema e como resolver. Essa é a habilidade principal que sustenta várias outras e eu recomendo fortemente pra quem tem interesse em trabalhar com consultoria, que foque neste item. É impressionante a diferença que isso faz no dia a dia e eu gostaria de ter dado maior importância pra isso desde que eu era mais novo. Bem, eu era o nerd que ficava jogando tazo e videogame e nunca fui muito de conversar, depois que os anos passaram e cada vez a vida mostrando o quanto é importante se comunicar pra viver (the life snakes), posso dizer com propriedade "prioriza essa soft skill e vá longe, caso contrário prepare pra sofrer". Isso vale pra qualquer ser humano, mas pra humaninhos que vendem, isso é um MUST.</li>
+</ul>
+<p><!-- /wp:list --></p>
+<p><!-- wp:paragraph --></p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:list --></p>
+<ul>
+<li>
+<strong>Escuta ativa</strong>: Ouvir com atenção o cliente pra entender qual é de fato os problemas e as dores que ele sente. Em alguns casos você como consultor vai descobrir que o problema na verdade é outro e muito maior do que o original, às vezes é simples pra <em>dedéu </em>e em alguns outros raros momentos  (mas acontece muito) você pode perceber que o cliente não sabe o que quer direito, ou está confuso sobre as possibilidades de algum problema. Saber escutar é o que vai garantir que você vai vender a "coisa certa" e que resolva "o problema certo". Tem total correlação com o tópico anterior sobre boa comunicação, e não é por acaso. </li>
+</ul>
+<p><!-- /wp:list --></p>
+<p><!-- wp:list --></p>
+<ul>
+<li>
+<strong>Integridade:  </strong>Um vendedor precisa ser honesto e confiável, inclusive pra assumir erros que pode ter cometido e como já falei em outro momento, errar é humano, estudamos e aprendemos com os erros dos outros pra errar menos. Um vendedor que não demonstra integridade não é um vendedor confiável, então é natural que quem está contratando evite-o nas próximas oportunidades. Porque eu digo que essa habilidade é extremamente importante: porque quanto mais transparente forem suas ações durante contato com o cliente (comunicação, evidências por e-mail, documentos, etc) melhor o serviço flui, mais confiança é gerada e todo mundo sai feliz.</li>
+</ul>
+<p><!-- /wp:list --></p>
+<p><!-- wp:heading --></p>
+<h2>Tá mas porque todos somos vendedores?</h2>
+<p><!-- /wp:heading --></p>
+<p><!-- wp:paragraph --></p>
+<p>Você vende seu tempo pra um empregador e neste tempo, presta um serviço para um cliente, correto? Não importa se você é CLT, PJ, se você trabalha em consultoria ou não, você tem um cliente (necessariamente) e por isso automaticamente você vende. Não estou aqui sendo o radical e falando: "Para tudo o que você tá fazendo e vai estudar técnicas de venda!" (<s>eu seria um tremendo mentiroso, porque nem eu fiz isso kkkk mas seria incrível que tivesse feito)</s>, mas o que quero dizer com essa prosa toda é, passe a observar toda interação dentro de uma empresa como venda de serviço e isso pode abrir seus olhos pra coisas que talvez não estejam tão claras e mude a forma como você interage com o mercado em geral.</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --></p>
+<p>Porque no caso do consultor isso é uma verdade muito mais nua e crua? Bem, <strong>além de você vender serviço pro cliente final</strong> (Exemplo: uma empresa de e-commerce), <strong>você também vende seu serviço para a empresa</strong> (independente se você é  CLT ou PJ) e portanto vender se torna uma dupla responsabilidade. A consultoria por sua vez precisa ter cada vez mais sucesso pra manter uma boa imagem no mercado para que possa continuar existindo, em tese cada vez com mais qualidade e pra isso ela depende dos seus consultores.</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --></p>
+<p>E porque isso é tão importante? Porque em essência <strong>consultoria é uma empresa  e empresas são feitas de pessoas</strong>, por mais que exista um suposto "espírito da empresa" como um ser imaterial, no final do dia relações são de carne e osso, e cada pessoa que ali trabalha equivale a uma família ao menos via de regra. Significa então que quando empresas vão bem, famílias vão bem também. Vender seu serviço de forma responsável em consultorias, em um mercado onde imagem e reputação contam muito, afeta não só você como consultor mas uma cadeia <strong>inimaginável </strong>de gente envolvida. É nesse sentido que, vender é uma ação um pouco mais crítica pra consultores que outras empresas em geral. Vender serviço de forma não efetiva (por N motivos) impede a empresa de crescer como deveria, pode afetar reputação ou até de prejudicar caixa. E já sabemos o que acontece quando uma empresa tem diminuição de caixa...</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:image --></p>
+<figure class="wp-block-image"><img src="/assets/2021/10/5rad6w.jpg" alt=""></figure>
+<p><!-- /wp:image --></p>
+<p><!-- wp:paragraph --></p>
+<p><strong>Resposta impopular: </strong>Crueldade das empresas? É como o mercado funciona e o mundo real também  gostemos ou não, essa prosa toda é pra falar que bem, se você está vendendo algo, venda com carinho principalmente se for serviço, pois boas vendas trazem mais clientes, mais clientes mais dinheiro, mais dinheiro, mais <em>oportunidades </em>pra todo mundo (inclusive você), a consultoria cresce e se destaca no mercado o que afeta a cadeia toda, inclusive quem você não faz ideia que exista.</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:image {"id":3004,"sizeSlug":"full","linkDestination":"none"} --></p>
+<figure class="wp-block-image size-full"><img src="/assets/2021/10/hide-the-pain-harold.jpg" alt="" class="wp-image-3004"><br />
+<figcaption>Pedro Nakamoto, analista de TI de 25 anos, concorda com tudo o que eu disse.</figcaption>
+</figure>
+<p><!-- /wp:image --></p>
+<p><!-- wp:paragraph --></p>
+<p>Fica as palavras finais que compartilho de outro grande pensador consultor que trabalha com SQL Server: </p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --></p>
+<p>"<span style="text-decoration: underline;">Cuida da lojinha" :p</span></p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --></p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --></p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --></p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --></p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --></p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --></p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --></p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --></p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --></p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --></p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --></p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --></p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --></p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --></p>
+<p><!-- /wp:paragraph --><br />
+</body></html></p>]]></content><author><name>{&quot;login&quot; =&gt; &quot;renatomsiq@gmail.com&quot;, &quot;email&quot; =&gt; &quot;renatomsiq@gmail.com&quot;, &quot;display_name&quot; =&gt; &quot;renatomsiq@gmail.com&quot;, &quot;first_name&quot; =&gt; &quot;&quot;, &quot;last_name&quot; =&gt; &quot;&quot;}</name><email>renatomsiq@gmail.com</email></author><category term="carreira" /><category term="OFFTOPIC" /><summary type="html"><![CDATA[Olá pessoal, O post de hoje traz uma percepção que tive sobre um tópico importante como consultor que pra mim são as soft skills, porque elas são críticas pra gente de TI e de forma crucial pra quem quem mexe com consultoria, portanto não podem ser negligenciadas nem a pau. Cabe aqui dizer que aprendi muito ao me tornar consultor e não sou um exemplo a ser seguido nos pontos que eu levanto aqui, mas a gente tenta melhorar aos poucos e na medida do possível. Parte 2 de 3 - Você também é um vendedor (sobre soft skill) Na parte 1 foquei no tópico técnico - as chamadas hard skills(conhecimento técnico), que são acessíveis pra qualquer pessoa caso ela tenha interesse em desenvolver. Hard skill é importante pra que o consultor(a) cometa o menor número de erros possíveis (spoiler: pois ele VAI cometer), entregue a solução seja a melhor ou a mais aceitável possível naquele período de tempo e que faça sentido pro negócio das empresas. Em suma, é prestar serviço efetivo que entrega valor, tem gente que vende produto e tem gente que vende serviço (a maioria de nós se encontra aqui). Se vendemos serviço somos em essência vendedores, logo é de se imaginar que algumas soft skills são extremamente importantes para auxiliar o contato com o cliente. São várias as habilidades necessárias para vendedores de serviço, mas gostaria de citar três que eu acredito serem as principais: Boa comunicação: Vale pra tudo na vida, mas ao lidar com cliente sobre prazos/planos, comunicar-se bem é fundamental pra evitar qualquer confusão sobre qual é o problema e como resolver. Essa é a habilidade principal que sustenta várias outras e eu recomendo fortemente pra quem tem interesse em trabalhar com consultoria, que foque neste item. É impressionante a diferença que isso faz no dia a dia e eu gostaria de ter dado maior importância pra isso desde que eu era mais novo. Bem, eu era o nerd que ficava jogando tazo e videogame e nunca fui muito de conversar, depois que os anos passaram e cada vez a vida mostrando o quanto é importante se comunicar pra viver (the life snakes), posso dizer com propriedade "prioriza essa soft skill e vá longe, caso contrário prepare pra sofrer". Isso vale pra qualquer ser humano, mas pra humaninhos que vendem, isso é um MUST. Escuta ativa: Ouvir com atenção o cliente pra entender qual é de fato os problemas e as dores que ele sente. Em alguns casos você como consultor vai descobrir que o problema na verdade é outro e muito maior do que o original, às vezes é simples pra dedéu e em alguns outros raros momentos (mas acontece muito) você pode perceber que o cliente não sabe o que quer direito, ou está confuso sobre as possibilidades de algum problema. Saber escutar é o que vai garantir que você vai vender a "coisa certa" e que resolva "o problema certo". Tem total correlação com o tópico anterior sobre boa comunicação, e não é por acaso. Integridade: Um vendedor precisa ser honesto e confiável, inclusive pra assumir erros que pode ter cometido e como já falei em outro momento, errar é humano, estudamos e aprendemos com os erros dos outros pra errar menos. Um vendedor que não demonstra integridade não é um vendedor confiável, então é natural que quem está contratando evite-o nas próximas oportunidades. Porque eu digo que essa habilidade é extremamente importante: porque quanto mais transparente forem suas ações durante contato com o cliente (comunicação, evidências por e-mail, documentos, etc) melhor o serviço flui, mais confiança é gerada e todo mundo sai feliz. Tá mas porque todos somos vendedores? Você vende seu tempo pra um empregador e neste tempo, presta um serviço para um cliente, correto? Não importa se você é CLT, PJ, se você trabalha em consultoria ou não, você tem um cliente (necessariamente) e por isso automaticamente você vende. Não estou aqui sendo o radical e falando: "Para tudo o que você tá fazendo e vai estudar técnicas de venda!" (eu seria um tremendo mentiroso, porque nem eu fiz isso kkkk mas seria incrível que tivesse feito), mas o que quero dizer com essa prosa toda é, passe a observar toda interação dentro de uma empresa como venda de serviço e isso pode abrir seus olhos pra coisas que talvez não estejam tão claras e mude a forma como você interage com o mercado em geral. Porque no caso do consultor isso é uma verdade muito mais nua e crua? Bem, além de você vender serviço pro cliente final (Exemplo: uma empresa de e-commerce), você também vende seu serviço para a empresa (independente se você é CLT ou PJ) e portanto vender se torna uma dupla responsabilidade. A consultoria por sua vez precisa ter cada vez mais sucesso pra manter uma boa imagem no mercado para que possa continuar existindo, em tese cada vez com mais qualidade e pra isso ela depende dos seus consultores. E porque isso é tão importante? Porque em essência consultoria é uma empresa e empresas são feitas de pessoas, por mais que exista um suposto "espírito da empresa" como um ser imaterial, no final do dia relações são de carne e osso, e cada pessoa que ali trabalha equivale a uma família ao menos via de regra. Significa então que quando empresas vão bem, famílias vão bem também. Vender seu serviço de forma responsável em consultorias, em um mercado onde imagem e reputação contam muito, afeta não só você como consultor mas uma cadeia inimaginável de gente envolvida. É nesse sentido que, vender é uma ação um pouco mais crítica pra consultores que outras empresas em geral. Vender serviço de forma não efetiva (por N motivos) impede a empresa de crescer como deveria, pode afetar reputação ou até de prejudicar caixa. E já sabemos o que acontece quando uma empresa tem diminuição de caixa... Resposta impopular: Crueldade das empresas? É como o mercado funciona e o mundo real também gostemos ou não, essa prosa toda é pra falar que bem, se você está vendendo algo, venda com carinho principalmente se for serviço, pois boas vendas trazem mais clientes, mais clientes mais dinheiro, mais dinheiro, mais oportunidades pra todo mundo (inclusive você), a consultoria cresce e se destaca no mercado o que afeta a cadeia toda, inclusive quem você não faz ideia que exista. Pedro Nakamoto, analista de TI de 25 anos, concorda com tudo o que eu disse. Fica as palavras finais que compartilho de outro grande pensador consultor que trabalha com SQL Server: "Cuida da lojinha" :p]]></summary></entry><entry><title type="html">Como é trabalhar com consultoria de TI? Parte 1 de 3</title><link href="http://localhost:4000/trabalhar-com-consultoria-parte1/" rel="alternate" type="text/html" title="Como é trabalhar com consultoria de TI? Parte 1 de 3" /><published>2021-10-18T20:17:43-03:00</published><updated>2021-10-18T20:17:43-03:00</updated><id>http://localhost:4000/trabalhar-com-consultoria-parte1</id><content type="html" xml:base="http://localhost:4000/trabalhar-com-consultoria-parte1/"><![CDATA[<p><!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN" "http://www.w3.org/TR/REC-html40/loose.dtd"><br />
+<!-- wp:paragraph --><html><body></p>
+<p>Olá,</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:image {"id":3006,"sizeSlug":"large","linkDestination":"none"} --></p>
+<figure class="wp-block-image size-large"><img src="/assets/2021/10/Screenshot_1-1024x671.jpg" alt="" class="wp-image-3006"></figure>
+<p><!-- /wp:image --></p>
+<p><!-- wp:paragraph --></p>
+<p>Finalmente um post não técnico  e como costumo dizer: com "sinceridade e sem crachá",sem compromisso ou preocupação de <s>des</s>agradar alguém, afinal estou escrevendo pro meu blog, então é zero patrocínio. A ideia aqui é deixar algumas impressões sobre ser consultor(a),  em especial coisas que eu gostaria de ter lido no passado.</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:heading --></p>
+<h2>Um pouco de background</h2>
+<p><!-- /wp:heading --></p>
+<p><!-- wp:paragraph --></p>
+<p>Pra quem não me conhece (e pra quem conhece também kkk), Renato, trintei ano passado, resido em Brasília-DF e trabalho como DBA desde 2012 (graças a uma baita oportunidade recebida pelos Rodrigos (Gomes/Jorge), Priscila, Ricardo, Marcel (dentre muitos outros amigos de profissão e também da G954). Não é ideia deste post contar sobre minha história, mas fui abençoado e tive muita sorte de ter tido a oportunidade de trabalhar ao lado de profissionais e pessoas incríveis (sem listas neste post) e graças aos ensinamentos vindos de todos os lados, um pouco de networking/comunidade e trabalho, cheguei até 2021 sempre trabalhando na área, e sempre alocado a um cliente específico de modo geral.</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --></p>
+<p>Seja empresa de BI, agência reguladora de energia elétrica, telefonia e comunicações, uma instituição financeira relevante relacionada ao Cooperativismo, alguns órgãos do governo de importância crítica pra sociedade  e também em uma operadora de plano de saúde... Já dei uma rodada considerável em vários ambientes, mas, até então, eu <strong>nunca </strong>tinha trabalhado com consultor de banco de dados como atividade principal, <strong>entretanto </strong>já tinha topado com <strong>inúmeros consultores</strong> de forma direta ou indireta no dia a dia  então eu tinha algumas ideias formadas já na cabeça de como seria o dia a dia de um(a) consultor(a), a principal delas é que, certamente é significado de uma vida mais agitada e desafiadora, afinal, sempre tem "bucha" pra resolver (ninguém chama uma consultoria em tempos de paz ou que não seja pra resolver problemas), e em "sabores" variados, levando em consideração a quantidade de clientes e seus diferentes setores/dimensões que uma consultoria atende (versus o DBA que fica alocado em um só lugar).</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --></p>
+<p> Me interessei justamente por esse desafio na época, a de exposição a vários tipos de "buchas" e decidi aceitar o convite da consultoria que me chamou primeiro (depois de algum tempo, pois pensei muito antes de prosseguir).</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:heading --></p>
+<h2> A entrevista</h2>
+<p><!-- /wp:heading --></p>
+<p><!-- wp:paragraph --></p>
+<p>Entrevista hardcore, meus amigos. Foi a entrevista técnica mais puxada de todas que já tinha feito até o momento  e que na minha opinião deveria ser um modelo pra entrevista de qualquer DBA, bem completa, desde os fundamentos do produto até itens mais avançados especialmente de performance <em>tuning</em>. Enfim, achei que não daria certo, acabou que deu, passei com ferimentos leves kkkkk e cá estou, agora de fato, trabalhando como consultor de banco de dados SQL Server, apesar de estar mais voltado a projetos, já participei de plantão, de alguns incidentes  e agora, tenho condições de compartilhar algumas impressões que são sobre ser consultor (a).</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:heading --></p>
+<h2>Características básicas de consultoria</h2>
+<p><!-- /wp:heading --></p>
+<p><!-- wp:image --></p>
+<figure class="wp-block-image"><img src="/assets/2021/10/884f4.jpg" alt="High Quality Matrix Morpheus Offer Blank Meme Template"><br />
+<figcaption>Resolver problemas é importante, oferecer alternativas também.</figcaption>
+</figure>
+<p><!-- /wp:image --></p>
+<p><!-- wp:paragraph --></p>
+<p>Bem, basicamente assim como todo profissional é contratado pra resolver problemas e com o consultor(a) não é diferente. Alguns pontos do papel de consultor(a) chamam a atenção:</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:list --></p>
+<ul>
+<li>A pool de clientes é muito vasta e em geral pode envolver clientes de diferentes tamanhos, setores e críticidades diversas (ou seja, naturalmente possuem cenários, problemas, budgets e características únicas que fazem cada problema ser, em geral diferente do outro). Lidar com diferentes cenários é uma (inescapável) realidade, <strong>saber </strong>lidar com eles é uma habilidade.</li>
+<li>A vida de um consultor é estilo Brasília-DF (já ouviram falar do lema Brasília 50 anos em 5???), mas como sei que grande parte de quem lê esse post também é meio nerd, ou manja de cultura pop 90+, então vou usar conceito de anime mesmo  por pura diversão pessoal  chamado Salão do tempo. Esse ponto é o que vou focar o restante do post;</li>
+<li>O consultor além da parte técnica,  é um representante da contratante  e vendedor. Esse pra mim foi um estalo um tanto quanto chocante, pois não parece óbvio a primeira vista, mas isso também vale para quem não é consultor (sim, você mesmo, que está alocado por exemplo). Somos todos vendedores e perceber isso vai fazer o mercado de trabalho fazer mais sentido. Esse é o ponto que vou focar no próximo post que sai na quinta com bastaaaaante foco (21/10/2021);</li>
+</ul>
+<p><!-- /wp:list --></p>
+<p><!-- wp:paragraph --></p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:heading --></p>
+<h2>Parte 1 de 3: Salão do Tempo </h2>
+<p><!-- /wp:heading --></p>
+<p><!-- wp:image {"id":3008,"sizeSlug":"full","linkDestination":"none"} --></p>
+<figure class="wp-block-image size-full"><img src="/assets/2021/10/4c10451583d3305a9e7324987d75918cf1547790v2_hq.jpg" alt="" class="wp-image-3008"></figure>
+<p><!-- /wp:image --></p>
+<p><!-- wp:paragraph --></p>
+<p>Quem assistiu Dragonball deve estar familiarizado com o conceito do Salão do Tempo, local que fica no céu (pra facilitar, fora da terra, que não é plana, só lembrando), onde  os protagonistas foram treinar pra vencer um inimigo muito mais poderoso que eles (premissa de toda jornada de herói). Bem, dentro deste local, o tempo passa diferente (6 minutos no salão equivalem a 1 segundo na terra), em outras palavras, treinar no salão compensa e muito pois o tempo passa mais devagar se comparado com treinar na terra, ou seja, o aproveitamento ao treinar dentro do salão é muito maior que fora dele.</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --></p>
+<p> Traçando os paralelos pra nossa realidade  já que dragonball é um anime, a gente só tem um vida e não somos desocupados que só querem lutar e participar de torneio (sim isso é um resumo do Goku e desculpa se eu estraguei a infância de alguém), trabalhar em uma consultoria saudável favorece demais o cenário de você aprender em um mês, o que você aprenderia em vários meses, ou até em anos, dada a quantidade de problemas que você tem à disposição pra resolver. </p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:heading --></p>
+<h2>Tá, mas...</h2>
+<p><!-- /wp:heading --></p>
+<p><!-- wp:image {"width":610,"height":343} --></p>
+<figure class="wp-block-image is-resized"><img src="/assets/2021/10/5qxsa3.jpg" alt="" width="610" height="343"></figure>
+<p><!-- /wp:image --></p>
+<p><!-- wp:paragraph --></p>
+<p>Isso é bom? Sem dúvida, pra quem é avido(a) por resolver problemas e quer mares mais agitados por assim dizer, é uma oportunidade incrível pra sua carreira, já que uma das partes principais de fato, que um(a) profissional deve procurar em uma consultoria (acredito), é a evolução técnica (mas não somente). Uma consultoria tem clientes variados, problemas variados, de dimensões bastante diferentes entre eles (e em alguns casos até requisitos legais, governamentais, ou relacionados à segurança que irão certamente dificultar a sua atuação), enfim, problema pra resolver aqui tem aos montes!</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --></p>
+<p>Vai ter que estudar mais do que o normal? Com certeza, já que ninguém sabe de tudo, e pra resolver determinados problemas cuja solução não é tão familiar, vai ter que sentar o bumbum na cadeira e estudar. Aqui fica uma dica pra quem está atuando na área na geração atual...Estudar como resolver determinados problemas APENAS quando eles aparecem, ao invés de se ter um preparo prévio dos fundamentos envolvidos, é válido mas não pode ser a única forma de estudo. Estude fundamentos, leia um ou mais livros de assuntos que você quer reforçar, não deixe de ler. Não saber algo é melhor do que falar bobagem (quem nunca).  Não espere ser surpreendido sempre, <em>do your research</em> como diria sei lá quem.</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --></p>
+<p>Quem não tem o perfil de estudar, uma certa auto-suficiência de correr atrás de determinado assunto (ou procurar quem sabe pra ajudar) tende a sofrer bastante em uma área tão dinâmica quanto a TI, mas isso se acentua no papel de consultor.  Então fica aqui meu conselho ultimate: estude. E nem vou completar "pois a caneta é mais leve que a pá", é que se algum dia você precisar daquela informação, já sabe... </p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --></p>
+<p>Resumindo:</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:quote --></p>
+<blockquote class="wp-block-quote"><p>O  "Salão do tempo" é uma das principais vantagens  de ser consultor pela evolução técnica, mas é onde exige mais esforço da sua parte e naturalmente exerce pressão. Quanto mais esforço dispendido, maiores os resultados, já que problemas nunca irão parar de aparecer. </p>
+</blockquote>
+<p><!-- /wp:quote --></p>
+<p><!-- wp:quote --></p>
+<blockquote class="wp-block-quote"><p> Independente se você é consultor(a) ou não, o maior responsável pela sua carreira é <strong>você</strong> mesmo, mas aqui isso vale mais do que nunca. Aproveite, se esforce, busque ajuda sempre que for necessário, mas nunca pare de "treinar" no salão.</p>
+</blockquote>
+<p><!-- /wp:quote --></p>
+<p><!-- wp:paragraph --></p>
+<p>P<strong>ergunta popular: </strong>Então o Salão do tempo é onde todo profissional de TI deveria estar? </p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --></p>
+<p>R<strong>esposta impopular:</strong> Não, pois nem todo mundo tem o perfil que a situação em si exige (de mares agitados)  e está tudo bem, principalmente nas diferentes etapas de vida, existem diversas variáveis que devem ser consideradas (trabalhar em um ritmo mais tranquilo é uma delas) e só a pessoa vai de fato saber se consegue pagar o preço ou não (ou se faz sentido pra ela, naquele momento), afinal pra cada escolha tem um sacrifício.</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --></p>
+<p>Enfim, no próximo post gostaria de focar em outro ponto que acredito ser tão importante quanto a parte técnica: soft skills em geral, e no fato do consultor(a) ser um vendedor(a) e por mais que pareça uma visão fria, vou explicar o porquê não é e porque você deveria se preocupar (e muito) com esse ponto.  </p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --></p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --></p>
+<p>Deixa sua opinião, comentário etc se tiver interesse, canal sempre aberto para discussões!</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --></p>
+<p>[]'s</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --></p>
+<p><strong>EDIT</strong>: Agradecimentos  anônimos a uma conhecida de pouquíssima intimidade (diz que parou de beber) que fez um CHECKDB no texto, cheio de erro.  </p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --></p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --></p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --></p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --></p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --></p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --></p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --></p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --></p>
+<p><!-- /wp:paragraph --><br />
+</body></html></p>]]></content><author><name>{&quot;login&quot; =&gt; &quot;renatomsiq@gmail.com&quot;, &quot;email&quot; =&gt; &quot;renatomsiq@gmail.com&quot;, &quot;display_name&quot; =&gt; &quot;renatomsiq@gmail.com&quot;, &quot;first_name&quot; =&gt; &quot;&quot;, &quot;last_name&quot; =&gt; &quot;&quot;}</name><email>renatomsiq@gmail.com</email></author><category term="carreira" /><category term="OFFTOPIC" /><summary type="html"><![CDATA[Olá, Finalmente um post não técnico e como costumo dizer: com "sinceridade e sem crachá",sem compromisso ou preocupação de desagradar alguém, afinal estou escrevendo pro meu blog, então é zero patrocínio. A ideia aqui é deixar algumas impressões sobre ser consultor(a), em especial coisas que eu gostaria de ter lido no passado. Um pouco de background Pra quem não me conhece (e pra quem conhece também kkk), Renato, trintei ano passado, resido em Brasília-DF e trabalho como DBA desde 2012 (graças a uma baita oportunidade recebida pelos Rodrigos (Gomes/Jorge), Priscila, Ricardo, Marcel (dentre muitos outros amigos de profissão e também da G954). Não é ideia deste post contar sobre minha história, mas fui abençoado e tive muita sorte de ter tido a oportunidade de trabalhar ao lado de profissionais e pessoas incríveis (sem listas neste post) e graças aos ensinamentos vindos de todos os lados, um pouco de networking/comunidade e trabalho, cheguei até 2021 sempre trabalhando na área, e sempre alocado a um cliente específico de modo geral. Seja empresa de BI, agência reguladora de energia elétrica, telefonia e comunicações, uma instituição financeira relevante relacionada ao Cooperativismo, alguns órgãos do governo de importância crítica pra sociedade e também em uma operadora de plano de saúde... Já dei uma rodada considerável em vários ambientes, mas, até então, eu nunca tinha trabalhado com consultor de banco de dados como atividade principal, entretanto já tinha topado com inúmeros consultores de forma direta ou indireta no dia a dia então eu tinha algumas ideias formadas já na cabeça de como seria o dia a dia de um(a) consultor(a), a principal delas é que, certamente é significado de uma vida mais agitada e desafiadora, afinal, sempre tem "bucha" pra resolver (ninguém chama uma consultoria em tempos de paz ou que não seja pra resolver problemas), e em "sabores" variados, levando em consideração a quantidade de clientes e seus diferentes setores/dimensões que uma consultoria atende (versus o DBA que fica alocado em um só lugar). Me interessei justamente por esse desafio na época, a de exposição a vários tipos de "buchas" e decidi aceitar o convite da consultoria que me chamou primeiro (depois de algum tempo, pois pensei muito antes de prosseguir). A entrevista Entrevista hardcore, meus amigos. Foi a entrevista técnica mais puxada de todas que já tinha feito até o momento e que na minha opinião deveria ser um modelo pra entrevista de qualquer DBA, bem completa, desde os fundamentos do produto até itens mais avançados especialmente de performance tuning. Enfim, achei que não daria certo, acabou que deu, passei com ferimentos leves kkkkk e cá estou, agora de fato, trabalhando como consultor de banco de dados SQL Server, apesar de estar mais voltado a projetos, já participei de plantão, de alguns incidentes e agora, tenho condições de compartilhar algumas impressões que são sobre ser consultor (a). Características básicas de consultoria Resolver problemas é importante, oferecer alternativas também. Bem, basicamente assim como todo profissional é contratado pra resolver problemas e com o consultor(a) não é diferente. Alguns pontos do papel de consultor(a) chamam a atenção: A pool de clientes é muito vasta e em geral pode envolver clientes de diferentes tamanhos, setores e críticidades diversas (ou seja, naturalmente possuem cenários, problemas, budgets e características únicas que fazem cada problema ser, em geral diferente do outro). Lidar com diferentes cenários é uma (inescapável) realidade, saber lidar com eles é uma habilidade. A vida de um consultor é estilo Brasília-DF (já ouviram falar do lema Brasília 50 anos em 5???), mas como sei que grande parte de quem lê esse post também é meio nerd, ou manja de cultura pop 90+, então vou usar conceito de anime mesmo por pura diversão pessoal chamado Salão do tempo. Esse ponto é o que vou focar o restante do post; O consultor além da parte técnica, é um representante da contratante e vendedor. Esse pra mim foi um estalo um tanto quanto chocante, pois não parece óbvio a primeira vista, mas isso também vale para quem não é consultor (sim, você mesmo, que está alocado por exemplo). Somos todos vendedores e perceber isso vai fazer o mercado de trabalho fazer mais sentido. Esse é o ponto que vou focar no próximo post que sai na quinta com bastaaaaante foco (21/10/2021); Parte 1 de 3: Salão do Tempo Quem assistiu Dragonball deve estar familiarizado com o conceito do Salão do Tempo, local que fica no céu (pra facilitar, fora da terra, que não é plana, só lembrando), onde os protagonistas foram treinar pra vencer um inimigo muito mais poderoso que eles (premissa de toda jornada de herói). Bem, dentro deste local, o tempo passa diferente (6 minutos no salão equivalem a 1 segundo na terra), em outras palavras, treinar no salão compensa e muito pois o tempo passa mais devagar se comparado com treinar na terra, ou seja, o aproveitamento ao treinar dentro do salão é muito maior que fora dele. Traçando os paralelos pra nossa realidade já que dragonball é um anime, a gente só tem um vida e não somos desocupados que só querem lutar e participar de torneio (sim isso é um resumo do Goku e desculpa se eu estraguei a infância de alguém), trabalhar em uma consultoria saudável favorece demais o cenário de você aprender em um mês, o que você aprenderia em vários meses, ou até em anos, dada a quantidade de problemas que você tem à disposição pra resolver. Tá, mas... Isso é bom? Sem dúvida, pra quem é avido(a) por resolver problemas e quer mares mais agitados por assim dizer, é uma oportunidade incrível pra sua carreira, já que uma das partes principais de fato, que um(a) profissional deve procurar em uma consultoria (acredito), é a evolução técnica (mas não somente). Uma consultoria tem clientes variados, problemas variados, de dimensões bastante diferentes entre eles (e em alguns casos até requisitos legais, governamentais, ou relacionados à segurança que irão certamente dificultar a sua atuação), enfim, problema pra resolver aqui tem aos montes! Vai ter que estudar mais do que o normal? Com certeza, já que ninguém sabe de tudo, e pra resolver determinados problemas cuja solução não é tão familiar, vai ter que sentar o bumbum na cadeira e estudar. Aqui fica uma dica pra quem está atuando na área na geração atual...Estudar como resolver determinados problemas APENAS quando eles aparecem, ao invés de se ter um preparo prévio dos fundamentos envolvidos, é válido mas não pode ser a única forma de estudo. Estude fundamentos, leia um ou mais livros de assuntos que você quer reforçar, não deixe de ler. Não saber algo é melhor do que falar bobagem (quem nunca). Não espere ser surpreendido sempre, do your research como diria sei lá quem. Quem não tem o perfil de estudar, uma certa auto-suficiência de correr atrás de determinado assunto (ou procurar quem sabe pra ajudar) tende a sofrer bastante em uma área tão dinâmica quanto a TI, mas isso se acentua no papel de consultor. Então fica aqui meu conselho ultimate: estude. E nem vou completar "pois a caneta é mais leve que a pá", é que se algum dia você precisar daquela informação, já sabe... Resumindo: O "Salão do tempo" é uma das principais vantagens de ser consultor pela evolução técnica, mas é onde exige mais esforço da sua parte e naturalmente exerce pressão. Quanto mais esforço dispendido, maiores os resultados, já que problemas nunca irão parar de aparecer. Independente se você é consultor(a) ou não, o maior responsável pela sua carreira é você mesmo, mas aqui isso vale mais do que nunca. Aproveite, se esforce, busque ajuda sempre que for necessário, mas nunca pare de "treinar" no salão. Pergunta popular: Então o Salão do tempo é onde todo profissional de TI deveria estar? Resposta impopular: Não, pois nem todo mundo tem o perfil que a situação em si exige (de mares agitados) e está tudo bem, principalmente nas diferentes etapas de vida, existem diversas variáveis que devem ser consideradas (trabalhar em um ritmo mais tranquilo é uma delas) e só a pessoa vai de fato saber se consegue pagar o preço ou não (ou se faz sentido pra ela, naquele momento), afinal pra cada escolha tem um sacrifício. Enfim, no próximo post gostaria de focar em outro ponto que acredito ser tão importante quanto a parte técnica: soft skills em geral, e no fato do consultor(a) ser um vendedor(a) e por mais que pareça uma visão fria, vou explicar o porquê não é e porque você deveria se preocupar (e muito) com esse ponto. Deixa sua opinião, comentário etc se tiver interesse, canal sempre aberto para discussões! []'s EDIT: Agradecimentos anônimos a uma conhecida de pouquíssima intimidade (diz que parou de beber) que fez um CHECKDB no texto, cheio de erro.]]></summary></entry></feed>

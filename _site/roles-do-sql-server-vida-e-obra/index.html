@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1"><!-- Begin Jekyll SEO tag v2.9.0 -->
+<title>Roles do SQL Server - Vida e Obra | Renato Siqueira</title>
+<meta name="generator" content="Jekyll v4.4.1" />
+<meta property="og:title" content="Roles do SQL Server - Vida e Obra" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="&lt;!DOCTYPE html PUBLIC &quot;-//W3C//DTD HTML 4.0 Transitional//EN&quot; &quot;http://www.w3.org/TR/REC-html40/loose.dtd&quot;&gt; &lt;/p&gt; (Esse artigo faz parte da série Roles do SQL Server - Vida e Obra) Bom dia! Este post inicia o começo de uma série sobre as Server-roles:  Roles no SQL Server. Entendo que é um assunto importante tanto pra DBA&#39;s (essencial aqui) quanto pra Desenvolvedores, que por vezes que precisam gerenciar o SQL Server por motivo ou outro. 1 - Básico sobre Segurança Tem um artigo legal do Laurentiu que trata dos aspectos básicos de segurança no SQL Server. Em resumo: Existem dois escopos principais no SQL Server quando o assunto é segurança:…" />
+<meta name="twitter:description" property="og:description" content="&lt;!DOCTYPE html PUBLIC &quot;-//W3C//DTD HTML 4.0 Transitional//EN&quot; &quot;http://www.w3.org/TR/REC-html40/loose.dtd&quot;&gt; &lt;/p&gt; (Esse artigo faz parte da série Roles do SQL Server - Vida e Obra) Bom dia! Este post inicia o começo de uma série sobre as Server-roles:  Roles no SQL Server. Entendo que é um assunto importante tanto pra DBA&#39;s (essencial aqui) quanto pra Desenvolvedores, que por vezes que precisam gerenciar o SQL Server por motivo ou outro. 1 - Básico sobre Segurança Tem um artigo legal do Laurentiu que trata dos aspectos básicos de segurança no SQL Server. Em resumo: Existem dois escopos principais no SQL Server quando o assunto é segurança:…" />
+<link rel="canonical" href="http://localhost:4000/roles-do-sql-server-vida-e-obra/" />
+<meta property="og:url" content="http://localhost:4000/roles-do-sql-server-vida-e-obra/" />
+<meta property="og:site_name" content="Renato Siqueira" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2013-09-20T15:34:13-03:00" />
+<meta property="article:modified_time" content="2013-09-20T15:34:13-03:00" />
+<meta name="twitter:card" content="summary" />
+<meta name="twitter:title" content="Roles do SQL Server - Vida e Obra" />
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"BlogPosting","dateModified":"2013-09-20T15:34:13-03:00","datePublished":"2013-09-20T15:34:13-03:00","description":"&lt;!DOCTYPE html PUBLIC &quot;-//W3C//DTD HTML 4.0 Transitional//EN&quot; &quot;http://www.w3.org/TR/REC-html40/loose.dtd&quot;&gt; &lt;/p&gt; (Esse artigo faz parte da série Roles do SQL Server - Vida e Obra) Bom dia! Este post inicia o começo de uma série sobre as Server-roles:  Roles no SQL Server. Entendo que é um assunto importante tanto pra DBA&#39;s (essencial aqui) quanto pra Desenvolvedores, que por vezes que precisam gerenciar o SQL Server por motivo ou outro. 1 - Básico sobre Segurança Tem um artigo legal do Laurentiu que trata dos aspectos básicos de segurança no SQL Server. Em resumo: Existem dois escopos principais no SQL Server quando o assunto é segurança:…","headline":"Roles do SQL Server - Vida e Obra","mainEntityOfPage":{"@type":"WebPage","@id":"http://localhost:4000/roles-do-sql-server-vida-e-obra/"},"url":"http://localhost:4000/roles-do-sql-server-vida-e-obra/"}</script>
+<!-- End Jekyll SEO tag -->
+<link rel="stylesheet" href="/assets/main.css"><link type="application/atom+xml" rel="alternate" href="http://localhost:4000/feed.xml" title="Renato Siqueira" /></head>
+<body><header class="site-header" role="banner">
+
+  <div class="wrapper"><a class="site-title" rel="author" href="/">Renato Siqueira</a><nav class="site-nav">
+        <input type="checkbox" id="nav-trigger" class="nav-trigger" />
+        <label for="nav-trigger">
+          <span class="menu-icon">
+            <svg viewBox="0 0 18 15" width="18px" height="15px">
+              <path d="M18,1.484c0,0.82-0.665,1.484-1.484,1.484H1.484C0.665,2.969,0,2.304,0,1.484l0,0C0,0.665,0.665,0,1.484,0 h15.032C17.335,0,18,0.665,18,1.484L18,1.484z M18,7.516C18,8.335,17.335,9,16.516,9H1.484C0.665,9,0,8.335,0,7.516l0,0 c0-0.82,0.665-1.484,1.484-1.484h15.032C17.335,6.031,18,6.696,18,7.516L18,7.516z M18,13.516C18,14.335,17.335,15,16.516,15H1.484 C0.665,15,0,14.335,0,13.516l0,0c0-0.82,0.665-1.483,1.484-1.483h15.032C17.335,12.031,18,12.695,18,13.516L18,13.516z"/>
+            </svg>
+          </span>
+        </label>
+
+        <div class="trigger"><a class="page-link" href="/about/">About</a></div>
+      </nav></div>
+</header>
+<main class="page-content" aria-label="Content">
+      <div class="wrapper">
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+
+  <header class="post-header">
+    <h1 class="post-title p-name" itemprop="name headline">Roles do SQL Server - Vida e Obra</h1>
+    <p class="post-meta">
+      <time class="dt-published" datetime="2013-09-20T15:34:13-03:00" itemprop="datePublished">Sep 20, 2013
+      </time>• <span itemprop="author" itemscope itemtype="http://schema.org/Person"><span class="p-author h-card" itemprop="name">{"login" => "Renato Siqueira", "email" => "", "display_name" => "Renato Siqueira", "first_name" => "", "last_name" => ""}</span></span></p>
+  </header>
+
+  <div class="post-content e-content" itemprop="articleBody">
+    <p><!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN" "http://www.w3.org/TR/REC-html40/loose.dtd"><br />
+<html><body><br />
+<a href="http://renatomsiqueira.com.br/wp-content/uploads/2013/09/s12.png"><img class="alignnone size-full wp-image-2374" src="/assets/2013/09/s12.png" alt="s12" width="470" height="147"></a></p>
+<p>(Esse artigo faz parte da série Roles do SQL Server - Vida e Obra)</p>
+<p>Bom dia!</p>
+<p>Este post inicia o começo de uma série sobre as Server-roles:  <a href="http://msdn.microsoft.com/en-us/library/bb669065.aspx">Roles no SQL Server</a>.</p>
+<p>Entendo que é um assunto importante tanto pra <strong>DBA's</strong> (essencial aqui) quanto pra Desenvolvedores, que por vezes que precisam gerenciar o SQL Server por motivo ou outro.</p>
+<p><strong>1 - Básico sobre Segurança</strong></p>
+<p>Tem um<a href="http://blogs.msdn.com/b/lcris/archive/2007/03/23/basic-sql-server-security-concepts-logins-users-and-principals.aspx"> artigo legal do Laurentiu</a> que trata dos aspectos básicos de segurança no SQL Server. Em resumo:</p>
+<ul>
+<li>Existem dois escopos principais no SQL Server quando o assunto é segurança: Server (Instância) e Databases (Bancos de Dados);</li>
+<li>Logins são relacionados à Instância (Server) e Usuários, aos bancos de dados;</li>
+<li>Cada login é um principal. Principal é tudo aquilo que pode sofrer uma ação chamada permissionamento;</li>
+<li>Existem "principals" que possuem permissões já pré-definidas, embora você também possa criá-los. Tais principals são chamados de Role (Papel, função)</li>
+</ul>
+<p>Mas...o que é uma role?</p>
+<p><strong>2- Roles: Analogia  </strong></p>
+<p>Maria Queren é uma analista de sistemas pela manhã, trabalhando em uma multinacional. De tarde, ela vai para sua empresa, onde é dona, a fim de tomar decisões gerenciais. No final da tarde, vai para o curso de inglês, onde é aluna. De noite, vai pra casa, onde é esposa e mãe. Nos finais de semana, passa o tempo na casa dos pais.</p>
+<p>Notou o que seriam "roles"? Observe a variedade de papéis que a Maria possui. Analistas de Sistema, proprietária de negócio, estudante, mãe, esposa, filha... Cada papel deste traz uma série de poderes e possui uma determinada atuação em determinado contexto (ambiente). Maria pode dar gerenciar pessoas em sua empresa, mas não na instituição onde tem curso de inglês.</p>
+<p><strong>3 - Voltando ao SQL Server </strong></p>
+<p>Então, o SQL Server possui também alguns papéis de servidor, tanto em <a href="http://technet.microsoft.com/en-us/library/ms188659.aspx">contexto de servidor </a>como em <a href="http://technet.microsoft.com/en-us/library/ms189121.aspx">contexto de banco de dados.</a> É importante associar o contexto de servidor aos logins (autenticação) do que usuários (estes estão no escopo de banco de dados).  Cada papel possui uma série de privilégios, e garante ao principal associado X permissões. No caso em específico do assunto atual, que são roles de servidor, garante algumas permissões à nível de instância.</p>
+<p><strong>4-   Mas o que são mesmo Server Roles?</strong></p>
+<p>Se dividem em duas categorias: Fixed Server Roles (Leia-se Funções fixas, pré-definidas) e as Custom Server Roles (referenciadas oficialmente como User Defined Server Roles, que é uma novidade trazida pelo SQL Server 2012). Vamos começar da raíz, conhecendo cada uma das roles fixas.</p>
+<p>As nove Roles Fixas de Servidor, linkadas neste tópico, são:</p>
+<ul>
+<li><a href="http://renatomsiqueira.com.br/2013/09/24/roles-do-sql-server-bulkadmin/"><em>bulkadmin</em></a></li>
+<li><a href="http://renatomsiqueira.com.br/2013/10/09/roles-do-sql-server-dbcreator/"><em>dbcreator</em></a></li>
+<li><a href="http://renatomsiqueira.com.br/2013/10/28/roles-do-sql-server-diskadmin-processadmin/"><em>diskadmin</em></a></li>
+<li><a href="http://renatomsiqueira.com.br/2013/10/28/roles-do-sql-server-diskadmin-processadmin/"><em>processadmin</em></a></li>
+<li><a href="renatomsiqueira.com.br/2013/11/17/roles-do-sql-server-public/"><em>public</em></a></li>
+<li><a href="http://renatomsiqueira.com.br/2014/04/11/roles-do-sql-server-serveradmin/"><em>serveradmin</em></a></li>
+<li><a href="http://renatomsiqueira.com.br/2014/04/23/roles-do-sql-server-setupadmin-e-securityadmin/"><em>setupadmin</em></a></li>
+<li><a href="http://renatomsiqueira.com.br/2014/04/23/roles-do-sql-server-setupadmin-e-securityadmin/"><em>securityadmin</em></a></li>
+<li><a href="http://renatomsiqueira.com.br/roles-do-sql-server-sysadmin/"><em>sysadmin</em></a></li>
+</ul>
+<p><strong>5 - Mas porque falar sobre Server Roles em outros posts? "Faz um resumão aê"</strong></p>
+<p>Pode parecer simples resumir poucas linhas sobre cada role acima (como é comumente visto pela internet). Porém, algumas roles são  extremamente peculiares, pois, possuem mais privilégios do que se comumente acredita que tenham e é difícil fixar isso sem teste. Algumas são irrelevantes no dia de hoje (em linhas gerais), outras fáceis de entender e outras bastante delicadas e que escondem um canhão (por exemplo, <em>dbcreator</em>) se mal utilizados.</p>
+<p>Nas próximas postagens, vou seguir a ordem da lista acima e conversamos sobre as roles <em>bulkadmin</em> e <em>dbcreator</em>.<br />
+De antemão, caso tenha alguma pergunta ou queira dar uma sugestão sobre o assunto (e quiser fazer perguntas sobre as roles), não hesite em comentar ou entrar em contato. Todo e qualquer feedback é bem vindo, ok?</p>
+<p>[]'s</body></html></p>
+
+  </div><a class="u-url" href="/roles-do-sql-server-vida-e-obra/" hidden></a>
+</article>
+
+      </div>
+    </main><footer class="site-footer h-card">
+  <data class="u-url" href="/"></data>
+
+  <div class="wrapper">
+
+    <h2 class="footer-heading">Renato Siqueira</h2>
+
+    <div class="footer-col-wrapper">
+      <div class="footer-col footer-col-1">
+        <ul class="contact-list">
+          <li class="p-name">Renato Siqueira</li><li><a class="u-email" href="mailto:rad_renato@hotmail.com">rad_renato@hotmail.com</a></li></ul>
+      </div>
+
+      <div class="footer-col footer-col-2"><ul class="social-media-list"><li><a href="https://github.com/renatomsq"><svg class="svg-icon"><use xlink:href="/assets/minima-social-icons.svg#github"></use></svg> <span class="username">renatomsq</span></a></li><li><a href="https://www.twitter.com/naotenhomais"><svg class="svg-icon"><use xlink:href="/assets/minima-social-icons.svg#twitter"></use></svg> <span class="username">naotenhomais</span></a></li></ul>
+</div>
+
+      <div class="footer-col footer-col-3">
+        <p>Meu blog de artigo técnico sobre banco de dados e carreira.</p>
+      </div>
+    </div>
+
+  </div>
+
+</footer>
+</body>
+
+</html>

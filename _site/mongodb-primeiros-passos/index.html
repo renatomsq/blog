@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1"><!-- Begin Jekyll SEO tag v2.9.0 -->
+<title>MongoDB: Primeiros passos na vila da folha | Renato Siqueira</title>
+<meta name="generator" content="Jekyll v4.4.1" />
+<meta property="og:title" content="MongoDB: Primeiros passos na vila da folha" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="&lt;!DOCTYPE html PUBLIC &quot;-//W3C//DTD HTML 4.0 Transitional//EN&quot; &quot;http://www.w3.org/TR/REC-html40/loose.dtd&quot;&gt; &lt;/p&gt; Olá, Depois de muito tempo sem postar e cumprindo um desejo antigo (desde 2019), finalmente criei coragem pra escrever um post sobre MongoDB, um banco de dados NoSQL orientado a documento extremamente popular, versátil (de uso geral) e que encaixa como uma luva na era em que vivemos onde dados assumem cada vez formatos mais diversos, onde nosso familiar banco &quot;relacional&quot; já não é mais a melhor pedida. Enfim, o post de hoje é simples porém de coração. São coisas que fiz pra aprender MongoDB para administração e que eu certamente…" />
+<meta name="twitter:description" property="og:description" content="&lt;!DOCTYPE html PUBLIC &quot;-//W3C//DTD HTML 4.0 Transitional//EN&quot; &quot;http://www.w3.org/TR/REC-html40/loose.dtd&quot;&gt; &lt;/p&gt; Olá, Depois de muito tempo sem postar e cumprindo um desejo antigo (desde 2019), finalmente criei coragem pra escrever um post sobre MongoDB, um banco de dados NoSQL orientado a documento extremamente popular, versátil (de uso geral) e que encaixa como uma luva na era em que vivemos onde dados assumem cada vez formatos mais diversos, onde nosso familiar banco &quot;relacional&quot; já não é mais a melhor pedida. Enfim, o post de hoje é simples porém de coração. São coisas que fiz pra aprender MongoDB para administração e que eu certamente…" />
+<link rel="canonical" href="http://localhost:4000/mongodb-primeiros-passos/" />
+<meta property="og:url" content="http://localhost:4000/mongodb-primeiros-passos/" />
+<meta property="og:site_name" content="Renato Siqueira" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2021-10-12T00:45:35-03:00" />
+<meta property="article:modified_time" content="2021-10-12T00:45:35-03:00" />
+<meta name="twitter:card" content="summary" />
+<meta name="twitter:title" content="MongoDB: Primeiros passos na vila da folha" />
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"BlogPosting","dateModified":"2021-10-12T00:45:35-03:00","datePublished":"2021-10-12T00:45:35-03:00","description":"&lt;!DOCTYPE html PUBLIC &quot;-//W3C//DTD HTML 4.0 Transitional//EN&quot; &quot;http://www.w3.org/TR/REC-html40/loose.dtd&quot;&gt; &lt;/p&gt; Olá, Depois de muito tempo sem postar e cumprindo um desejo antigo (desde 2019), finalmente criei coragem pra escrever um post sobre MongoDB, um banco de dados NoSQL orientado a documento extremamente popular, versátil (de uso geral) e que encaixa como uma luva na era em que vivemos onde dados assumem cada vez formatos mais diversos, onde nosso familiar banco &quot;relacional&quot; já não é mais a melhor pedida. Enfim, o post de hoje é simples porém de coração. São coisas que fiz pra aprender MongoDB para administração e que eu certamente…","headline":"MongoDB: Primeiros passos na vila da folha","mainEntityOfPage":{"@type":"WebPage","@id":"http://localhost:4000/mongodb-primeiros-passos/"},"url":"http://localhost:4000/mongodb-primeiros-passos/"}</script>
+<!-- End Jekyll SEO tag -->
+<link rel="stylesheet" href="/assets/main.css"><link type="application/atom+xml" rel="alternate" href="http://localhost:4000/feed.xml" title="Renato Siqueira" /></head>
+<body><header class="site-header" role="banner">
+
+  <div class="wrapper"><a class="site-title" rel="author" href="/">Renato Siqueira</a><nav class="site-nav">
+        <input type="checkbox" id="nav-trigger" class="nav-trigger" />
+        <label for="nav-trigger">
+          <span class="menu-icon">
+            <svg viewBox="0 0 18 15" width="18px" height="15px">
+              <path d="M18,1.484c0,0.82-0.665,1.484-1.484,1.484H1.484C0.665,2.969,0,2.304,0,1.484l0,0C0,0.665,0.665,0,1.484,0 h15.032C17.335,0,18,0.665,18,1.484L18,1.484z M18,7.516C18,8.335,17.335,9,16.516,9H1.484C0.665,9,0,8.335,0,7.516l0,0 c0-0.82,0.665-1.484,1.484-1.484h15.032C17.335,6.031,18,6.696,18,7.516L18,7.516z M18,13.516C18,14.335,17.335,15,16.516,15H1.484 C0.665,15,0,14.335,0,13.516l0,0c0-0.82,0.665-1.483,1.484-1.483h15.032C17.335,12.031,18,12.695,18,13.516L18,13.516z"/>
+            </svg>
+          </span>
+        </label>
+
+        <div class="trigger"><a class="page-link" href="/about/">About</a></div>
+      </nav></div>
+</header>
+<main class="page-content" aria-label="Content">
+      <div class="wrapper">
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+
+  <header class="post-header">
+    <h1 class="post-title p-name" itemprop="name headline">MongoDB: Primeiros passos na vila da folha</h1>
+    <p class="post-meta">
+      <time class="dt-published" datetime="2021-10-12T00:45:35-03:00" itemprop="datePublished">Oct 12, 2021
+      </time>• <span itemprop="author" itemscope itemtype="http://schema.org/Person"><span class="p-author h-card" itemprop="name">{"login" => "renatomsiq@gmail.com", "email" => "renatomsiq@gmail.com", "display_name" => "renatomsiq@gmail.com", "first_name" => "", "last_name" => ""}</span></span></p>
+  </header>
+
+  <div class="post-content e-content" itemprop="articleBody">
+    <p><!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN" "http://www.w3.org/TR/REC-html40/loose.dtd"><br />
+<!-- wp:image {"id":2930,"sizeSlug":"large","linkDestination":"none","className":"is-style-rounded"} --><html><body></p>
+<figure class="wp-block-image size-large is-style-rounded"><img src="/assets/2021/10/mongo2021-1024x543.jpg" alt="" class="wp-image-2930"></figure>
+<p><!-- /wp:image --></p>
+<p><!-- wp:paragraph --></p>
+<p>Olá,</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --></p>
+<p>Depois de muito tempo sem postar e cumprindo um desejo antigo (desde 2019), finalmente criei coragem pra escrever um post sobre MongoDB, um banco de dados NoSQL orientado a documento extremamente popular, versátil (de uso geral) e que encaixa como uma luva na era em que vivemos onde dados assumem cada vez formatos mais diversos, onde nosso familiar  banco "relacional" já não é mais a melhor pedida.</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:image --></p>
+<figure class="wp-block-image"><img src="/assets/2021/10/5q3eb9.jpg" alt=""></figure>
+<p><!-- /wp:image --></p>
+<p><!-- wp:paragraph --></p>
+<p>Enfim, o post de hoje é simples porém de coração. São coisas que fiz pra aprender MongoDB para administração e que eu certamente faria de novo <em>pra entrar na vila da folha</em> (piada ruim utilizada, então bora pro post).</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:image {"id":2931,"sizeSlug":"large","linkDestination":"none"} --></p>
+<figure class="wp-block-image size-large"><img src="/assets/2021/10/Konoha-1024x543.jpg" alt="" class="wp-image-2931"></figure>
+<p><!-- /wp:image --></p>
+<p><!-- wp:heading --></p>
+<h2>1. <strong>Confia no site</strong><br />
+</h2>
+<p><!-- /wp:heading --></p>
+<p><!-- wp:paragraph --></p>
+<p>Uma excelente forma de aprender sobre MongoDB é, sem dúvida, consumir o conteúdo disponibilizado no site do produto. Um tour que eu recomendaria:</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --></p>
+<p>a) Uma breve noção do que é MongoDB em 100 segundos (resumo menor que esse só em formato tik tok lol):</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:embed {"url":"https://www.youtube.com/watch?v=-bt_y4Loofg","type":"video","providerNameSlug":"youtube","responsive":true,"className":"wp-embed-aspect-16-9 wp-has-aspect-ratio"} --></p>
+<figure class="wp-block-embed is-type-video is-provider-youtube wp-block-embed-youtube wp-embed-aspect-16-9 wp-has-aspect-ratio">
+<div class="wp-block-embed__wrapper">
+https://www.youtube.com/watch?v=-bt_y4Loofg
+</div>
+</figure>
+<p><!-- /wp:embed --></p>
+<p><!-- wp:paragraph --></p>
+<p>b) Explore sem compromisso o <a href="https://www.mongodb.com/">site do produto</a> pra se ter uma noção do potencial do MongoDB</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --></p>
+<p>Vale muito a pena dar uma olhada mesmo que rápida só pra dar aquela "situada":</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:list --></p>
+<ul>
+<li>
+<a href="https://www.mongodb.com/who-uses-mongodb" target="_blank" rel="noreferrer noopener">Quem usa MongoDB?</a> Aqui vai a primeira surpresa, se surpreenda com a variedade de clientes (saúde, financeiro, gaming, etc). </li>
+</ul>
+<p><!-- /wp:list --></p>
+<p><!-- wp:list --></p>
+<ul>
+<li>
+<a href="https://www.mongodb.com/use-cases">Casos de Uso </a> de como a tecnologia é utilizada (do ponto de vista comercial mas ainda assim, bem interessante a leitura).</li>
+<li> <a href="https://docs.mongodb.com/guides/">Guides</a> são a forma mais rápida de interagir com a tecnologia. Na minha opinião não existe uma forma melhor pra isso do que baixar o <a href="https://www.mongodb.com/try/download/community">MongoDB Community</a> na sua máquina e já subir uma instância pra brincar um pouco, pra isso conte com <strong><a href="https://docs.mongodb.com/guides/server/install/">o guia de instalação</a></strong>. </li>
+<li>Pra fins de estudo, baixar o Mongo no <a href="https://fastdl.mongodb.org/windows/mongodb-windows-x86_64-5.0.3.zip">formato zip</a> na minha opinião é o modo mais fácil (e didático), basta descompactar, criar uma pasta pra armazenar os arquivos dos BD's, e iniciar o processo do banco. Ah, existem algumas formas de você acessar o banco, seja via linha de comando (Powershell, CMD) ou clients por exemplo (<a href="https://www.mongodb.com/pt-br/products/compass">MongoDB Compass</a> e o Robo3T/Studio3T).</li>
+</ul>
+<p><!-- /wp:list --></p>
+<p><!-- wp:paragraph --></p>
+<p>Bem, ainda falando no site, como a  própria MongoDB tem interesse em difundir conhecimento sobre a tecnologia, nada melhor do que ter um portal educacional, certo?</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:heading --></p>
+<h2>2. <strong>MongoDB University é parada obrigatória</strong><br />
+</h2>
+<p><!-- /wp:heading --></p>
+<p><!-- wp:image --></p>
+<figure class="wp-block-image"><img src="/assets/2021/10/5q3f0y.jpg" alt=""></figure>
+<p><!-- /wp:image --></p>
+<p><!-- wp:paragraph --></p>
+<p><a href="https://university.mongodb.com/courses/catalog">MongoDB University</a> é na minha opinião a melhor forma de aprender sobre o produto em disparado! Os motivos são simples:</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:list --></p>
+<ul>
+<li>Vão direto ao ponto com pouco conteúdo teórico;</li>
+<li>Tem exercícios de fixação, não basta ver, tem mão na massa também e essa parte é incrível;</li>
+<li>O conteúdo é rico, completo e é de graça! </li>
+</ul>
+<p><!-- /wp:list --></p>
+<p><!-- wp:paragraph --></p>
+<p>Existem muitos bons cursos lá mas os dois que eu recomendo obviamente se você possui viés para administrar a ferramenta:</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --></p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:image {"id":2934,"sizeSlug":"large","linkDestination":"none"} --></p>
+<figure class="wp-block-image size-large"><img src="/assets/2021/10/image-1.png" alt="" class="wp-image-2934"><br />
+<figcaption>M001 é realmente muito bom pra preparar o terreno e situar bem quem tá aprendendo. Já o M103 é pra começar a brincar bem com o MongoDB passando um bom apanhado sobre as possibilidades mas principalmente por focar em Cluster (em outras palavras ReplicaSet e Sharding, que são as topologias utilizadas para qualquer MongoDB (produção) que se preze.</figcaption>
+</figure>
+<p><!-- /wp:image --></p>
+<p><!-- wp:paragraph --></p>
+<p>Enfim, seria sacanagem não mencionar University e não só pra quem está aprendendo a tecnologia mas também pra avançar cada vez mais nos aspectos diversos do produto (Aggregation pipeline, Performance tuning e segurança, por exemplo).</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --></p>
+<p>Bônus: Descobri dias depois de escrever este post, não assisti ainda mas dou voto de confiança:  <a href="https://studio3t.com/academy/?utm_campaign=R3T%20SB%26I%20Trial%20Campaign&amp;utm_medium=email&amp;_hsmi=140427267&amp;_hsenc=p2ANqtz-_8YV5bl6q8QzMInMpjxMnWzC9zhRgQnes0vHm0f7tLzczezP9lQqj__QhH6TqMzbqvtnfwsxxkfcMnkYBb3RVOpGj5aQ&amp;utm_content=140427267&amp;utm_source=hs_automation#s3t-vpb-row-block_5f858cd4c1ad3">https://studio3t.com/academy/?utm_campaign=R3T%20SB%26I%20Trial%20Campaign&amp;utm_medium=email&amp;_hsmi=140427267&amp;_hsenc=p2ANqtz-_8YV5bl6q8QzMInMpjxMnWzC9zhRgQnes0vHm0f7tLzczezP9lQqj__QhH6TqMzbqvtnfwsxxkfcMnkYBb3RVOpGj5aQ&amp;utm_content=140427267&amp;utm_source=hs_automation#s3t-vpb-row-block_5f858cd4c1ad3</a></p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --></p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --></p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:heading --></p>
+<h2><strong>Atlas! O MongoDB na nuvem</strong></h2>
+<p><!-- /wp:heading --></p>
+<p><!-- wp:image {"id":2937,"sizeSlug":"large","linkDestination":"none"} --></p>
+<figure class="wp-block-image size-large"><img src="/assets/2021/10/image.jpeg" alt="" class="wp-image-2937"></figure>
+<p><!-- /wp:image --></p>
+<p><!-- wp:paragraph --></p>
+<p>Atlas é opção do MongoDB como serviço  ofertado em nuvem (tem nas mais famosas, você escolhe) e é uma forma excelente de experimentar Mongo  sem se preocupar com o fundo do iceberg (infra). </p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --></p>
+<p>Basicamente é <a href="https://www.mongodb.com/pt-br/cloud/atlas">registrar-se no Atlas</a> e escolher o free tier (M0), usar um cluster compartilhado e partir para os estudos, uma verdadeira mão na roda:</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:image {"id":2935,"sizeSlug":"large","linkDestination":"none"} --></p>
+<figure class="wp-block-image size-large"><img src="/assets/2021/10/image-2-1024x773.png" alt="" class="wp-image-2935"><br />
+<figcaption>Opção Shared pra usar a Free Tier</figcaption>
+</figure>
+<p><!-- /wp:image --></p>
+<p><!-- wp:paragraph --></p>
+<p>Note os sabores de nuvem disponíveis:</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:image {"id":2936,"sizeSlug":"large","linkDestination":"none"} --></p>
+<figure class="wp-block-image size-large"><img src="/assets/2021/10/image-3-1024x709.png" alt="" class="wp-image-2936"></figure>
+<p><!-- /wp:image --></p>
+<p><!-- wp:paragraph --></p>
+<p>Enfim, não tem muito o que falar do Atlas (ou de cloud) sem estender mais o post, mas fica aqui a dica de que, em poucos passos, já é possível testar o serviço em nuvem. A pequena desvantagem aqui, volta na piada do iceberg, é interessante conhecer um pouco da infra do Mongo mesmo usando Atlas, então recomendado estudar Atlas em conjunto com o MongoDB Community.</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:heading --></p>
+<h2>Conclusão</h2>
+<p><!-- /wp:heading --></p>
+<p><!-- wp:paragraph --></p>
+<p>Espero que tenham gostado das dicas, principalmente se é seu objetivo estudar ou conhecer um pouco mais sobre MongoDB, que é líder em sua categoria (banco orientado a documento) e vale muito, mas muito a pena prestar atenção nos problemas que ele pode resolver. Deixo claro, sempre bom lembrar, apesar de ser DBA SQL Server de longa data, nunca defendi bala de prata, empresa ou "melhor banco", acho isso bobagem e não pretendo alimentar esses memes. O MongoDB é na minha opinião uma ótima forma também de quebrar esse paradigma pra quem ainda está dentro da caixa fechada dos SQL.</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --></p>
+<p>Espero voltar a postar em breve, se o tempo permitir e o cansaço não me segurar. Simbora.</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --></p>
+<p>[]'s</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --></p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --></p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --></p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --></p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --></p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --></p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --></p>
+<p><!-- /wp:paragraph --><br />
+</body></html></p>
+
+  </div><a class="u-url" href="/mongodb-primeiros-passos/" hidden></a>
+</article>
+
+      </div>
+    </main><footer class="site-footer h-card">
+  <data class="u-url" href="/"></data>
+
+  <div class="wrapper">
+
+    <h2 class="footer-heading">Renato Siqueira</h2>
+
+    <div class="footer-col-wrapper">
+      <div class="footer-col footer-col-1">
+        <ul class="contact-list">
+          <li class="p-name">Renato Siqueira</li><li><a class="u-email" href="mailto:rad_renato@hotmail.com">rad_renato@hotmail.com</a></li></ul>
+      </div>
+
+      <div class="footer-col footer-col-2"><ul class="social-media-list"><li><a href="https://github.com/renatomsq"><svg class="svg-icon"><use xlink:href="/assets/minima-social-icons.svg#github"></use></svg> <span class="username">renatomsq</span></a></li><li><a href="https://www.twitter.com/naotenhomais"><svg class="svg-icon"><use xlink:href="/assets/minima-social-icons.svg#twitter"></use></svg> <span class="username">naotenhomais</span></a></li></ul>
+</div>
+
+      <div class="footer-col footer-col-3">
+        <p>Meu blog de artigo técnico sobre banco de dados e carreira.</p>
+      </div>
+    </div>
+
+  </div>
+
+</footer>
+</body>
+
+</html>

@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1"><!-- Begin Jekyll SEO tag v2.9.0 -->
+<title>SQL Server 2012 - Cláusula CONCAT() e o que isso significa pra galáxia | Renato Siqueira</title>
+<meta name="generator" content="Jekyll v4.4.1" />
+<meta property="og:title" content="SQL Server 2012 - Cláusula CONCAT() e o que isso significa pra galáxia" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="&lt;!DOCTYPE html PUBLIC &quot;-//W3C//DTD HTML 4.0 Transitional//EN&quot; &quot;http://www.w3.org/TR/REC-html40/loose.dtd&quot;&gt; &lt;/p&gt; Bom dia. Post rápido, de nível básico pra não deixar água parada :) Vários Sistemas Gerenciadores de Bancos de Dados (ou DBMS, no original) utilizam, pra concatenar, ou seja, juntar textos, pipes (o símbolo  --&gt; | &lt;--)  sendo que o padrão ANSI-92 prevê dois pipes como concatenação (mas não é obrigado a ser seguido tanto que o SQL Server não o faz) ou a função CONCAT(), que é bastante popular no Oracle e no MySQL. SQL Server, por sua vez, sempre concatenou os textos com o símbolo + (plus, conhecimento popularmente…" />
+<meta name="twitter:description" property="og:description" content="&lt;!DOCTYPE html PUBLIC &quot;-//W3C//DTD HTML 4.0 Transitional//EN&quot; &quot;http://www.w3.org/TR/REC-html40/loose.dtd&quot;&gt; &lt;/p&gt; Bom dia. Post rápido, de nível básico pra não deixar água parada :) Vários Sistemas Gerenciadores de Bancos de Dados (ou DBMS, no original) utilizam, pra concatenar, ou seja, juntar textos, pipes (o símbolo  --&gt; | &lt;--)  sendo que o padrão ANSI-92 prevê dois pipes como concatenação (mas não é obrigado a ser seguido tanto que o SQL Server não o faz) ou a função CONCAT(), que é bastante popular no Oracle e no MySQL. SQL Server, por sua vez, sempre concatenou os textos com o símbolo + (plus, conhecimento popularmente…" />
+<link rel="canonical" href="http://localhost:4000/sql-server-2012-clausula-concat-e-o-que-isso-significa-pra-galaxia/" />
+<meta property="og:url" content="http://localhost:4000/sql-server-2012-clausula-concat-e-o-que-isso-significa-pra-galaxia/" />
+<meta property="og:site_name" content="Renato Siqueira" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2013-08-06T07:52:33-03:00" />
+<meta property="article:modified_time" content="2013-08-06T07:52:33-03:00" />
+<meta name="twitter:card" content="summary" />
+<meta name="twitter:title" content="SQL Server 2012 - Cláusula CONCAT() e o que isso significa pra galáxia" />
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"BlogPosting","dateModified":"2013-08-06T07:52:33-03:00","datePublished":"2013-08-06T07:52:33-03:00","description":"&lt;!DOCTYPE html PUBLIC &quot;-//W3C//DTD HTML 4.0 Transitional//EN&quot; &quot;http://www.w3.org/TR/REC-html40/loose.dtd&quot;&gt; &lt;/p&gt; Bom dia. Post rápido, de nível básico pra não deixar água parada :) Vários Sistemas Gerenciadores de Bancos de Dados (ou DBMS, no original) utilizam, pra concatenar, ou seja, juntar textos, pipes (o símbolo  --&gt; | &lt;--)  sendo que o padrão ANSI-92 prevê dois pipes como concatenação (mas não é obrigado a ser seguido tanto que o SQL Server não o faz) ou a função CONCAT(), que é bastante popular no Oracle e no MySQL. SQL Server, por sua vez, sempre concatenou os textos com o símbolo + (plus, conhecimento popularmente…","headline":"SQL Server 2012 - Cláusula CONCAT() e o que isso significa pra galáxia","mainEntityOfPage":{"@type":"WebPage","@id":"http://localhost:4000/sql-server-2012-clausula-concat-e-o-que-isso-significa-pra-galaxia/"},"url":"http://localhost:4000/sql-server-2012-clausula-concat-e-o-que-isso-significa-pra-galaxia/"}</script>
+<!-- End Jekyll SEO tag -->
+<link rel="stylesheet" href="/assets/main.css"><link type="application/atom+xml" rel="alternate" href="http://localhost:4000/feed.xml" title="Renato Siqueira" /></head>
+<body><header class="site-header" role="banner">
+
+  <div class="wrapper"><a class="site-title" rel="author" href="/">Renato Siqueira</a><nav class="site-nav">
+        <input type="checkbox" id="nav-trigger" class="nav-trigger" />
+        <label for="nav-trigger">
+          <span class="menu-icon">
+            <svg viewBox="0 0 18 15" width="18px" height="15px">
+              <path d="M18,1.484c0,0.82-0.665,1.484-1.484,1.484H1.484C0.665,2.969,0,2.304,0,1.484l0,0C0,0.665,0.665,0,1.484,0 h15.032C17.335,0,18,0.665,18,1.484L18,1.484z M18,7.516C18,8.335,17.335,9,16.516,9H1.484C0.665,9,0,8.335,0,7.516l0,0 c0-0.82,0.665-1.484,1.484-1.484h15.032C17.335,6.031,18,6.696,18,7.516L18,7.516z M18,13.516C18,14.335,17.335,15,16.516,15H1.484 C0.665,15,0,14.335,0,13.516l0,0c0-0.82,0.665-1.483,1.484-1.483h15.032C17.335,12.031,18,12.695,18,13.516L18,13.516z"/>
+            </svg>
+          </span>
+        </label>
+
+        <div class="trigger"><a class="page-link" href="/about/">About</a></div>
+      </nav></div>
+</header>
+<main class="page-content" aria-label="Content">
+      <div class="wrapper">
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+
+  <header class="post-header">
+    <h1 class="post-title p-name" itemprop="name headline">SQL Server 2012 - Cláusula CONCAT() e o que isso significa pra galáxia</h1>
+    <p class="post-meta">
+      <time class="dt-published" datetime="2013-08-06T07:52:33-03:00" itemprop="datePublished">Aug 6, 2013
+      </time>• <span itemprop="author" itemscope itemtype="http://schema.org/Person"><span class="p-author h-card" itemprop="name">{"login" => "Renato Siqueira", "email" => "", "display_name" => "Renato Siqueira", "first_name" => "", "last_name" => ""}</span></span></p>
+  </header>
+
+  <div class="post-content e-content" itemprop="articleBody">
+    <p><!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN" "http://www.w3.org/TR/REC-html40/loose.dtd"><br />
+<html><body><br />
+<a href="http://renatomsiqueira.com.br/wp-content/uploads/2013/08/golphin1.png"><img class="aligncenter size-full wp-image-703" alt="golphin" src="/assets/2013/08/golphin1.png" width="470" height="147"></a></p>
+<p>Bom dia. Post rápido, de nível básico pra não deixar água parada :)</p>
+<p>Vários Sistemas Gerenciadores de Bancos de Dados (ou DBMS, no original) utilizam, pra concatenar, ou seja, juntar textos, pipes (o símbolo  --&gt; | &lt;--)  sendo que o padrão ANSI-92 prevê dois pipes como concatenação (mas não é obrigado a ser seguido tanto que o SQL Server não o faz) ou a função CONCAT(), que é bastante popular no Oracle e no MySQL. SQL Server, por sua vez, sempre concatenou os textos com o símbolo + (plus, conhecimento popularmente como MAIS).</p>
+<p>Felizmente, assim como de costume em cada release, novos comandos (ou velhos, dependendo do ponto de vista) são adicionados no SQL Server de modo a facilitar a portabilidade entre sistemas. Aliás, features assim eu já vejo de cara como tentativa da MS de justificar migrações de código, deixando-as menos penosas. Mas bem, adivinha quem entrou como alternativa pra concatenações no SQL Server?</p>
+<p>THIS GUY  ------------&gt; <a title="Sobre CONCAT" href="http://technet.microsoft.com/en-us/library/hh231515.aspx">link</a></p>
+<pre>
+&lt;pre&gt;--&gt; Declaração pra testes :)
+
+DECLARE @boss VARCHAR(100) = 'Chuck Norris'
+DECLARE @lutaPerdida VARCHAR(3) = 'uma'
+DECLARE @Oponente VARCHAR(20) = 'Bruce Lee'
+
+--&gt; Exemplo de Concatenação convencional
+
+SELECT 'Até hoje '+@boss+' só perdeu '+@lutaPerdida+' luta, que foi para o adversário '+@Oponente+'. Não precisa nem falar o que aconteceu depois' AS UsandoConcatString
+
+--&gt; Exemplo de Concatenação usando a cláusula CONCAT
+
+SELECT CONCAT('Até hoje ',@boss,' só perdeu ',@lutaPerdida,' luta, que foi para o adversário ',@Oponente,'. Não precisa nem falar o que aconteceu depois') AS UsandoFuncaoConcat&lt;/pre&gt;
+</pre>
+<p>Mas essa ainda não é a maior vantagem do CONCAT sobre o método tradicional. Observe que todos os envolvidos na concatenação eram tipos textuais. Mas e nos casos comuns, onde geralmente temos que concatenar texto com números?</p>
+<pre>
+
+DECLARE @nome VARCHAR(20) = 'SQL SERVER'
+DECLARE @release INT = 2012
+
+--&gt; Tudo o que estiver dentro de CONCAT() sai como String.
+
+SELECT CONCAT(@NOME,' ',@RELEASE)
+
+--&gt; Com a concatenação convencional do SQL Server...
+
+SELECT @NOME+' '+@RELEASE
+</pre>
+<blockquote><p>Msg 245, Level 16, State 1, Line 11<br />
+Conversion failed when converting the varchar value 'SQL SERVER ' to data type int.</p></blockquote>
+<p>A mensagem é clara demais...Ele tenta concatenar um número com texto e falha. Pra que o código acima rodasse tranquilamente, era necessário um CAST ou CONVERT na variável @release para um tipo textual, sendo possível assim realizar a concatenação. Exemplo:</p>
+<pre>
+
+DECLARE @nome VARCHAR(20) = 'SQL SERVER'
+DECLARE @release INT = 2012
+
+--&gt; Agora o código executa com sucesso
+SELECT @nome+' '+CAST(@release AS CHAR(4))
+</pre>
+<p>Significa que quando recebermos a tarefa de migrar um script do MySQL ou Oracle pra SQL Server por exemplo, teremos menos uma dor de cabeça em relação a cláusula de concatenação, já que a função agora é a mesma. Parece uma mudança irrelevante e sem graça, e de fato, perto do que o 2012 traz, não é aquela senhora feature, mas achei um passo até notável. Alguns pontos:</p>
+<p>1) Evite sempre que possível o uso de extensões proprietárias. Prefira sempre comandos ANSI e se não houver, algo de sintaxe similar ou que seja comum a outros bancos. Isso facilita o reuso, migrações de código entre plataformas. SEMPRE pense nisso quando for desenvolver algo em SQL.</p>
+<p>2) Concatenação geralmente é um recurso bastante presente em códigos legados. Não precisar portar boa (senão toda) parte dele é economia de tempo. Isso tem impacto sobre sua vida, sua produtividade e na vida dos ursos no polo norte.</p>
+<p>3) SQL Server cada vez mais se torna amigável adaptando em si alguns recursos que são usados de modo frequente. Vejo isso como uma oportunidade  de desmistificar pra profissionais que mexem com outros sistemas que MSSQL é algo de outro mundo (sendo que nem é e possui inclusive um dos dialetos (T-SQL) mais fáceis entre os disponíveis). O uso destes recursos pelo desenvolvedor possibilita a propagação dessa idéia. ;</p>
+<p>4) Desenvolvedores (T)-SQL fazem com que o código mais universal  reduzam o impacto de meteoritos para longe da órbita do planeta Migrations;</p>
+<p>Enfim, recomendo que você use CONCAT() sempre que possível partindo da versão SQL Server 2012 se não houver envolvimento com o legado, é claro.</p>
+<p>[]'s</body></html></p>
+
+  </div><a class="u-url" href="/sql-server-2012-clausula-concat-e-o-que-isso-significa-pra-galaxia/" hidden></a>
+</article>
+
+      </div>
+    </main><footer class="site-footer h-card">
+  <data class="u-url" href="/"></data>
+
+  <div class="wrapper">
+
+    <h2 class="footer-heading">Renato Siqueira</h2>
+
+    <div class="footer-col-wrapper">
+      <div class="footer-col footer-col-1">
+        <ul class="contact-list">
+          <li class="p-name">Renato Siqueira</li><li><a class="u-email" href="mailto:rad_renato@hotmail.com">rad_renato@hotmail.com</a></li></ul>
+      </div>
+
+      <div class="footer-col footer-col-2"><ul class="social-media-list"><li><a href="https://github.com/renatomsq"><svg class="svg-icon"><use xlink:href="/assets/minima-social-icons.svg#github"></use></svg> <span class="username">renatomsq</span></a></li><li><a href="https://www.twitter.com/naotenhomais"><svg class="svg-icon"><use xlink:href="/assets/minima-social-icons.svg#twitter"></use></svg> <span class="username">naotenhomais</span></a></li></ul>
+</div>
+
+      <div class="footer-col footer-col-3">
+        <p>Meu blog de artigo técnico sobre banco de dados e carreira.</p>
+      </div>
+    </div>
+
+  </div>
+
+</footer>
+</body>
+
+</html>

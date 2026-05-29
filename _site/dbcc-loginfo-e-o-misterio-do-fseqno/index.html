@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1"><!-- Begin Jekyll SEO tag v2.9.0 -->
+<title>DBCC LOGINFO e o mistério do FSeqNo | Renato Siqueira</title>
+<meta name="generator" content="Jekyll v4.4.1" />
+<meta property="og:title" content="DBCC LOGINFO e o mistério do FSeqNo" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="&lt;!DOCTYPE html PUBLIC &quot;-//W3C//DTD HTML 4.0 Transitional//EN&quot; &quot;http://www.w3.org/TR/REC-html40/loose.dtd&quot;&gt; &lt;/p&gt; Esse post faz parte da série: pequenas curiosidades que (quase) ninguém se importa, tipo a notícia que o G1 divulgou da marmota que ficou presa numa tampa de bueiro nos EUA. O comando DBCC LOGINFO é um comando não-documentado pela Microsoft. Mas existe. E tá aí firme e forte (e disponível) até hoje no código do SQL Server. Pode comprovar caso queira no SQL Server 2014. O que não quer dizer que estou recomendando o seu uso :) Abaixo, resultado do comando exatamente depois que eu criei uma base qualquer.  …" />
+<meta name="twitter:description" property="og:description" content="&lt;!DOCTYPE html PUBLIC &quot;-//W3C//DTD HTML 4.0 Transitional//EN&quot; &quot;http://www.w3.org/TR/REC-html40/loose.dtd&quot;&gt; &lt;/p&gt; Esse post faz parte da série: pequenas curiosidades que (quase) ninguém se importa, tipo a notícia que o G1 divulgou da marmota que ficou presa numa tampa de bueiro nos EUA. O comando DBCC LOGINFO é um comando não-documentado pela Microsoft. Mas existe. E tá aí firme e forte (e disponível) até hoje no código do SQL Server. Pode comprovar caso queira no SQL Server 2014. O que não quer dizer que estou recomendando o seu uso :) Abaixo, resultado do comando exatamente depois que eu criei uma base qualquer.  …" />
+<link rel="canonical" href="http://localhost:4000/dbcc-loginfo-e-o-misterio-do-fseqno/" />
+<meta property="og:url" content="http://localhost:4000/dbcc-loginfo-e-o-misterio-do-fseqno/" />
+<meta property="og:site_name" content="Renato Siqueira" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2014-08-10T09:02:42-03:00" />
+<meta property="article:modified_time" content="2014-08-10T09:02:42-03:00" />
+<meta name="twitter:card" content="summary" />
+<meta name="twitter:title" content="DBCC LOGINFO e o mistério do FSeqNo" />
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"BlogPosting","dateModified":"2014-08-10T09:02:42-03:00","datePublished":"2014-08-10T09:02:42-03:00","description":"&lt;!DOCTYPE html PUBLIC &quot;-//W3C//DTD HTML 4.0 Transitional//EN&quot; &quot;http://www.w3.org/TR/REC-html40/loose.dtd&quot;&gt; &lt;/p&gt; Esse post faz parte da série: pequenas curiosidades que (quase) ninguém se importa, tipo a notícia que o G1 divulgou da marmota que ficou presa numa tampa de bueiro nos EUA. O comando DBCC LOGINFO é um comando não-documentado pela Microsoft. Mas existe. E tá aí firme e forte (e disponível) até hoje no código do SQL Server. Pode comprovar caso queira no SQL Server 2014. O que não quer dizer que estou recomendando o seu uso :) Abaixo, resultado do comando exatamente depois que eu criei uma base qualquer.  …","headline":"DBCC LOGINFO e o mistério do FSeqNo","mainEntityOfPage":{"@type":"WebPage","@id":"http://localhost:4000/dbcc-loginfo-e-o-misterio-do-fseqno/"},"url":"http://localhost:4000/dbcc-loginfo-e-o-misterio-do-fseqno/"}</script>
+<!-- End Jekyll SEO tag -->
+<link rel="stylesheet" href="/assets/main.css"><link type="application/atom+xml" rel="alternate" href="http://localhost:4000/feed.xml" title="Renato Siqueira" /></head>
+<body><header class="site-header" role="banner">
+
+  <div class="wrapper"><a class="site-title" rel="author" href="/">Renato Siqueira</a><nav class="site-nav">
+        <input type="checkbox" id="nav-trigger" class="nav-trigger" />
+        <label for="nav-trigger">
+          <span class="menu-icon">
+            <svg viewBox="0 0 18 15" width="18px" height="15px">
+              <path d="M18,1.484c0,0.82-0.665,1.484-1.484,1.484H1.484C0.665,2.969,0,2.304,0,1.484l0,0C0,0.665,0.665,0,1.484,0 h15.032C17.335,0,18,0.665,18,1.484L18,1.484z M18,7.516C18,8.335,17.335,9,16.516,9H1.484C0.665,9,0,8.335,0,7.516l0,0 c0-0.82,0.665-1.484,1.484-1.484h15.032C17.335,6.031,18,6.696,18,7.516L18,7.516z M18,13.516C18,14.335,17.335,15,16.516,15H1.484 C0.665,15,0,14.335,0,13.516l0,0c0-0.82,0.665-1.483,1.484-1.483h15.032C17.335,12.031,18,12.695,18,13.516L18,13.516z"/>
+            </svg>
+          </span>
+        </label>
+
+        <div class="trigger"><a class="page-link" href="/about/">About</a></div>
+      </nav></div>
+</header>
+<main class="page-content" aria-label="Content">
+      <div class="wrapper">
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+
+  <header class="post-header">
+    <h1 class="post-title p-name" itemprop="name headline">DBCC LOGINFO e o mistério do FSeqNo</h1>
+    <p class="post-meta">
+      <time class="dt-published" datetime="2014-08-10T09:02:42-03:00" itemprop="datePublished">Aug 10, 2014
+      </time>• <span itemprop="author" itemscope itemtype="http://schema.org/Person"><span class="p-author h-card" itemprop="name">{"login" => "Renato Siqueira", "email" => "", "display_name" => "Renato Siqueira", "first_name" => "", "last_name" => ""}</span></span></p>
+  </header>
+
+  <div class="post-content e-content" itemprop="articleBody">
+    <p><!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN" "http://www.w3.org/TR/REC-html40/loose.dtd"><br />
+<html><body><br />
+<a href="http://renatomsiqueira.com.br/wp-content/uploads/2014/08/marmota1.png"><img class="alignleft size-full wp-image-1925" src="/assets/2014/08/marmota1.png" alt="marmota presa num bueiro. Total random." width="616" height="408"></a></p>
+<p>Esse post faz parte da série: pequenas curiosidades que (quase) ninguém se importa, tipo a notícia que o <a href="http://g1.globo.com/planeta-bizarro/noticia/2014/08/marmota-e-resgatada-nos-eua-apos-entalar-cabeca-em-tampa-de-bueiro.html?utm_source=twitter&amp;utm_medium=social&amp;utm_campaign=g1">G1 divulgou da marmota que ficou presa numa tampa de bueiro nos EUA.</a></p>
+<p>O comando DBCC LOGINFO é um comando não-documentado pela Microsoft.</p>
+<p><!--more--> Mas existe. E tá aí firme e forte (e disponível) até hoje no código do SQL Server. Pode comprovar caso queira no SQL Server 2014. O que não quer dizer que estou recomendando o seu uso :)</p>
+<p>Abaixo, resultado do comando exatamente depois que eu criei uma base qualquer.</p>
+<p><a href="http://renatomsiqueira.com.br/wp-content/uploads/2014/08/sorria1.png"><img class="alignleft size-full wp-image-1922" src="/assets/2014/08/sorria1.png" alt="SORRIA" width="525" height="273"></a></p>
+<p> </p>
+<p> </p>
+<p> </p>
+<p> </p>
+<p> </p>
+<p> </p>
+<p> </p>
+<p> </p>
+<p>E pra que ele é utilizado? Com ele, é possível visualizar de modo amigável os VLF's do Log de Transação da base que está sendo utilizada no momento e descobrir duas informações importantes:</p>
+<ol>
+<li>Tamanho e quantidade dos VLF's: Pelas linhas retornadas, você identifica se tem muitos VLF's naquele T-log em específico. Pela coluna FileSize, identifica o tamanho. Esse é o caminho pra se identificar a famosa fragmentação no T-log.</li>
+<li>Status: 0 indica que aquele VLF está sem uso, 2 indica uso. Pra estudos, ela é ótima. Pra vida real mesmo, talvez seja útil para algum <em>troubleshooting</em> no arquivo de log.</li>
+</ol>
+<p>Uma coluna que é bem interessante (mas por si só não diz muita coisa) é o <em>FSeqNo</em>, que é um número dinâmico que vai mudando de acordo com o crescimento e a movimentação circular nos VLF's. Contudo, como o próprio nome sugere, deveria ser um número sequencial, certo?</p>
+<p>Porque será que o único VLF utilizado (e ativado) começou do 89 e não de algum número como 1, por exemplo?</p>
+<p>A resposta está na.....</p>
+<p><a href="http://renatomsiqueira.com.br/wp-content/uploads/2014/08/modelo-cai1.jpg"><img class="size-full wp-image-1926 aligncenter" src="/assets/2014/08/modelo-cai1.jpg" alt="Modelo cai" width="400" height="285"></a>Model :D</p>
+<p>A Model é aquela base de sistema que ninguém acha importante mas sem ela muita coisa não acontece, e uma delas é a criação de uma base. Uma das coisas que você pode ter pensado é a seguinte: - Será que esse número 89 veio da model?</p>
+<p>Dá pra descobrir isso fazendo um DBCC LOGINFO na model (só pra tira-teima):</p>
+<p><a href="http://renatomsiqueira.com.br/wp-content/uploads/2014/08/881.png"><img class="size-full wp-image-1924 aligncenter" src="/assets/2014/08/881.png" alt="88" width="583" height="266"></a>OH! O último VLF da model estava com o FSeqNo 88, e quando eu criei uma base nova, como todo filho deve ser, puxou os traços da mãe, e acrescentou um +1 no número da sequência. Em outras palavras, o FSeqNo da base recém-criada se baseia na model.</p>
+<p>Curiosidade resolvida e documentada :p</p>
+<p>Agora, três perguntas que podem estar sendo feitas:</p>
+<ul>
+<li><strong>Porque o FSeqNo dessa model tá "tão alto"? Aqui na minha máquina deu diferente.</strong></li>
+</ul>
+<p>Porque eu tava fazendo uns testes nela que logaram algumas transações e aí a sequência chegou nesse número aí.</p>
+<ol>
+<ul>
+<li><strong>Essa informação realmente é útil pra alguma coisa?</strong></li>
+</ul>
+</ol>
+<p>Bem, como esse número de sequência é mais de interesse do SQL do que nosso, não, não é de fato uma informação realmente útil. Mas é uma curiosidade legal pra quem está observando um pouco do T-log e alguns comandos relacionados. E é legal a gente pegar um caso assim, onde detalhes que muitos acharam randômicos, fazem algum sentido. MSSQL tá cheio de coisa nesse naipe.</p>
+<ul>
+<li><strong>Então porque você postou algo assim?</strong></li>
+</ul>
+<p>Porque eu me divirto bastante postando e fiquei um tempão sem postar (e não quero perder isso). Postar pra retornar ao hábito. E por mais improvável que seja, talvez alguém faça esse questionamento. E se você uma vez se perguntar, lembra deste post. My 0,5 cent :D</p>
+<p>[]'s</p>
+<p> </p>
+<p> </p>
+<p> </body></html></p>
+
+  </div><a class="u-url" href="/dbcc-loginfo-e-o-misterio-do-fseqno/" hidden></a>
+</article>
+
+      </div>
+    </main><footer class="site-footer h-card">
+  <data class="u-url" href="/"></data>
+
+  <div class="wrapper">
+
+    <h2 class="footer-heading">Renato Siqueira</h2>
+
+    <div class="footer-col-wrapper">
+      <div class="footer-col footer-col-1">
+        <ul class="contact-list">
+          <li class="p-name">Renato Siqueira</li><li><a class="u-email" href="mailto:rad_renato@hotmail.com">rad_renato@hotmail.com</a></li></ul>
+      </div>
+
+      <div class="footer-col footer-col-2"><ul class="social-media-list"><li><a href="https://github.com/renatomsq"><svg class="svg-icon"><use xlink:href="/assets/minima-social-icons.svg#github"></use></svg> <span class="username">renatomsq</span></a></li><li><a href="https://www.twitter.com/naotenhomais"><svg class="svg-icon"><use xlink:href="/assets/minima-social-icons.svg#twitter"></use></svg> <span class="username">naotenhomais</span></a></li></ul>
+</div>
+
+      <div class="footer-col footer-col-3">
+        <p>Meu blog de artigo técnico sobre banco de dados e carreira.</p>
+      </div>
+    </div>
+
+  </div>
+
+</footer>
+</body>
+
+</html>

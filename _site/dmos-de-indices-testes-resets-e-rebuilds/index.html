@@ -1,0 +1,838 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1"><!-- Begin Jekyll SEO tag v2.9.0 -->
+<title>DMO’s de Índices: Testes, resets e rebuilds. | Renato Siqueira</title>
+<meta name="generator" content="Jekyll v4.4.1" />
+<meta property="og:title" content="DMO’s de Índices: Testes, resets e rebuilds." />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="&lt;!DOCTYPE html PUBLIC &quot;-//W3C//DTD HTML 4.0 Transitional//EN&quot; &quot;http://www.w3.org/TR/REC-html40/loose.dtd&quot;&gt; &lt;/p&gt; [caption id=&quot;attachment_2255&quot; align=&quot;aligncenter&quot; width=&quot;420&quot;] Era pra passar a ideia de raízes.[/caption] Olá, Antes de iniciar o post, aviso que vou usar bastante o termo DMO (forma de agrupar os termos DMV e DMF). Clique aqui  e aqui  para ler mais sobre os termos. DMO&#39;s em geral (DMV&#39;s e DMF&#39;s) são coisas legais do SQL Server, que se tornaram disponíveis para uso público a partir do SQL Server 2005 e desde então tem facilitado bastante a obtenção de certas estatísticas relacionadas ao servidor SQL Server e/ou banco de dados em questão. Existe uma classe…" />
+<meta name="twitter:description" property="og:description" content="&lt;!DOCTYPE html PUBLIC &quot;-//W3C//DTD HTML 4.0 Transitional//EN&quot; &quot;http://www.w3.org/TR/REC-html40/loose.dtd&quot;&gt; &lt;/p&gt; [caption id=&quot;attachment_2255&quot; align=&quot;aligncenter&quot; width=&quot;420&quot;] Era pra passar a ideia de raízes.[/caption] Olá, Antes de iniciar o post, aviso que vou usar bastante o termo DMO (forma de agrupar os termos DMV e DMF). Clique aqui  e aqui  para ler mais sobre os termos. DMO&#39;s em geral (DMV&#39;s e DMF&#39;s) são coisas legais do SQL Server, que se tornaram disponíveis para uso público a partir do SQL Server 2005 e desde então tem facilitado bastante a obtenção de certas estatísticas relacionadas ao servidor SQL Server e/ou banco de dados em questão. Existe uma classe…" />
+<link rel="canonical" href="http://localhost:4000/dmos-de-indices-testes-resets-e-rebuilds/" />
+<meta property="og:url" content="http://localhost:4000/dmos-de-indices-testes-resets-e-rebuilds/" />
+<meta property="og:site_name" content="Renato Siqueira" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2014-12-04T12:20:31-03:00" />
+<meta property="article:modified_time" content="2014-12-04T12:20:31-03:00" />
+<meta name="twitter:card" content="summary" />
+<meta name="twitter:title" content="DMO’s de Índices: Testes, resets e rebuilds." />
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"BlogPosting","dateModified":"2014-12-04T12:20:31-03:00","datePublished":"2014-12-04T12:20:31-03:00","description":"&lt;!DOCTYPE html PUBLIC &quot;-//W3C//DTD HTML 4.0 Transitional//EN&quot; &quot;http://www.w3.org/TR/REC-html40/loose.dtd&quot;&gt; &lt;/p&gt; [caption id=&quot;attachment_2255&quot; align=&quot;aligncenter&quot; width=&quot;420&quot;] Era pra passar a ideia de raízes.[/caption] Olá, Antes de iniciar o post, aviso que vou usar bastante o termo DMO (forma de agrupar os termos DMV e DMF). Clique aqui  e aqui  para ler mais sobre os termos. DMO&#39;s em geral (DMV&#39;s e DMF&#39;s) são coisas legais do SQL Server, que se tornaram disponíveis para uso público a partir do SQL Server 2005 e desde então tem facilitado bastante a obtenção de certas estatísticas relacionadas ao servidor SQL Server e/ou banco de dados em questão. Existe uma classe…","headline":"DMO’s de Índices: Testes, resets e rebuilds.","mainEntityOfPage":{"@type":"WebPage","@id":"http://localhost:4000/dmos-de-indices-testes-resets-e-rebuilds/"},"url":"http://localhost:4000/dmos-de-indices-testes-resets-e-rebuilds/"}</script>
+<!-- End Jekyll SEO tag -->
+<link rel="stylesheet" href="/assets/main.css"><link type="application/atom+xml" rel="alternate" href="http://localhost:4000/feed.xml" title="Renato Siqueira" /></head>
+<body><header class="site-header" role="banner">
+
+  <div class="wrapper"><a class="site-title" rel="author" href="/">Renato Siqueira</a><nav class="site-nav">
+        <input type="checkbox" id="nav-trigger" class="nav-trigger" />
+        <label for="nav-trigger">
+          <span class="menu-icon">
+            <svg viewBox="0 0 18 15" width="18px" height="15px">
+              <path d="M18,1.484c0,0.82-0.665,1.484-1.484,1.484H1.484C0.665,2.969,0,2.304,0,1.484l0,0C0,0.665,0.665,0,1.484,0 h15.032C17.335,0,18,0.665,18,1.484L18,1.484z M18,7.516C18,8.335,17.335,9,16.516,9H1.484C0.665,9,0,8.335,0,7.516l0,0 c0-0.82,0.665-1.484,1.484-1.484h15.032C17.335,6.031,18,6.696,18,7.516L18,7.516z M18,13.516C18,14.335,17.335,15,16.516,15H1.484 C0.665,15,0,14.335,0,13.516l0,0c0-0.82,0.665-1.483,1.484-1.483h15.032C17.335,12.031,18,12.695,18,13.516L18,13.516z"/>
+            </svg>
+          </span>
+        </label>
+
+        <div class="trigger"><a class="page-link" href="/about/">About</a></div>
+      </nav></div>
+</header>
+<main class="page-content" aria-label="Content">
+      <div class="wrapper">
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+
+  <header class="post-header">
+    <h1 class="post-title p-name" itemprop="name headline">DMO&#39;s de Índices: Testes, resets e rebuilds.</h1>
+    <p class="post-meta">
+      <time class="dt-published" datetime="2014-12-04T12:20:31-03:00" itemprop="datePublished">Dec 4, 2014
+      </time>• <span itemprop="author" itemscope itemtype="http://schema.org/Person"><span class="p-author h-card" itemprop="name">{"login" => "Renato Siqueira", "email" => "", "display_name" => "Renato Siqueira", "first_name" => "", "last_name" => ""}</span></span></p>
+  </header>
+
+  <div class="post-content e-content" itemprop="articleBody">
+    <p><!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN" "http://www.w3.org/TR/REC-html40/loose.dtd"><br />
+<html><body></p>
+<p>[caption id="attachment_2255" align="aligncenter" width="420"]<a href="http://renatomsiqueira.com.br/wp-content/uploads/2014/12/rais.png"><img class="wp-image-2255" src="/assets/2014/12/rais-300x225.png" alt="raizes, indices. A ideia era pra ser essa." width="420" height="315"></a> Era pra passar a ideia de raízes.[/caption]</p>
+<p>Olá,</p>
+<blockquote><p>Antes de iniciar o post, aviso que vou usar bastante o termo DMO (forma de agrupar os termos DMV e DMF). Clique <a href="http://technet.microsoft.com/en-us/magazine/hh441700.aspx">aqui </a> e <a href="http://msdn.microsoft.com/en-us/library/ms188754.aspx">aqui</a>  para ler mais sobre os termos.</p></blockquote>
+<p>DMO's em geral (DMV's e DMF's) são coisas legais do SQL Server, que se tornaram disponíveis para uso público a partir do SQL Server 2005 e desde então tem facilitado bastante a obtenção de certas estatísticas relacionadas ao servidor SQL Server e/ou banco de dados em questão.</p>
+<p>Existe uma classe de DMO's extremamente útil que retorna informações relacionadas aos  índices:</p>
+<div style="direction: ltr;">
+<table style="direction: ltr; border-collapse: collapse; border: 1pt solid #a3a3a3; height: 139px;" border="1" width="580" cellspacing="0" cellpadding="0">
+<tbody>
+<tr>
+<td style="background-color: #dce6f1; vertical-align: top; width: 2.2208in; padding: 4pt 4pt 4pt 4pt; border: 1pt solid #A3A3A3;">
+<p style="margin: 0in; font-family: Calibri; font-size: 11.0pt; color: black;"><strong>Nome</strong></p>
+</td>
+<td style="background-color: #dce6f1; vertical-align: top; width: 2.7576in; padding: 4pt 4pt 4pt 4pt; border: 1pt solid #A3A3A3;">
+<p style="margin: 0in; font-family: Calibri; font-size: 11.0pt; color: black;"><strong>Tipo</strong></p>
+</td>
+</tr>
+<tr>
+<td style="background-color: #b8cce4; vertical-align: top; width: 2.2208in; padding: 4pt 4pt 4pt 4pt; border: 1pt solid #A3A3A3;">
+<p style="margin: 0in; font-family: Calibri; font-size: 11.0pt; color: black;">dm_db_index_operational_stats</p>
+</td>
+<td style="background-color: #b8cce4; vertical-align: top; width: 2.7576in; padding: 4pt 4pt 4pt 4pt; border: 1pt solid #A3A3A3;">
+<p style="margin: 0in; font-family: Calibri; font-size: 11.0pt; color: black;">SQL_INLINE_TABLE_VALUED_FUNCTION (DMF)</p>
+</td>
+</tr>
+<tr>
+<td style="background-color: #dce6f1; vertical-align: top; width: 2.2208in; padding: 4pt 4pt 4pt 4pt; border: 1pt solid #A3A3A3;">
+<p style="margin: 0in; font-family: Calibri; font-size: 11.0pt; color: black;">dm_db_index_physical_stats</p>
+</td>
+<td style="background-color: #dce6f1; vertical-align: top; width: 2.7576in; padding: 4pt 4pt 4pt 4pt; border: 1pt solid #A3A3A3;">
+<p style="margin: 0in; font-family: Calibri; font-size: 11.0pt; color: black;">SQL_INLINE_TABLE_VALUED_FUNCTION (DMF)</p>
+</td>
+</tr>
+<tr>
+<td style="background-color: #b8cce4; vertical-align: top; width: 2.2208in; padding: 4pt 4pt 4pt 4pt; border: 1pt solid #A3A3A3;">
+<p style="margin: 0in; font-family: Calibri; font-size: 11.0pt; color: black;">dm_db_index_usage_stats</p>
+</td>
+<td style="background-color: #b8cce4; vertical-align: top; width: 2.7576in; padding: 4pt 4pt 4pt 4pt; border: 1pt solid #A3A3A3;">
+<p style="margin: 0in; font-family: Calibri; font-size: 11.0pt; color: black;">VIEW (DMV)</p>
+</td>
+</tr>
+</tbody>
+</table>
+<p>Vou chamar todos os três de DMO neste post, embora pessoalmente goste de usar o termo DMV pra tudo (por conveniência), inclusive pra referenciar DMF. Não estou considerando DMO's de Missing indexes, pois não são o tópico do momento.</p>
+</div>
+<p>O objetivo deste post é explicar o que cada DMO retorna como resultado entrando utilizando a prática pra fixar o conteúdo, demonstrando alguns detalhes do funcionamento de cada um destes itens que não são tão aparentes assim relativos à persistência destas informações, e que podem gerar entendimentos incorretos sobre as informações que ele retorna.</p>
+<p><!--more--></p>
+<p>Os testes foram realizados em uma instância SQL Server 2008 R2, embora possam ser feitos tanto no SQL Server 2008R2 como no 2012 ou no 2014.  Existe apenas uma única diferença que ocorre na db_index_usage_stats. Lá na frente explico o porquê.</p>
+<p><strong>Vamos aos trabalhos</strong></p>
+<p>Sem demo, a coisa não roda. A coisa não acontece. A coisa não vai. Vamos criar uma base pra começar os testes:</p>
+<pre class="">USE MASTER
+IF EXISTS (SELECT NAME FROM sys.databases WHERE name = 'TesteIndexacao') 
+BEGIN
+	ALTER DATABASE TesteIndexacao SET SINGLE_USER WITH ROLLBACK IMMEDIATE;
+	DROP DATABASE TesteIndexacao;
+END	
+
+CREATE DATABASE TesteIndexacao
+GO
+USE TesteIndexacao
+GO
+</pre>
+<p>Agora, vamos criar uma tabela com um índice cluster e realizar algumas operações, pra que a gente consiga usar os DMO's e validar os resultados.</p>
+<p>Recomendo atenção com os comentários:</p>
+<pre class="">CREATE TABLE dbo.Pessoa
+(
+	ID INT PRIMARY KEY IDENTITY (1,1) NOT NULL,
+	NOME VARCHAR(30) NULL DEFAULT 'Pessoa ',
+	ATIVO BIT NULL	DEFAULT 1
+);
+GO
+
+-- INSERT: Mil inserts, cada um em um batch diferente... 
+
+INSERT INTO dbo.Pessoa DEFAULT VALUES 
+GO 1000
+
+-- SELECT: Nossa primeira leitura na tabela (E é um scan) 
+SELECT * FROM dbo.Pessoa
+
+-- Vamos criar um índice nonclustered pra ter mais um exemplo de interpretação.
+CREATE NONCLUSTERED INDEX idx_Nome ON dbo.Pessoa 
+(
+	NOME ASC
+);
+GO
+
+-- UPDATE: Atualizando mil registros. 
+UPDATE  dbo.Pessoa
+SET NOME = NOME+CAST(ID AS VARCHAR(4))
+GO
+
+-- SELECT: Vamos fazer mais uma leitura na tabela (SCAN). Agora, copie o registro "Pessoa 2".
+SELECT * FROM dbo.Pessoa
+GO
+
+-- SELECT: Criamos um índice para cobrir a consulta por nome. Que tal fazermos um seek agora? 
+SELECT ID, NOME FROM dbo.Pessoa WHERE NOME = 'Pessoa 2'
+GO
+
+-- INSERT: Vamos adicionar mais algumas linhas agora (3 registros)
+INSERT INTO Pessoa (NOME) VALUES ('Jubertina'),('Sara'),('Jurema')
+GO
+-- DELETE: Agora, vamos deletar a Jubertina (1 registro)
+DELETE FROM Pessoa WHERE NOME = 'Jubertina'
+GO
+
+</pre>
+<p>Terminamos nosso "workload" simulado. Vamos agora falar sobre os DMO's individualmente e entender na prática o que eles retornam pra gente. Os resultados serão resumidos, trazendo apenas alguns campos de interesse, que são justamente aqueles que deixam óbvia qual a utilidade do DMO em questão.</p>
+<p>Caso queira reproduzir os resultados, seguem as queries utilizadas para os testes abaixo:</p>
+<pre>-- Query para Operational Stats
+SELECT 
+	DB_NAME(DATABASE_ID) as [DatabaseName] , 
+	object_name(O.object_id) as Objeto, 
+	i.name as [NomeIndice], 
+	leaf_insert_count,
+	leaf_delete_count,
+	leaf_update_count,
+	leaf_ghost_count
+FROM SYS.dm_db_index_operational_stats(DB_ID(),OBJECT_ID('PESSOA'),NULL,NULL) O 
+INNER JOIN sys.indexes i ON o.object_id = i.object_id and o.index_id = i.index_id
+GO
+
+-- Query para Physical Stats 
+
+SELECT 
+	DB_NAME(DATABASE_ID) AS Database_name, 
+	object_name(i.object_id) as [Tabela],
+	i.name as [Índice],
+	avg_fragmentation_in_percent, 
+	avg_fragment_size_in_pages, 
+	avg_page_space_used_in_percent, 
+	record_count, 
+	AVG_RECORD_SIZE_IN_BYTES 
+FROM SYS.dm_db_index_physical_stats(DB_ID(),OBJECT_ID('PESSOA'),NULL,NULL,'SAMPLED') o
+INNER JOIN sys.indexes i ON o.object_id = i.object_id and o.index_id = i.index_id
+
+GO
+
+-- Query para Usage Stats
+
+SELECT 
+	DB_NAME(DATABASE_ID) AS Database_name,
+	object_name(i.object_id) as [Tabela],
+	i.name as [Índice], 
+	user_scans,user_updates, 
+	last_user_scan,
+	last_user_update,
+	last_system_scan
+FROM SYS.dm_db_index_usage_stats o 
+INNER JOIN sys.indexes i ON o.object_id = i.object_id and o.index_id = i.index_id
+WHERE database_id = DB_ID('TesteIndexacao')  
+GO
+
+</pre>
+<p> </p>
+<p>Outra coisa: apesar de não ser tão intuitivo assim, uma heap (tabelas sem índice cluster) também tem estatísticas nestes DMO's. Isso não está coberto nos exemplos, mas achei importante citar...</p>
+<p><strong>DM_DB_INDEX_OPERATIONAL_STATS</strong></p>
+<p><strong>O que é:</strong> Retorna informações operacionais (relacionadas à <a href="http://technet.microsoft.com/en-us/library/aa213039%28v=sql.80%29.aspx">locking</a>, <a href="http://msdn.microsoft.com/pt-br/library/ms177421.aspx">latching</a>, <a href="http://blogs.msdn.com/b/sqljourney/archive/2012/07/28/an-in-depth-look-at-ghost-records-in-sql-server.aspx">ghost counts</a>, etc). Também retorna a quantidade de registros afetados por determinadas operações de DML no nível  "folha" do índice (e claro, convenientemente, são as quantidades que eu mostro na tabela abaixo)</p>
+<p>As estatísticas retornadas por esta DMF são resetadas em situações normais de várias outros DMO's não-persistentes, que são:</p>
+<ul>
+<li>Restart da instância;</li>
+<li>Indisponibilidade/disponibilidade da base em questão.</li>
+</ul>
+<p>Note que o DMO retorna quantidade de registros inseridos (ao todo foram 1003), quantidade de registros atualizados (foi apenas uma operação de update, mas que atualizou todos os registros) e um DELETE que no índice foi marcado como ghost (será removido assim que o cleanup for realizado, para maiores informações pesquise pelos termos "Ghost Cleanup" ou veja as referências).</p>
+<div style="direction: ltr;">
+<table style="direction: ltr; border-collapse: collapse; border: 1pt solid #a3a3a3; height: 128px;" border="1" width="582" cellspacing="0" cellpadding="0">
+<tbody>
+<tr>
+<td style="background-color: #1f497d; vertical-align: top; width: 1.3923in; padding: 4pt 4pt 4pt 4pt; border: 1pt solid #A3A3A3;">
+<p style="margin: 0in; font-family: Calibri; font-size: 11.0pt; color: white;">DatabaseName</p>
+</td>
+<td style="background-color: #1f497d; vertical-align: top; width: .6673in; padding: 4pt 4pt 4pt 4pt; border: 1pt solid #A3A3A3;">
+<p style="margin: 0in; font-family: Calibri; font-size: 11.0pt; color: white;">Objeto</p>
+</td>
+<td style="background-color: #1f497d; vertical-align: top; width: 2.3395in; padding: 4pt 4pt 4pt 4pt; border: 1pt solid #A3A3A3;">
+<p style="margin: 0in; font-family: Calibri; font-size: 11.0pt; color: white;">NomeIndice</p>
+</td>
+<td style="background-color: #1f497d; vertical-align: top; width: 1.3166in; padding: 4pt 4pt 4pt 4pt; border: 1pt solid #A3A3A3;">
+<p style="margin: 0in; font-family: Calibri; font-size: 11.0pt; color: white;">leaf_insert_</p>
+<p style="margin: 0in; font-family: Calibri; font-size: 11.0pt; color: white;">count</p>
+</td>
+<td style="background-color: #1f497d; vertical-align: top; width: 1.3562in; padding: 4pt 4pt 4pt 4pt; border: 1pt solid #A3A3A3;">
+<p style="margin: 0in; font-family: Calibri; font-size: 11.0pt; color: white;">leaf_</p>
+<p style="margin: 0in; font-family: Calibri; font-size: 11.0pt; color: white;">delete_</p>
+<p style="margin: 0in; font-family: Calibri; font-size: 11.0pt; color: white;">count</p>
+</td>
+<td style="background-color: #1f497d; vertical-align: top; width: 1.4027in; padding: 4pt 4pt 4pt 4pt; border: 1pt solid #A3A3A3;">
+<p style="margin: 0in; font-family: Calibri; font-size: 11.0pt; color: white;">leaf_</p>
+<p style="margin: 0in; font-family: Calibri; font-size: 11.0pt; color: white;">update_</p>
+<p style="margin: 0in; font-family: Calibri; font-size: 11.0pt; color: white;">count</p>
+</td>
+<td style="background-color: #1f497d; vertical-align: top; width: 1.3708in; padding: 4pt 4pt 4pt 4pt; border: 1pt solid #A3A3A3;">
+<p style="margin: 0in; font-family: Calibri; font-size: 11.0pt; color: white;">leaf_</p>
+<p style="margin: 0in; font-family: Calibri; font-size: 11.0pt; color: white;">ghost_</p>
+<p style="margin: 0in; font-family: Calibri; font-size: 11.0pt; color: white;">count</p>
+</td>
+</tr>
+<tr>
+<td style="vertical-align: top; width: 1.3923in; padding: 4pt 4pt 4pt 4pt; border: 1pt solid #A3A3A3;">
+<p style="margin: 0in; font-family: Calibri; font-size: 11.0pt; color: black;">TesteIndexacao</p>
+</td>
+<td style="vertical-align: top; width: .6673in; padding: 4pt 4pt 4pt 4pt; border: 1pt solid #A3A3A3;">
+<p style="margin: 0in; font-family: Calibri; font-size: 11.0pt; color: black;">Pessoa</p>
+</td>
+<td style="vertical-align: top; width: 2.3395in; padding: 4pt 4pt 4pt 4pt; border: 1pt solid #A3A3A3;">
+<p style="margin: 0in; font-family: Calibri; font-size: 11.0pt; color: black;">PK__Pessoa__3214EC277F60ED59</p>
+</td>
+<td style="vertical-align: top; width: 1.3166in; padding: 4pt 4pt 4pt 4pt; border: 1pt solid #A3A3A3;">
+<p style="margin: 0in; font-family: Calibri; font-size: 11.0pt; color: black; text-align: right;">1003</p>
+</td>
+<td style="vertical-align: top; width: 1.3562in; padding: 4pt 4pt 4pt 4pt; border: 1pt solid #A3A3A3;">
+<p style="margin: 0in; font-family: Calibri; font-size: 11.0pt; color: black; text-align: right;">0</p>
+</td>
+<td style="vertical-align: top; width: 1.4027in; padding: 4pt 4pt 4pt 4pt; border: 1pt solid #A3A3A3;">
+<p style="margin: 0in; font-family: Calibri; font-size: 11.0pt; color: black; text-align: right;">1000</p>
+</td>
+<td style="vertical-align: top; width: 1.3708in; padding: 4pt 4pt 4pt 4pt; border: 1pt solid #A3A3A3;">
+<p style="margin: 0in; font-family: Calibri; font-size: 11.0pt; color: black; text-align: right;">1</p>
+</td>
+</tr>
+<tr>
+<td style="vertical-align: top; width: 1.3923in; padding: 4pt 4pt 4pt 4pt; border: 1pt solid #A3A3A3;">
+<p style="margin: 0in; font-family: Calibri; font-size: 11.0pt; color: black;">TesteIndexacao</p>
+</td>
+<td style="vertical-align: top; width: .6673in; padding: 4pt 4pt 4pt 4pt; border: 1pt solid #A3A3A3;">
+<p style="margin: 0in; font-family: Calibri; font-size: 11.0pt; color: black;">Pessoa</p>
+</td>
+<td style="vertical-align: top; width: 2.3395in; padding: 4pt 4pt 4pt 4pt; border: 1pt solid #A3A3A3;">
+<p style="margin: 0in; font-family: Calibri; font-size: 11.0pt; color: black;">idx_Nome</p>
+</td>
+<td style="vertical-align: top; width: 1.3166in; padding: 4pt 4pt 4pt 4pt; border: 1pt solid #A3A3A3;">
+<p style="margin: 0in; font-family: Calibri; font-size: 11.0pt; color: black; text-align: right;">1003</p>
+</td>
+<td style="vertical-align: top; width: 1.3562in; padding: 4pt 4pt 4pt 4pt; border: 1pt solid #A3A3A3;">
+<p style="margin: 0in; font-family: Calibri; font-size: 11.0pt; color: black; text-align: right;">0</p>
+</td>
+<td style="vertical-align: top; width: 1.4027in; padding: 4pt 4pt 4pt 4pt; border: 1pt solid #A3A3A3;">
+<p style="margin: 0in; font-family: Calibri; font-size: 11.0pt; color: black; text-align: right;">0</p>
+</td>
+<td style="vertical-align: top; width: 1.3708in; padding: 4pt 4pt 4pt 4pt; border: 1pt solid #A3A3A3;">
+<p style="margin: 0in; font-family: Calibri; font-size: 11.0pt; color: black; text-align: right;">1001</p>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>Tabela 1 (Registros no nível "folha"  dos índices).</p>
+<p><strong>DM_DB_INDEX_PHYSICAL_INDEX</strong></p>
+<p><strong>O que é:</strong> Esse DMO é o caminho pra identificar fragmentaçãonos índices. Tem que ache que o DBCC SHOWCONTIG muito mais fácil e rápido de usar (comando que esse DMO visa substituir), mas não tem a mesma flexibidade do DMO por permitir a realização de queries.</p>
+<div style="direction: ltr;">
+<table style="direction: ltr; border-collapse: collapse; border: 1pt solid #a3a3a3; height: 185px;" border="1" width="607" cellspacing="0" cellpadding="0">
+<tbody>
+<tr>
+<td style="background-color: #1f497d; vertical-align: top; width: 1.2798in; padding: 4pt 4pt 4pt 4pt; border: 1pt solid #A3A3A3;">
+<p style="margin: 0in; font-family: Calibri; font-size: 11.0pt; color: white;">Database_name</p>
+</td>
+<td style="background-color: #1f497d; vertical-align: top; width: .6673in; padding: 4pt 4pt 4pt 4pt; border: 1pt solid #A3A3A3;">
+<p style="margin: 0in; font-family: Calibri; font-size: 11.0pt; color: white;">Tabela</p>
+</td>
+<td style="background-color: #1f497d; vertical-align: top; width: 1.4895in; padding: 4pt 4pt 4pt 4pt; border: 1pt solid #A3A3A3;">
+<p style="margin: 0in; font-family: Calibri; font-size: 11.0pt; color: white;">Índice</p>
+</td>
+<td style="background-color: #1f497d; vertical-align: top; width: 2.1951in; padding: 4pt 4pt 4pt 4pt; border: 1pt solid #A3A3A3;">
+<p style="margin: 0in; font-family: Calibri; font-size: 11.0pt; color: white;">avg_</p>
+<p style="margin: 0in; font-family: Calibri; font-size: 11.0pt; color: white;">fragmentation</p>
+<p style="margin: 0in; font-family: Calibri; font-size: 11.0pt; color: white;">_in_percent</p>
+</td>
+<td style="background-color: #1f497d; vertical-align: top; width: 1.5138in; padding: 4pt 4pt 4pt 4pt; border: 1pt solid #A3A3A3;">
+<p style="margin: 0in; font-family: Calibri; font-size: 11.0pt; color: white;">avg_</p>
+<p style="margin: 0in; font-family: Calibri; font-size: 11.0pt; color: white;">fragment</p>
+<p style="margin: 0in; font-family: Calibri; font-size: 11.0pt; color: white;">_size_</p>
+<p style="margin: 0in; font-family: Calibri; font-size: 11.0pt; color: white;">in_pages</p>
+</td>
+<td style="background-color: #1f497d; vertical-align: top; width: 1.5118in; padding: 4pt 4pt 4pt 4pt; border: 1pt solid #A3A3A3;">
+<p style="margin: 0in; font-family: Calibri; font-size: 11.0pt; color: white;">avg_page</p>
+<p style="margin: 0in; font-family: Calibri; font-size: 11.0pt; color: white;">_space</p>
+<p style="margin: 0in; font-family: Calibri; font-size: 11.0pt; color: white;">_used</p>
+<p style="margin: 0in; font-family: Calibri; font-size: 11.0pt; color: white;">_in_percent</p>
+</td>
+<td style="background-color: #1f497d; vertical-align: top; width: .868in; padding: 4pt 4pt 4pt 4pt; border: 1pt solid #A3A3A3;">
+<p style="margin: 0in; font-family: Calibri; font-size: 11.0pt; color: white;">record</p>
+<p style="margin: 0in; font-family: Calibri; font-size: 11.0pt; color: white;">_count</p>
+</td>
+<td style="background-color: #1f497d; vertical-align: top; width: 1.3479in; padding: 4pt 4pt 4pt 4pt; border: 1pt solid #A3A3A3;">
+<p style="margin: 0in; font-family: Calibri; font-size: 11.0pt; color: white;">AVG_</p>
+<p style="margin: 0in; font-family: Calibri; font-size: 11.0pt; color: white;">RECORD</p>
+<p style="margin: 0in; font-family: Calibri; font-size: 11.0pt; color: white;">_SIZE</p>
+<p style="margin: 0in; font-family: Calibri; font-size: 11.0pt; color: white;">_IN_BYTES</p>
+</td>
+</tr>
+<tr>
+<td style="vertical-align: top; width: 1.2798in; padding: 4pt 4pt 4pt 4pt; border: 1pt solid #A3A3A3;">
+<p style="margin: 0in; font-family: Calibri; font-size: 11.0pt; color: black;">TesteIndexacao</p>
+</td>
+<td style="vertical-align: top; width: .6673in; padding: 4pt 4pt 4pt 4pt; border: 1pt solid #A3A3A3;">
+<p style="margin: 0in; font-family: Calibri; font-size: 11.0pt; color: black;">Pessoa</p>
+</td>
+<td style="vertical-align: top; width: 1.4895in; padding: 4pt 4pt 4pt 4pt; border: 1pt solid #A3A3A3;">
+<p style="margin: 0in; font-family: Calibri; font-size: 11.0pt; color: black;">PK__Pessoa__</p>
+<p style="margin: 0in; font-family: Calibri; font-size: 11.0pt; color: black;">3214EC277</p>
+<p style="margin: 0in; font-family: Calibri; font-size: 11.0pt; color: black;">F60ED59</p>
+</td>
+<td style="vertical-align: top; width: 2.1951in; padding: 4pt 4pt 4pt 4pt; border: 1pt solid #A3A3A3;">
+<p style="margin: 0in; font-family: Calibri; font-size: 11.0pt; color: black; text-align: right;">85,71428571</p>
+</td>
+<td style="vertical-align: top; width: 1.5138in; padding: 4pt 4pt 4pt 4pt; border: 1pt solid #A3A3A3;">
+<p style="margin: 0in; font-family: Calibri; font-size: 11.0pt; color: black; text-align: right;">1</p>
+</td>
+<td style="vertical-align: top; width: 1.5118in; padding: 4pt 4pt 4pt 4pt; border: 1pt solid #A3A3A3;">
+<p style="margin: 0in; font-family: Calibri; font-size: 11.0pt; color: black; text-align: right;">49,2869533</p>
+</td>
+<td style="vertical-align: top; width: .868in; padding: 4pt 4pt 4pt 4pt; border: 1pt solid #A3A3A3;">
+<p style="margin: 0in; font-family: Calibri; font-size: 11.0pt; color: black; text-align: right;">1002</p>
+</td>
+<td style="vertical-align: top; width: 1.3479in; padding: 4pt 4pt 4pt 4pt; border: 1pt solid #A3A3A3;">
+<p style="margin: 0in; font-family: Calibri; font-size: 11.0pt; color: black; text-align: right;">25,883</p>
+</td>
+</tr>
+<tr>
+<td style="vertical-align: top; width: 1.2798in; padding: 4pt 4pt 4pt 4pt; border: 1pt solid #A3A3A3;">
+<p style="margin: 0in; font-family: Calibri; font-size: 11.0pt; color: black;">TesteIndexacao</p>
+</td>
+<td style="vertical-align: top; width: .6673in; padding: 4pt 4pt 4pt 4pt; border: 1pt solid #A3A3A3;">
+<p style="margin: 0in; font-family: Calibri; font-size: 11.0pt; color: black;">Pessoa</p>
+</td>
+<td style="vertical-align: top; width: 1.4895in; padding: 4pt 4pt 4pt 4pt; border: 1pt solid #A3A3A3;">
+<p style="margin: 0in; font-family: Calibri; font-size: 11.0pt; color: black;">idx_Nome</p>
+</td>
+<td style="vertical-align: top; width: 2.1951in; padding: 4pt 4pt 4pt 4pt; border: 1pt solid #A3A3A3;">
+<p style="margin: 0in; font-family: Calibri; font-size: 11.0pt; color: black; text-align: right;">85,71428571</p>
+</td>
+<td style="vertical-align: top; width: 1.5138in; padding: 4pt 4pt 4pt 4pt; border: 1pt solid #A3A3A3;">
+<p style="margin: 0in; font-family: Calibri; font-size: 11.0pt; color: black; text-align: right;">1</p>
+</td>
+<td style="vertical-align: top; width: 1.5118in; padding: 4pt 4pt 4pt 4pt; border: 1pt solid #A3A3A3;">
+<p style="margin: 0in; font-family: Calibri; font-size: 11.0pt; color: black; text-align: right;">42,21293551</p>
+</td>
+<td style="vertical-align: top; width: .868in; padding: 4pt 4pt 4pt 4pt; border: 1pt solid #A3A3A3;">
+<p style="margin: 0in; font-family: Calibri; font-size: 11.0pt; color: black; text-align: right;">1002</p>
+</td>
+<td style="vertical-align: top; width: 1.3479in; padding: 4pt 4pt 4pt 4pt; border: 1pt solid #A3A3A3;">
+<p style="margin: 0in; font-family: Calibri; font-size: 11.0pt; color: black; text-align: right;">21,883</p>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>Tabela 2 (Registro de fragmentação)</p>
+<p><strong>DM_DB_INDEX_USAGE_STATS</strong></p>
+<p><strong>O que é:</strong> Mostra estatísticas de uso por operação. Útil pra saber se o índice está sendo utilizado, se aquele índice sofre mais scan que seek, se é mais atualizado que consultado, se aquela tabela se beneficiaria com a criação de novos índices. É uma ótima forma também de se ter uma ideia do workload de determinada base.</p>
+<p>Importante saber: Existe uma confusão que estatísticas este DMO retorna. Note que ele contabiliza operações e não número de registros. Isso significa que se você fizer um UPDATE de um registro, conta como 1 operação. Se você fizer um UPDATE que atualize mil registros, continua contando como uma operação. Se você faz mil INSERTS em batchs diferentes (com um GO embaixo da instrução, conforme foi feito), são mil operações. Significa que, se em algum momento alguém pedir quantidade de registros alterados, essa view não é o caminho.</p>
+<p>Comentando rapidamente, note que:</p>
+<p>User_Scans = 3</p>
+<p>Fizemos dois SELECTs que causaram dois scans. E o nosso update, como varreu todo o índice também realizou outro SCAN. Totalizando três scans.</p>
+<p>User_updates = 1003</p>
+<p>Fazendo as contas:</p>
+<p>- Os inserts totabilizaram 1000 operações, pois fizemos um insert por batch (atenção ao GO no final da instrução).. Total = 1000</p>
+<p>- O UPDATE realizado em mil registros contabilizou apenas uma operação. Total  =1001</p>
+<p>- O INSERT de três registros  contou como uma operação. Total = 1002</p>
+<p>- O DELETE de um registro contou como uma operação. Total = 1003</p>
+<p>Porque o detalhamento acima? Pra ilustrar como realmente a contagem desta DMV funciona.</p>
+<div style="direction: ltr;">
+<table style="direction: ltr; border-collapse: collapse; border: 1pt solid #a3a3a3; height: 147px;" border="1" width="688" cellspacing="0" cellpadding="0">
+<tbody>
+<tr>
+<td style="background-color: #1f497d; vertical-align: top; width: 1.1715in; padding: 4pt 4pt 4pt 4pt; border: 1pt solid #A3A3A3;">
+<p style="margin: 0in; font-family: Calibri; font-size: 11.0pt; color: white;">Database_name</p>
+</td>
+<td style="background-color: #1f497d; vertical-align: top; width: .6673in; padding: 4pt 4pt 4pt 4pt; border: 1pt solid #A3A3A3;">
+<p style="margin: 0in; font-family: Calibri; font-size: 11.0pt; color: white;">Tabela</p>
+</td>
+<td style="background-color: #1f497d; vertical-align: top; width: 2.168in; padding: 4pt 4pt 4pt 4pt; border: 1pt solid #A3A3A3;">
+<p style="margin: 0in; font-family: Calibri; font-size: 11.0pt; color: white;">Índice</p>
+</td>
+<td style="background-color: #1f497d; vertical-align: top; width: .8819in; padding: 4pt 4pt 4pt 4pt; border: 1pt solid #A3A3A3;">
+<p style="margin: 0in; font-family: Calibri; font-size: 11.0pt; color: white;">user_</p>
+<p style="margin: 0in; font-family: Calibri; font-size: 11.0pt; color: white;">scans</p>
+</td>
+<td style="background-color: #1f497d; vertical-align: top; width: 1.0256in; padding: 4pt 4pt 4pt 4pt; border: 1pt solid #A3A3A3;">
+<p style="margin: 0in; font-family: Calibri; font-size: 11.0pt; color: white;">user_</p>
+<p style="margin: 0in; font-family: Calibri; font-size: 11.0pt; color: white;">updates</p>
+</td>
+<td style="background-color: #1f497d; vertical-align: top; width: 1.6541in; padding: 4pt 4pt 4pt 4pt; border: 1pt solid #A3A3A3;">
+<p style="margin: 0in; font-family: Calibri; font-size: 11.0pt; color: white;">last_user</p>
+<p style="margin: 0in; font-family: Calibri; font-size: 11.0pt; color: white;">_scan</p>
+</td>
+<td style="background-color: #1f497d; vertical-align: top; width: 1.6541in; padding: 4pt 4pt 4pt 4pt; border: 1pt solid #A3A3A3;">
+<p style="margin: 0in; font-family: Calibri; font-size: 11.0pt; color: white;">last_user</p>
+<p style="margin: 0in; font-family: Calibri; font-size: 11.0pt; color: white;">_update</p>
+</td>
+<td style="background-color: #1f497d; vertical-align: top; width: 1.6513in; padding: 4pt 4pt 4pt 4pt; border: 1pt solid #A3A3A3;">
+<p style="margin: 0in; font-family: Calibri; font-size: 11.0pt; color: white;">last_system</p>
+<p style="margin: 0in; font-family: Calibri; font-size: 11.0pt; color: white;">_scan</p>
+</td>
+</tr>
+<tr>
+<td style="vertical-align: top; width: 1.1715in; padding: 4pt 4pt 4pt 4pt; border: 1pt solid #A3A3A3;">
+<p style="margin: 0in; font-family: Calibri; font-size: 11.0pt; color: black;">TesteIndexacao</p>
+</td>
+<td style="vertical-align: top; width: .6673in; padding: 4pt 4pt 4pt 4pt; border: 1pt solid #A3A3A3;">
+<p style="margin: 0in; font-family: Calibri; font-size: 11.0pt; color: black;">Pessoa</p>
+</td>
+<td style="vertical-align: top; width: 2.168in; padding: 4pt 4pt 4pt 4pt; border: 1pt solid #A3A3A3;">
+<p style="margin: 0in; font-family: Calibri; font-size: 11.0pt; color: black;">PK__Pessoa__</p>
+<p style="margin: 0in; font-family: Calibri; font-size: 11.0pt; color: black;">3214EC2</p>
+<p style="margin: 0in; font-family: Calibri; font-size: 11.0pt; color: black;">77F60ED59</p>
+</td>
+<td style="vertical-align: top; width: .8819in; padding: 4pt 4pt 4pt 4pt; border: 1pt solid #A3A3A3;">
+<p style="margin: 0in; font-family: Calibri; font-size: 11.0pt; color: black; text-align: right;">3</p>
+</td>
+<td style="vertical-align: top; width: 1.0256in; padding: 4pt 4pt 4pt 4pt; border: 1pt solid #A3A3A3;">
+<p style="margin: 0in; font-family: Calibri; font-size: 11.0pt; color: black; text-align: right;">1003</p>
+</td>
+<td style="vertical-align: top; width: 1.6541in; padding: 4pt 4pt 4pt 4pt; border: 1pt solid #A3A3A3;">
+<p style="margin: 0in; font-family: Calibri; font-size: 11.0pt; color: black;">2014-12-03 17:53:23.497</p>
+</td>
+<td style="vertical-align: top; width: 1.6541in; padding: 4pt 4pt 4pt 4pt; border: 1pt solid #A3A3A3;">
+<p style="margin: 0in; font-family: Calibri; font-size: 11.0pt; color: black;">2014-12-03 17:53:57.143</p>
+</td>
+<td style="vertical-align: top; width: 1.6513in; padding: 4pt 4pt 4pt 4pt; border: 1pt solid #A3A3A3;">
+<p style="margin: 0in; font-family: Calibri; font-size: 11.0pt; color: black;">2014-12-03 17:52:59.933</p>
+</td>
+</tr>
+<tr>
+<td style="vertical-align: top; width: 1.1715in; padding: 4pt 4pt 4pt 4pt; border: 1pt solid #A3A3A3;">
+<p style="margin: 0in; font-family: Calibri; font-size: 11.0pt; color: black;">TesteIndexacao</p>
+</td>
+<td style="vertical-align: top; width: .6673in; padding: 4pt 4pt 4pt 4pt; border: 1pt solid #A3A3A3;">
+<p style="margin: 0in; font-family: Calibri; font-size: 11.0pt; color: black;">Pessoa</p>
+</td>
+<td style="vertical-align: top; width: 2.168in; padding: 4pt 4pt 4pt 4pt; border: 1pt solid #A3A3A3;">
+<p style="margin: 0in; font-family: Calibri; font-size: 11.0pt; color: black;">idx_Nome</p>
+</td>
+<td style="vertical-align: top; width: .8819in; padding: 4pt 4pt 4pt 4pt; border: 1pt solid #A3A3A3;">
+<p style="margin: 0in; font-family: Calibri; font-size: 11.0pt; color: black; text-align: right;">0</p>
+</td>
+<td style="vertical-align: top; width: 1.0256in; padding: 4pt 4pt 4pt 4pt; border: 1pt solid #A3A3A3;">
+<p style="margin: 0in; font-family: Calibri; font-size: 11.0pt; color: black; text-align: right;">3</p>
+</td>
+<td style="vertical-align: top; width: 1.6541in; padding: 4pt 4pt 4pt 4pt; border: 1pt solid #A3A3A3;">
+<p style="margin: 0in; font-family: Calibri; font-size: 11.0pt; color: black;">NULL</p>
+</td>
+<td style="vertical-align: top; width: 1.6541in; padding: 4pt 4pt 4pt 4pt; border: 1pt solid #A3A3A3;">
+<p style="margin: 0in; font-family: Calibri; font-size: 11.0pt; color: black;">2014-12-03 17:53:57.143</p>
+</td>
+<td style="vertical-align: top; width: 1.6513in; padding: 4pt 4pt 4pt 4pt; border: 1pt solid #A3A3A3;">
+<p style="margin: 0in; font-family: Calibri; font-size: 11.0pt; color: black;">2014-12-03 17:53:27.257</p>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>..</p>
+<p>Agora, vamos realizar um rebuild em todos os índices da tabela.</p>
+<p>O motivo disto? Observar o comportamento dos DMO's em índices recém-construídos.</p>
+<pre class="">ALTER INDEX ALL ON dbo.Pessoa REBUILD</pre>
+<p>E o que muda com o rebuild?</p>
+<p><strong>Mesmo SELECT da [Operational Stats]</strong></p>
+<div style="direction: ltr;">
+<table style="direction: ltr; border-collapse: collapse; border: 1pt solid #a3a3a3; height: 128px;" border="1" width="632" cellspacing="0" cellpadding="0">
+<tbody>
+<tr>
+<td style="background-color: #1f497d; vertical-align: top; width: 1.1895in; padding: 4pt 4pt 4pt 4pt; border: 1pt solid #A3A3A3;">
+<p style="margin: 0in; font-family: Calibri; font-size: 11.0pt; color: white;">DatabaseName</p>
+</td>
+<td style="background-color: #1f497d; vertical-align: top; width: .6673in; padding: 4pt 4pt 4pt 4pt; border: 1pt solid #A3A3A3;">
+<p style="margin: 0in; font-family: Calibri; font-size: 11.0pt; color: white;">Objeto</p>
+</td>
+<td style="background-color: #1f497d; vertical-align: top; width: 2.3395in; padding: 4pt 4pt 4pt 4pt; border: 1pt solid #A3A3A3;">
+<p style="margin: 0in; font-family: Calibri; font-size: 11.0pt; color: white;">NomeIndice</p>
+</td>
+<td style="background-color: #1f497d; vertical-align: top; width: 1.3166in; padding: 4pt 4pt 4pt 4pt; border: 1pt solid #A3A3A3;">
+<p style="margin: 0in; font-family: Calibri; font-size: 11.0pt; color: white;">leaf_</p>
+<p style="margin: 0in; font-family: Calibri; font-size: 11.0pt; color: white;">insert</p>
+<p style="margin: 0in; font-family: Calibri; font-size: 11.0pt; color: white;">_count</p>
+</td>
+<td style="background-color: #1f497d; vertical-align: top; width: 1.3562in; padding: 4pt 4pt 4pt 4pt; border: 1pt solid #A3A3A3;">
+<p style="margin: 0in; font-family: Calibri; font-size: 11.0pt; color: white;">leaf_</p>
+<p style="margin: 0in; font-family: Calibri; font-size: 11.0pt; color: white;">delete</p>
+<p style="margin: 0in; font-family: Calibri; font-size: 11.0pt; color: white;">_count</p>
+</td>
+<td style="background-color: #1f497d; vertical-align: top; width: 1.4027in; padding: 4pt 4pt 4pt 4pt; border: 1pt solid #A3A3A3;">
+<p style="margin: 0in; font-family: Calibri; font-size: 11.0pt; color: white;">leaf_</p>
+<p style="margin: 0in; font-family: Calibri; font-size: 11.0pt; color: white;">update</p>
+<p style="margin: 0in; font-family: Calibri; font-size: 11.0pt; color: white;">_count</p>
+</td>
+<td style="background-color: #1f497d; vertical-align: top; width: 1.2597in; padding: 4pt 4pt 4pt 4pt; border: 1pt solid #A3A3A3;">
+<p style="margin: 0in; font-family: Calibri; font-size: 11.0pt; color: white;">leaf_</p>
+<p style="margin: 0in; font-family: Calibri; font-size: 11.0pt; color: white;">ghost</p>
+<p style="margin: 0in; font-family: Calibri; font-size: 11.0pt; color: white;">_count</p>
+</td>
+</tr>
+<tr>
+<td style="vertical-align: top; width: 1.1895in; padding: 4pt 4pt 4pt 4pt; border: 1pt solid #A3A3A3;">
+<p style="margin: 0in; font-family: Calibri; font-size: 11.0pt; color: black;">TesteIndexacao</p>
+</td>
+<td style="vertical-align: top; width: .6673in; padding: 4pt 4pt 4pt 4pt; border: 1pt solid #A3A3A3;">
+<p style="margin: 0in; font-family: Calibri; font-size: 11.0pt; color: black;">Pessoa</p>
+</td>
+<td style="vertical-align: top; width: 2.3395in; padding: 4pt 4pt 4pt 4pt; border: 1pt solid #A3A3A3;">
+<p style="margin: 0in; font-family: Calibri; font-size: 11.0pt; color: black;">PK__Pessoa__3214EC277F60ED59</p>
+</td>
+<td style="vertical-align: top; width: 1.3166in; padding: 4pt 4pt 4pt 4pt; border: 1pt solid #A3A3A3;">
+<p style="margin: 0in; font-family: Calibri; font-size: 11.0pt; color: black; text-align: right;">0</p>
+</td>
+<td style="vertical-align: top; width: 1.3562in; padding: 4pt 4pt 4pt 4pt; border: 1pt solid #A3A3A3;">
+<p style="margin: 0in; font-family: Calibri; font-size: 11.0pt; color: black; text-align: right;">0</p>
+</td>
+<td style="vertical-align: top; width: 1.4027in; padding: 4pt 4pt 4pt 4pt; border: 1pt solid #A3A3A3;">
+<p style="margin: 0in; font-family: Calibri; font-size: 11.0pt; color: black; text-align: right;">0</p>
+</td>
+<td style="vertical-align: top; width: 1.2597in; padding: 4pt 4pt 4pt 4pt; border: 1pt solid #A3A3A3;">
+<p style="margin: 0in; font-family: Calibri; font-size: 11.0pt; color: black; text-align: right;">0</p>
+</td>
+</tr>
+<tr>
+<td style="vertical-align: top; width: 1.1895in; padding: 4pt 4pt 4pt 4pt; border: 1pt solid #A3A3A3;">
+<p style="margin: 0in; font-family: Calibri; font-size: 11.0pt; color: black;">TesteIndexacao</p>
+</td>
+<td style="vertical-align: top; width: .6673in; padding: 4pt 4pt 4pt 4pt; border: 1pt solid #A3A3A3;">
+<p style="margin: 0in; font-family: Calibri; font-size: 11.0pt; color: black;">Pessoa</p>
+</td>
+<td style="vertical-align: top; width: 2.3395in; padding: 4pt 4pt 4pt 4pt; border: 1pt solid #A3A3A3;">
+<p style="margin: 0in; font-family: Calibri; font-size: 11.0pt; color: black;">idx_Nome</p>
+</td>
+<td style="vertical-align: top; width: 1.3166in; padding: 4pt 4pt 4pt 4pt; border: 1pt solid #A3A3A3;">
+<p style="margin: 0in; font-family: Calibri; font-size: 11.0pt; color: black; text-align: right;">0</p>
+</td>
+<td style="vertical-align: top; width: 1.3562in; padding: 4pt 4pt 4pt 4pt; border: 1pt solid #A3A3A3;">
+<p style="margin: 0in; font-family: Calibri; font-size: 11.0pt; color: black; text-align: right;">0</p>
+</td>
+<td style="vertical-align: top; width: 1.4027in; padding: 4pt 4pt 4pt 4pt; border: 1pt solid #A3A3A3;">
+<p style="margin: 0in; font-family: Calibri; font-size: 11.0pt; color: black; text-align: right;">0</p>
+</td>
+<td style="vertical-align: top; width: 1.2597in; padding: 4pt 4pt 4pt 4pt; border: 1pt solid #A3A3A3;">
+<p style="margin: 0in; font-family: Calibri; font-size: 11.0pt; color: black; text-align: right;">0</p>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>Note que as informações operacionais (quantidade de registros inseridos no nível "folha") sumiu. É by design. Porque é importante saber disto: se você montar um relatório ou algo do tipo com o intuito de mensurar quantidade de registros e suas respectivas operações (delete, insert e delete) nos índices  mais realizadas, é óbvio pensar que essas estatísticas serão zeradas apenas nos restarts da base (ou servidor), mas nunca em um rebuild. Significa que por exemplo, se seu último restart da instância ocorreu numa segunda, seus índices sofreram rebuild da quarta e você puxa essas informações na quinta, você não tem informações acumuladas de segunda. Então caso for usar este DMO para realizar algum levantamento, cuidado com os rebuilds (organizes contudo não zeram as estatísticas).</p>
+<p><strong>Mesmo SELECT da [Physical Stats]</strong></p>
+<div style="direction: ltr;">
+<table style="direction: ltr; border-collapse: collapse; border: 1pt solid #a3a3a3; height: 185px;" border="1" width="575" cellspacing="0" cellpadding="0">
+<tbody>
+<tr>
+<td style="background-color: #1f497d; vertical-align: top; width: 1.4361in; padding: 4pt 4pt 4pt 4pt; border: 1pt solid #A3A3A3;">
+<p style="margin: 0in; font-family: Calibri; font-size: 11.0pt; color: white;">Database_name</p>
+</td>
+<td style="background-color: #1f497d; vertical-align: top; width: .6673in; padding: 4pt 4pt 4pt 4pt; border: 1pt solid #A3A3A3;">
+<p style="margin: 0in; font-family: Calibri; font-size: 11.0pt; color: white;">Tabela</p>
+</td>
+<td style="background-color: #1f497d; vertical-align: top; width: 1.6312in; padding: 4pt 4pt 4pt 4pt; border: 1pt solid #A3A3A3;">
+<p style="margin: 0in; font-family: Calibri; font-size: 11.0pt; color: white;">Índice</p>
+</td>
+<td style="background-color: #1f497d; vertical-align: top; width: 1.568in; padding: 4pt 4pt 4pt 4pt; border: 1pt solid #A3A3A3;">
+<p style="margin: 0in; font-family: Calibri; font-size: 11.0pt; color: white;">avg_</p>
+<p style="margin: 0in; font-family: Calibri; font-size: 11.0pt; color: white;">fragmentation</p>
+<p style="margin: 0in; font-family: Calibri; font-size: 11.0pt; color: white;">_in_percent</p>
+</td>
+<td style="background-color: #1f497d; vertical-align: top; width: 1.4881in; padding: 4pt 4pt 4pt 4pt; border: 1pt solid #A3A3A3;">
+<p style="margin: 0in; font-family: Calibri; font-size: 11.0pt; color: white;">avg_</p>
+<p style="margin: 0in; font-family: Calibri; font-size: 11.0pt; color: white;">fragment_</p>
+<p style="margin: 0in; font-family: Calibri; font-size: 11.0pt; color: white;">size_</p>
+<p style="margin: 0in; font-family: Calibri; font-size: 11.0pt; color: white;">in_pages</p>
+</td>
+<td style="background-color: #1f497d; vertical-align: top; width: 1.6937in; padding: 4pt 4pt 4pt 4pt; border: 1pt solid #A3A3A3;">
+<p style="margin: 0in; font-family: Calibri; font-size: 11.0pt; color: white;">avg_page</p>
+<p style="margin: 0in; font-family: Calibri; font-size: 11.0pt; color: white;">_space</p>
+<p style="margin: 0in; font-family: Calibri; font-size: 11.0pt; color: white;">_used_</p>
+<p style="margin: 0in; font-family: Calibri; font-size: 11.0pt; color: white;">in_percent</p>
+</td>
+<td style="background-color: #1f497d; vertical-align: top; width: .9125in; padding: 4pt 4pt 4pt 4pt; border: 1pt solid #A3A3A3;">
+<p style="margin: 0in; font-family: Calibri; font-size: 11.0pt; color: white;">record</p>
+<p style="margin: 0in; font-family: Calibri; font-size: 11.0pt; color: white;">_count</p>
+</td>
+<td style="background-color: #1f497d; vertical-align: top; width: 1.477in; padding: 4pt 4pt 4pt 4pt; border: 1pt solid #A3A3A3;">
+<p style="margin: 0in; font-family: Calibri; font-size: 11.0pt; color: white;">AVG_</p>
+<p style="margin: 0in; font-family: Calibri; font-size: 11.0pt; color: white;">RECORD</p>
+<p style="margin: 0in; font-family: Calibri; font-size: 11.0pt; color: white;">_SIZE_</p>
+<p style="margin: 0in; font-family: Calibri; font-size: 11.0pt; color: white;">IN_BYTES</p>
+</td>
+</tr>
+<tr>
+<td style="vertical-align: top; width: 1.4361in; padding: 4pt 4pt 4pt 4pt; border: 1pt solid #A3A3A3;">
+<p style="margin: 0in; font-family: Calibri; font-size: 11.0pt; color: black;">TesteIndexacao</p>
+</td>
+<td style="vertical-align: top; width: .6673in; padding: 4pt 4pt 4pt 4pt; border: 1pt solid #A3A3A3;">
+<p style="margin: 0in; font-family: Calibri; font-size: 11.0pt; color: black;">Pessoa</p>
+</td>
+<td style="vertical-align: top; width: 1.6312in; padding: 4pt 4pt 4pt 4pt; border: 1pt solid #A3A3A3;">
+<p style="margin: 0in; font-family: Calibri; font-size: 11.0pt; color: black;">PK__Pessoa__</p>
+<p style="margin: 0in; font-family: Calibri; font-size: 11.0pt; color: black;">3214EC277F</p>
+<p style="margin: 0in; font-family: Calibri; font-size: 11.0pt; color: black;">60ED59</p>
+</td>
+<td style="vertical-align: top; width: 1.568in; padding: 4pt 4pt 4pt 4pt; border: 1pt solid #A3A3A3;">
+<p style="margin: 0in; font-family: Calibri; font-size: 11.0pt; color: black; text-align: right;">50</p>
+</td>
+<td style="vertical-align: top; width: 1.4881in; padding: 4pt 4pt 4pt 4pt; border: 1pt solid #A3A3A3;">
+<p style="margin: 0in; font-family: Calibri; font-size: 11.0pt; color: black; text-align: right;">1,3333333</p>
+</td>
+<td style="vertical-align: top; width: 1.6937in; padding: 4pt 4pt 4pt 4pt; border: 1pt solid #A3A3A3;">
+<p style="margin: 0in; font-family: Calibri; font-size: 11.0pt; color: black; text-align: right;">86,27069434</p>
+</td>
+<td style="vertical-align: top; width: .9125in; padding: 4pt 4pt 4pt 4pt; border: 1pt solid #A3A3A3;">
+<p style="margin: 0in; font-family: Calibri; font-size: 11.0pt; color: black; text-align: right;">1002</p>
+</td>
+<td style="vertical-align: top; width: 1.477in; padding: 4pt 4pt 4pt 4pt; border: 1pt solid #A3A3A3;">
+<p style="margin: 0in; font-family: Calibri; font-size: 11.0pt; color: black; text-align: right;">25,883</p>
+</td>
+</tr>
+<tr>
+<td style="vertical-align: top; width: 1.4361in; padding: 4pt 4pt 4pt 4pt; border: 1pt solid #A3A3A3;">
+<p style="margin: 0in; font-family: Calibri; font-size: 11.0pt; color: black;">TesteIndexacao</p>
+</td>
+<td style="vertical-align: top; width: .6673in; padding: 4pt 4pt 4pt 4pt; border: 1pt solid #A3A3A3;">
+<p style="margin: 0in; font-family: Calibri; font-size: 11.0pt; color: black;">Pessoa</p>
+</td>
+<td style="vertical-align: top; width: 1.6312in; padding: 4pt 4pt 4pt 4pt; border: 1pt solid #A3A3A3;">
+<p style="margin: 0in; font-family: Calibri; font-size: 11.0pt; color: black;">idx_Nome</p>
+</td>
+<td style="vertical-align: top; width: 1.568in; padding: 4pt 4pt 4pt 4pt; border: 1pt solid #A3A3A3;">
+<p style="margin: 0in; font-family: Calibri; font-size: 11.0pt; color: black; text-align: right;">66,66666667</p>
+</td>
+<td style="vertical-align: top; width: 1.4881in; padding: 4pt 4pt 4pt 4pt; border: 1pt solid #A3A3A3;">
+<p style="margin: 0in; font-family: Calibri; font-size: 11.0pt; color: black; text-align: right;">1</p>
+</td>
+<td style="vertical-align: top; width: 1.6937in; padding: 4pt 4pt 4pt 4pt; border: 1pt solid #A3A3A3;">
+<p style="margin: 0in; font-family: Calibri; font-size: 11.0pt; color: black; text-align: right;">98,52977514</p>
+</td>
+<td style="vertical-align: top; width: .9125in; padding: 4pt 4pt 4pt 4pt; border: 1pt solid #A3A3A3;">
+<p style="margin: 0in; font-family: Calibri; font-size: 11.0pt; color: black; text-align: right;">1002</p>
+</td>
+<td style="vertical-align: top; width: 1.477in; padding: 4pt 4pt 4pt 4pt; border: 1pt solid #A3A3A3;">
+<p style="margin: 0in; font-family: Calibri; font-size: 11.0pt; color: black; text-align: right;">21,883</p>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>Óia. Comportamento normal. Se você fez rebuild é natural que as páginas sejam organizadas, diminuindo as fragmentações e densidade de registros por página (aka fragmentação interna). Mas note que é um DMO que puxa metadados dos índices e tanto faz se algum restart ocorrer, as estatísticas não  serão voláteis. Em outras palavras, são estatísticas persistentes. Se você por exemplo realizar a consulta citada, deixar a base OFFLINE e ONLINE, e realizar a mesma consulta novamente, não deverá  terá surpresa com os dados retornados.</p>
+<p><strong>Mesmo SELECT da [Usage Stats]</strong></p>
+<div style="direction: ltr;">
+<table style="direction: ltr; border-collapse: collapse; border: 1pt solid #a3a3a3; height: 147px;" border="1" width="499" cellspacing="0" cellpadding="0">
+<tbody>
+<tr>
+<td style="background-color: #1f497d; vertical-align: top; width: 1.1715in; padding: 4pt 4pt 4pt 4pt; border: 1pt solid #A3A3A3;">
+<p style="margin: 0in; font-family: Calibri; font-size: 11.0pt; color: white;">Database_name</p>
+</td>
+<td style="background-color: #1f497d; vertical-align: top; width: .6673in; padding: 4pt 4pt 4pt 4pt; border: 1pt solid #A3A3A3;">
+<p style="margin: 0in; font-family: Calibri; font-size: 11.0pt; color: white;">Tabela</p>
+</td>
+<td style="background-color: #1f497d; vertical-align: top; width: 2.1736in; padding: 4pt 4pt 4pt 4pt; border: 1pt solid #A3A3A3;">
+<p style="margin: 0in; font-family: Calibri; font-size: 11.0pt; color: white;">Índice</p>
+</td>
+<td style="background-color: #1f497d; vertical-align: top; width: .8625in; padding: 4pt 4pt 4pt 4pt; border: 1pt solid #A3A3A3;">
+<p style="margin: 0in; font-family: Calibri; font-size: 11.0pt; color: white;">user_</p>
+<p style="margin: 0in; font-family: Calibri; font-size: 11.0pt; color: white;">scans</p>
+</td>
+<td style="background-color: #1f497d; vertical-align: top; width: 1.0256in; padding: 4pt 4pt 4pt 4pt; border: 1pt solid #A3A3A3;">
+<p style="margin: 0in; font-family: Calibri; font-size: 11.0pt; color: white;">user_</p>
+<p style="margin: 0in; font-family: Calibri; font-size: 11.0pt; color: white;">updates</p>
+</td>
+<td style="background-color: #1f497d; vertical-align: top; width: 1.6576in; padding: 4pt 4pt 4pt 4pt; border: 1pt solid #A3A3A3;">
+<p style="margin: 0in; font-family: Calibri; font-size: 11.0pt; color: white;">last_user</p>
+<p style="margin: 0in; font-family: Calibri; font-size: 11.0pt; color: white;">_scan</p>
+</td>
+<td style="background-color: #1f497d; vertical-align: top; width: 1.6576in; padding: 4pt 4pt 4pt 4pt; border: 1pt solid #A3A3A3;">
+<p style="margin: 0in; font-family: Calibri; font-size: 11.0pt; color: white;">last_user</p>
+<p style="margin: 0in; font-family: Calibri; font-size: 11.0pt; color: white;">_update</p>
+</td>
+<td style="background-color: #1f497d; vertical-align: top; width: 1.6583in; padding: 4pt 4pt 4pt 4pt; border: 1pt solid #A3A3A3;">
+<p style="margin: 0in; font-family: Calibri; font-size: 11.0pt; color: white;">last_system</p>
+<p style="margin: 0in; font-family: Calibri; font-size: 11.0pt; color: white;">_scan</p>
+</td>
+</tr>
+<tr>
+<td style="vertical-align: top; width: 1.1715in; padding: 4pt 4pt 4pt 4pt; border: 1pt solid #A3A3A3;">
+<p style="margin: 0in; font-family: Calibri; font-size: 11.0pt; color: black;">TesteIndexacao</p>
+</td>
+<td style="vertical-align: top; width: .6673in; padding: 4pt 4pt 4pt 4pt; border: 1pt solid #A3A3A3;">
+<p style="margin: 0in; font-family: Calibri; font-size: 11.0pt; color: black;">Pessoa</p>
+</td>
+<td style="vertical-align: top; width: 2.1736in; padding: 4pt 4pt 4pt 4pt; border: 1pt solid #A3A3A3;">
+<p style="margin: 0in; font-family: Calibri; font-size: 11.0pt; color: black;">PK__Pessoa__321</p>
+<p style="margin: 0in; font-family: Calibri; font-size: 11.0pt; color: black;">4EC277F60ED59</p>
+</td>
+<td style="vertical-align: top; width: .8625in; padding: 4pt 4pt 4pt 4pt; border: 1pt solid #A3A3A3;">
+<p style="margin: 0in; font-family: Calibri; font-size: 11.0pt; color: black; text-align: right;">3</p>
+</td>
+<td style="vertical-align: top; width: 1.0256in; padding: 4pt 4pt 4pt 4pt; border: 1pt solid #A3A3A3;">
+<p style="margin: 0in; font-family: Calibri; font-size: 11.0pt; color: black; text-align: right;">1003</p>
+</td>
+<td style="vertical-align: top; width: 1.6576in; padding: 4pt 4pt 4pt 4pt; border: 1pt solid #A3A3A3;">
+<p style="margin: 0in; font-family: Calibri; font-size: 11.0pt; color: black;">2014-12-03 17:53:23.497</p>
+</td>
+<td style="vertical-align: top; width: 1.6576in; padding: 4pt 4pt 4pt 4pt; border: 1pt solid #A3A3A3;">
+<p style="margin: 0in; font-family: Calibri; font-size: 11.0pt; color: black;">2014-12-03 17:53:57.143</p>
+</td>
+<td style="vertical-align: top; width: 1.6583in; padding: 4pt 4pt 4pt 4pt; border: 1pt solid #A3A3A3;">
+<p style="margin: 0in; font-family: Calibri; font-size: 11.0pt; color: black;">2014-12-03 18:20:29.470</p>
+</td>
+</tr>
+<tr>
+<td style="vertical-align: top; width: 1.1715in; padding: 4pt 4pt 4pt 4pt; border: 1pt solid #A3A3A3;">
+<p style="margin: 0in; font-family: Calibri; font-size: 11.0pt; color: black;">TesteIndexacao</p>
+</td>
+<td style="vertical-align: top; width: .6673in; padding: 4pt 4pt 4pt 4pt; border: 1pt solid #A3A3A3;">
+<p style="margin: 0in; font-family: Calibri; font-size: 11.0pt; color: black;">Pessoa</p>
+</td>
+<td style="vertical-align: top; width: 2.1736in; padding: 4pt 4pt 4pt 4pt; border: 1pt solid #A3A3A3;">
+<p style="margin: 0in; font-family: Calibri; font-size: 11.0pt; color: black;">idx_Nome</p>
+</td>
+<td style="vertical-align: top; width: .8625in; padding: 4pt 4pt 4pt 4pt; border: 1pt solid #A3A3A3;">
+<p style="margin: 0in; font-family: Calibri; font-size: 11.0pt; color: black; text-align: right;">0</p>
+</td>
+<td style="vertical-align: top; width: 1.0256in; padding: 4pt 4pt 4pt 4pt; border: 1pt solid #A3A3A3;">
+<p style="margin: 0in; font-family: Calibri; font-size: 11.0pt; color: black; text-align: right;">3</p>
+</td>
+<td style="vertical-align: top; width: 1.6576in; padding: 4pt 4pt 4pt 4pt; border: 1pt solid #A3A3A3;">
+<p style="margin: 0in; font-family: Calibri; font-size: 11.0pt; color: black;">NULL</p>
+</td>
+<td style="vertical-align: top; width: 1.6576in; padding: 4pt 4pt 4pt 4pt; border: 1pt solid #A3A3A3;">
+<p style="margin: 0in; font-family: Calibri; font-size: 11.0pt; color: black;">2014-12-03 17:53:57.143</p>
+</td>
+<td style="vertical-align: top; width: 1.6583in; padding: 4pt 4pt 4pt 4pt; border: 1pt solid #A3A3A3;">
+<p style="margin: 0in; font-family: Calibri; font-size: 11.0pt; color: black;">2014-12-03 18:20:29.487</p>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>Se a base sofrer mudança de disponibilidade (restart do servidor ou da base de dados via online/offline) os dados são resetados, pois são estatísticas voláteis. Como se tratam de estatísticas de uso do índice, não faz muito sentido que sejam resetados com rebuild, certo?</p>
+<p>Quaaaaase. Essa informação não é sempre verdadeira, pois dependendo da versão do SQL Server, existe um bug que reseta as estatísticas de uso caso o índice sofra rebuild: veja este <a href="https://connect.microsoft.com/SQLServer/feedback/details/739566/rebuilding-an-index-clears-stats-from-sys-dm-db-index-usage-stats">item do connect </a>e como simular o problema <a href="http://mattsql.wordpress.com/2014/02/27/issue-with-sys-dm_db_index_usage_stats-in-sql-server-2012/">e uma forma de reproduzir o erro. </a>Reproduzi testes com as seguintes versões:</p>
+<ul>
+<li>SQL Server 2008R2 SP3 (10.50.6000.34 )</li>
+<li>SQL Server 2012 (11.0.2100.60 )</li>
+<li>SQL Server 2014 ( 12.0.2402.0)</li>
+</ul>
+<p>No SQL Server 2008R2, os dados não foram apagados após um rebuild. No SQL Server 2012 e 2014, os testes não tiveram a mesma sorte. Como não era um comportamento esperado, galera usuário do SQL Server chamou isso de bug e abriram um connect (com razão) e foi fechado como "não será consertado" porque a equipe quis assim e pronto, hehe.</p>
+<p>Significa que caso você use essas versões do SQL Server e precise usar essa DMV, fique ligado neste detalhe.</p>
+<p><strong>Conclusão</strong></p>
+<p>Não tem muito segredo usar os DMO's em questão, mas é importante saber alguns detalhes para que qualquer entendimento incorreto seja evitado!</p>
+<p>Como de prática: feedback, sugestões, críticas e impressões sempre são bem vindas. Fique à vontade para comentar.</p>
+<p>[]'s</p>
+<p><strong>Referências</strong></p>
+<ol>
+<li><a href="http://msdn.microsoft.com/pt-br/library/ms174281.aspx">sys.dm_db_index_operational_stats</a></li>
+<li><a href="http://msdn.microsoft.com/pt-br/library/ms188917.aspx">sys.dm_db_index_physical_stats</a></li>
+<li><a href="http://msdn.microsoft.com/pt-br/library/ms188755.aspx">sys.dm_db_index_usage_stats</a></li>
+<li><a href="http://msdn.microsoft.com/pt-br/library/ms175008.aspx">DBCC SHOWCONTIG (antigo comando usado antes dos DMO's, FYI)</a></li>
+</ol>
+<p> </body></html></p>
+
+  </div><a class="u-url" href="/dmos-de-indices-testes-resets-e-rebuilds/" hidden></a>
+</article>
+
+      </div>
+    </main><footer class="site-footer h-card">
+  <data class="u-url" href="/"></data>
+
+  <div class="wrapper">
+
+    <h2 class="footer-heading">Renato Siqueira</h2>
+
+    <div class="footer-col-wrapper">
+      <div class="footer-col footer-col-1">
+        <ul class="contact-list">
+          <li class="p-name">Renato Siqueira</li><li><a class="u-email" href="mailto:rad_renato@hotmail.com">rad_renato@hotmail.com</a></li></ul>
+      </div>
+
+      <div class="footer-col footer-col-2"><ul class="social-media-list"><li><a href="https://github.com/renatomsq"><svg class="svg-icon"><use xlink:href="/assets/minima-social-icons.svg#github"></use></svg> <span class="username">renatomsq</span></a></li><li><a href="https://www.twitter.com/naotenhomais"><svg class="svg-icon"><use xlink:href="/assets/minima-social-icons.svg#twitter"></use></svg> <span class="username">naotenhomais</span></a></li></ul>
+</div>
+
+      <div class="footer-col footer-col-3">
+        <p>Meu blog de artigo técnico sobre banco de dados e carreira.</p>
+      </div>
+    </div>
+
+  </div>
+
+</footer>
+</body>
+
+</html>

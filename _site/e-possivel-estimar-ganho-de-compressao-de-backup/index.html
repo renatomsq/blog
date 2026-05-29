@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1"><!-- Begin Jekyll SEO tag v2.9.0 -->
+<title>É possível estimar ganho de compressão de backup? | Renato Siqueira</title>
+<meta name="generator" content="Jekyll v4.4.1" />
+<meta property="og:title" content="É possível estimar ganho de compressão de backup?" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="&lt;!DOCTYPE html PUBLIC &quot;-//W3C//DTD HTML 4.0 Transitional//EN&quot; &quot;http://www.w3.org/TR/REC-html40/loose.dtd&quot;&gt; &lt;/p&gt; Olá, É possível determinar o tamanho de uma backup comprimido com WITH COMPRESSION? Observação: Recomendo a leitura do  post sobre backup compression aqui do blog além da documentação oficial, para melhor aproveitamento do assunto deste post.   Essa é a resposta do BOL que você pode conferir aqui: For compressed backups, the size of the final backup file depends on how compressible the data is, and this is unknown before the backup operation finishes Quando este questionamento foi feito a mim, o banco de dados  em questão nunca teve backup, não tinha valor algum no MSDB.DBO.BACKUPSET pra…" />
+<meta name="twitter:description" property="og:description" content="&lt;!DOCTYPE html PUBLIC &quot;-//W3C//DTD HTML 4.0 Transitional//EN&quot; &quot;http://www.w3.org/TR/REC-html40/loose.dtd&quot;&gt; &lt;/p&gt; Olá, É possível determinar o tamanho de uma backup comprimido com WITH COMPRESSION? Observação: Recomendo a leitura do  post sobre backup compression aqui do blog além da documentação oficial, para melhor aproveitamento do assunto deste post.   Essa é a resposta do BOL que você pode conferir aqui: For compressed backups, the size of the final backup file depends on how compressible the data is, and this is unknown before the backup operation finishes Quando este questionamento foi feito a mim, o banco de dados  em questão nunca teve backup, não tinha valor algum no MSDB.DBO.BACKUPSET pra…" />
+<link rel="canonical" href="http://localhost:4000/e-possivel-estimar-ganho-de-compressao-de-backup/" />
+<meta property="og:url" content="http://localhost:4000/e-possivel-estimar-ganho-de-compressao-de-backup/" />
+<meta property="og:site_name" content="Renato Siqueira" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2015-07-14T19:00:29-03:00" />
+<meta property="article:modified_time" content="2015-07-14T19:00:29-03:00" />
+<meta name="twitter:card" content="summary" />
+<meta name="twitter:title" content="É possível estimar ganho de compressão de backup?" />
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"BlogPosting","dateModified":"2015-07-14T19:00:29-03:00","datePublished":"2015-07-14T19:00:29-03:00","description":"&lt;!DOCTYPE html PUBLIC &quot;-//W3C//DTD HTML 4.0 Transitional//EN&quot; &quot;http://www.w3.org/TR/REC-html40/loose.dtd&quot;&gt; &lt;/p&gt; Olá, É possível determinar o tamanho de uma backup comprimido com WITH COMPRESSION? Observação: Recomendo a leitura do  post sobre backup compression aqui do blog além da documentação oficial, para melhor aproveitamento do assunto deste post.   Essa é a resposta do BOL que você pode conferir aqui: For compressed backups, the size of the final backup file depends on how compressible the data is, and this is unknown before the backup operation finishes Quando este questionamento foi feito a mim, o banco de dados  em questão nunca teve backup, não tinha valor algum no MSDB.DBO.BACKUPSET pra…","headline":"É possível estimar ganho de compressão de backup?","mainEntityOfPage":{"@type":"WebPage","@id":"http://localhost:4000/e-possivel-estimar-ganho-de-compressao-de-backup/"},"url":"http://localhost:4000/e-possivel-estimar-ganho-de-compressao-de-backup/"}</script>
+<!-- End Jekyll SEO tag -->
+<link rel="stylesheet" href="/assets/main.css"><link type="application/atom+xml" rel="alternate" href="http://localhost:4000/feed.xml" title="Renato Siqueira" /></head>
+<body><header class="site-header" role="banner">
+
+  <div class="wrapper"><a class="site-title" rel="author" href="/">Renato Siqueira</a><nav class="site-nav">
+        <input type="checkbox" id="nav-trigger" class="nav-trigger" />
+        <label for="nav-trigger">
+          <span class="menu-icon">
+            <svg viewBox="0 0 18 15" width="18px" height="15px">
+              <path d="M18,1.484c0,0.82-0.665,1.484-1.484,1.484H1.484C0.665,2.969,0,2.304,0,1.484l0,0C0,0.665,0.665,0,1.484,0 h15.032C17.335,0,18,0.665,18,1.484L18,1.484z M18,7.516C18,8.335,17.335,9,16.516,9H1.484C0.665,9,0,8.335,0,7.516l0,0 c0-0.82,0.665-1.484,1.484-1.484h15.032C17.335,6.031,18,6.696,18,7.516L18,7.516z M18,13.516C18,14.335,17.335,15,16.516,15H1.484 C0.665,15,0,14.335,0,13.516l0,0c0-0.82,0.665-1.483,1.484-1.483h15.032C17.335,12.031,18,12.695,18,13.516L18,13.516z"/>
+            </svg>
+          </span>
+        </label>
+
+        <div class="trigger"><a class="page-link" href="/about/">About</a></div>
+      </nav></div>
+</header>
+<main class="page-content" aria-label="Content">
+      <div class="wrapper">
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+
+  <header class="post-header">
+    <h1 class="post-title p-name" itemprop="name headline">É possível estimar ganho de compressão de backup?</h1>
+    <p class="post-meta">
+      <time class="dt-published" datetime="2015-07-14T19:00:29-03:00" itemprop="datePublished">Jul 14, 2015
+      </time>• <span itemprop="author" itemscope itemtype="http://schema.org/Person"><span class="p-author h-card" itemprop="name">{"login" => "Renato Siqueira", "email" => "", "display_name" => "Renato Siqueira", "first_name" => "", "last_name" => ""}</span></span></p>
+  </header>
+
+  <div class="post-content e-content" itemprop="articleBody">
+    <p><!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN" "http://www.w3.org/TR/REC-html40/loose.dtd"><br />
+<html><body><br />
+<a href="http://renatomsiqueira.com.br/wp-content/uploads/2015/07/Comprimido111.jpg"><img class=" size-full wp-image-2469 aligncenter" src="/assets/2015/07/Comprimido111.jpg" alt="A imagem é um trocadilho" width="360" height="492"></a></p>
+<p>Olá,</p>
+<p>É possível determinar o tamanho de uma backup comprimido com WITH COMPRESSION?</p>
+<blockquote><p>Observação: Recomendo a leitura do <a href="http://renatomsiqueira.com.br/rapidas-palavras-sobre-o-backup-compression/"> post sobre backup compression </a>aqui do blog além da documentação oficial, para melhor aproveitamento do assunto deste post.</p>
+<p> </p></blockquote>
+<p>Essa é a resposta do BOL que você pode conferir <a href="https://technet.microsoft.com/en-US/library/bb964719.aspx#Restrictions">aqui</a>:</p>
+<blockquote><p><em>For compressed backups, the size of the final backup file depends on how compressible the data is, and this is unknown before the backup operation finishes</em></p></blockquote>
+<p>Quando este questionamento foi feito a mim, o banco de dados  em questão nunca teve backup, não tinha valor algum no MSDB.DBO.BACKUPSET pra sequer dar uma ideia de qual seria o tamanho do .bak e além disso espaço em disco, nesta situação em específico, também era um problema. E ganho de compressão é aquela coisa: cada caso é um caso, não tem números mágicos pra multiplicar ou dividir e chegar nesta resposta. Quando qualquer backup com compressão já foi realizado, é possível obter o que é chamado de "Compression Rate", dividindo o tamanho da base pelo tamanho da base comprimida. O Compression rate ajuda pra ter uma boa ideia de quanto será comprimido.  A fórmula básica é:</p>
+<pre class="">SELECT backup_size/compressed_backup_size FROM msdb..backupset;</pre>
+<p>Mas bem, se não dá pra estimar qual será o tamanho do backup comprimido se nenhum backup foi realizado, daria certo criar um  um  backup "fake" pra obter informações na backupset? Entenda-se por backup "fake" no contexto deste post aquele backup que é realizado normalmente, logado no <strong>msdb</strong> mas nada é gravado e persistido em disco. Trata-se do backup enviado para o NUL device, assunto já comentando e que você pode conferir <a href="http://renatomsiqueira.com.br/backup-to-nul-enviando-seus-backups-pro-alem/"> neste post</a>.</p>
+<p><strong>IT'S DEMO TIME!</strong></p>
+<p>Tudo foi testado em uma instância 2008 R2, embora possa ser testado em qualquer versão 2008+ que possua a feature de compressão de backup.</p>
+<p>Tenho uma base chamada DB_BESTIARIO que possui 484.37 MB.</p>
+<p><a href="http://renatomsiqueira.com.br/wp-content/uploads/2015/07/comp1.png"><img class="alignnone size-full wp-image-2459" src="/assets/2015/07/comp1.png" alt="sp_helpdb na base" width="193" height="126"></a></p>
+<p>Trata-se de um repositório e que no momento do teste estava sem atividade alguma, o que é perfeito para este exemplo diga-se de passagem. Esse banco de dados não tem nenhum backup realizado (Veja o <span style="font-style: italic;">resultset</span> vazio).</p>
+<pre class="">SELECT
+		backup_set_id,
+		database_name,
+		CAST((backup_size/1024.)/1024. AS DEC(12,2)) AS [Backup Normal MB] ,
+		CAST((compressed_backup_size/1024.)/1024. AS DEC (12,2)) AS [Backup Compress.MB] ,
+		CAST(backup_size/compressed_backup_size AS DEC(12,2)) as [Ganho (x)]
+FROM msdb.dbo.backupset
+WHERE database_name = 'DB_BESTIARIO'
+</pre>
+<p>[caption id="attachment_2460" align="alignnone" width="675"]<a href="http://renatomsiqueira.com.br/wp-content/uploads/2015/07/comp2.png"><img class="size-full wp-image-2460" src="/assets/2015/07/comp2.png" alt="Não retorna nenhum resultado" width="675" height="228"></a> Não retorna nenhum resultado[/caption]</p>
+<p>Agora, vamos tirar um backup FULL normal, sem compressão e conferir o que foi logado na backupset:</p>
+<pre>BACKUP DATABASE DB_BESTIARIO TO DISK = 'D:\STAGE\DB_BESTIARIO.bak'</pre>
+<p><a href="http://renatomsiqueira.com.br/wp-content/uploads/2015/07/comp3.png"><img class="alignnone size-full wp-image-2462" src="/assets/2015/07/comp3.png" alt="comp3" width="671" height="244"></a></p>
+<p>Nada demais. O tamanho do campo compressed backup size é exatamente o mesmo do backup_Size se não for utilizado compressão. Apenas com esta informação, não consigo estimar o tamanho do backup comprimido.</p>
+<p>Então, vamos tirar um backup apontando pro NUL:</p>
+<pre> BACKUP DATABASE DB_BESTIARIO TO DISK = 'NUL'</pre>
+<p><a href="http://renatomsiqueira.com.br/wp-content/uploads/2015/07/Comp4.png"><img class="alignnone size-full wp-image-2463" src="/assets/2015/07/Comp4.png" alt="Comp4" width="710" height="279"></a></p>
+<p>Note que o tamanho do backup feito pra NUL é o mesmo do backup realizado fisicamente em disco. Estes tamanhos conferem com a realidade do primeiro backup tirado?</p>
+<p><a href="http://renatomsiqueira.com.br/wp-content/uploads/2015/07/comp5.png"><img class="alignnone size-full wp-image-2464" src="/assets/2015/07/comp5.png" alt="comp5" width="749" height="144"></a></p>
+<p>.. 151.636 KB equivale à 148MB. Agora, vamos tirar um backup COM compressão e conferir qual tamanho o SQL Server loga no backupset:</p>
+<pre> BACKUP DATABASE DB_BESTIARIO TO DISK = 'NUL' WITH COMPRESSION</pre>
+<p><a href="http://renatomsiqueira.com.br/wp-content/uploads/2015/07/comp6.png"><img class="alignnone size-full wp-image-2465" src="/assets/2015/07/comp6.png" alt="comp6" width="680" height="284"></a></p>
+<p>Aqui está a observação principal do teste. Fazendo um backup "fake", dá pra estimar que o backup comprimido é três vezes menor que o tamanho do backup sem compressão. Mas nem por isso existe a certeza de que o ganho do comprimido x original será sempre 3x menor pra todo backup daquela base, embora isso seja favorável para praticamente todos os cenários. Através deste teste, é possível estimar o tamanho do backup sem efetivamente gerar algum arquivo de saída.</p>
+<p>Só pra fechar o teste, vamos tirar um backup comprimido para o disco (ou seja, vai gerar arquivo persistido em disco) pra ver se vai dar esses 45.97MB de fato. Só pra validar se não foi viagem confiar no tamanho que o backup pro NUL mostrou.</p>
+<pre class=""> BACKUP DATABASE DB_BESTIARIO TO DISK = 'D:\STAGE\DB_BESTIARIO_COMPR.bak' WITH COMPRESSION</pre>
+<p><a href="http://renatomsiqueira.com.br/wp-content/uploads/2015/07/comp7.png"><img class="alignnone size-full wp-image-2466" src="/assets/2015/07/comp7.png" alt="comp7" width="685" height="298"></a></p>
+<p> </p>
+<p> </p>
+<p>Mais uma prova cabal do backup comprimido em disco:</p>
+<p><a href="http://renatomsiqueira.com.br/wp-content/uploads/2015/07/comp8.png"><img class="alignnone size-full wp-image-2467" src="/assets/2015/07/comp8.png" alt="comp8" width="467" height="59"></a></p>
+<p><strong>IMPORTANTE (!)</strong></p>
+<p>- O backup é "fake" mas o processo de leitura em disco é real, ou seja, há processamento e leitura durante a criação do backup. A única coisa que muda é o destino do arquivo. Não existe essa do backup ser fictício e não consumir recursos do servidor (no caso, disco, memória e CPU).<br />
+- Use com cautela e saiba em quais situações aplicar. Por exemplo, se a base em questão tiver backups diferenciais, se você fizer um backup full desta forma sem COPY_ONLY, haverá uma modificação no DCM (Differential Change Mapping) e aquele backup será necessário se for necessário restaurar aquele diferencial que vem em seguida. No exemplo não usei COPY_ONLY pois se trata de uma base de testes. Se for para backup de log, a coisa é um pouco mais séria: mandar um backup de log quebra cadeia de backup de log, e nunca queira contar com um backup que não existe, é a pior coisa que tem quando o assunto é recovery.</p>
+<p><strong>RESUMO</strong></p>
+<p>Não é possível afirmar com precisão qual será o tamanho do backup com compressão a não ser que você tire um. Então a resposta para a pergunta "É possível estimar o tamanho de um backup comprimido" continua a mesma do BOL (Não, só tendo algum backup . O que apresento aqui é uma forma alternativa de obter essa informação.  Como Backup to NUL não é salvo em disco. Significa na prática que você pode estimar espaço de um backup daquela base de 2TB sem ter problemas com espaço em disco por causa do arquivo de backup. Foi o que usei para resolver essa questão, especificamente.</p>
+<p>Obrigado pela sua leitura, e...I'll be back!</p>
+<hr>
+<p><strong>Referências</strong></p>
+<p>Backup Compression - <a href="https://technet.microsoft.com/en-US/library/bb964719.aspx">https://technet.microsoft.com/en-US/library/bb964719.aspx</a><br />
+</body></html></p>
+
+  </div><a class="u-url" href="/e-possivel-estimar-ganho-de-compressao-de-backup/" hidden></a>
+</article>
+
+      </div>
+    </main><footer class="site-footer h-card">
+  <data class="u-url" href="/"></data>
+
+  <div class="wrapper">
+
+    <h2 class="footer-heading">Renato Siqueira</h2>
+
+    <div class="footer-col-wrapper">
+      <div class="footer-col footer-col-1">
+        <ul class="contact-list">
+          <li class="p-name">Renato Siqueira</li><li><a class="u-email" href="mailto:rad_renato@hotmail.com">rad_renato@hotmail.com</a></li></ul>
+      </div>
+
+      <div class="footer-col footer-col-2"><ul class="social-media-list"><li><a href="https://github.com/renatomsq"><svg class="svg-icon"><use xlink:href="/assets/minima-social-icons.svg#github"></use></svg> <span class="username">renatomsq</span></a></li><li><a href="https://www.twitter.com/naotenhomais"><svg class="svg-icon"><use xlink:href="/assets/minima-social-icons.svg#twitter"></use></svg> <span class="username">naotenhomais</span></a></li></ul>
+</div>
+
+      <div class="footer-col footer-col-3">
+        <p>Meu blog de artigo técnico sobre banco de dados e carreira.</p>
+      </div>
+    </div>
+
+  </div>
+
+</footer>
+</body>
+
+</html>

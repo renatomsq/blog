@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1"><!-- Begin Jekyll SEO tag v2.9.0 -->
+<title>Menor privilégio possível. Mas nem sempre. | Renato Siqueira</title>
+<meta name="generator" content="Jekyll v4.4.1" />
+<meta property="og:title" content="Menor privilégio possível. Mas nem sempre." />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="&lt;!DOCTYPE html PUBLIC &quot;-//W3C//DTD HTML 4.0 Transitional//EN&quot; &quot;http://www.w3.org/TR/REC-html40/loose.dtd&quot;&gt; &lt;/p&gt; Boa noite =) Hoje um amigo tinha uma dúvida, que também já tive, sobre visualizações de bases desnecessárias. Achei um bom assunto pra postar, pois gosto da temática segurança e apesar de parecer óbvio, nem sempre o SQL Server oferece um dos seus princípios básicos, o princípio do menor privilégio. Vamos conversar sobre isso? Bem, nada melhor do que um case pra passar a ideia... 1 - A demanda Você é o DBA de uma única instância SQL Server chamada NINJACORP. Existem várias bases confidenciais em tal instância, e você é um…" />
+<meta name="twitter:description" property="og:description" content="&lt;!DOCTYPE html PUBLIC &quot;-//W3C//DTD HTML 4.0 Transitional//EN&quot; &quot;http://www.w3.org/TR/REC-html40/loose.dtd&quot;&gt; &lt;/p&gt; Boa noite =) Hoje um amigo tinha uma dúvida, que também já tive, sobre visualizações de bases desnecessárias. Achei um bom assunto pra postar, pois gosto da temática segurança e apesar de parecer óbvio, nem sempre o SQL Server oferece um dos seus princípios básicos, o princípio do menor privilégio. Vamos conversar sobre isso? Bem, nada melhor do que um case pra passar a ideia... 1 - A demanda Você é o DBA de uma única instância SQL Server chamada NINJACORP. Existem várias bases confidenciais em tal instância, e você é um…" />
+<link rel="canonical" href="http://localhost:4000/menor-privilegio-possivel-mas-nem-sempre/" />
+<meta property="og:url" content="http://localhost:4000/menor-privilegio-possivel-mas-nem-sempre/" />
+<meta property="og:site_name" content="Renato Siqueira" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2013-09-10T18:37:57-03:00" />
+<meta property="article:modified_time" content="2013-09-10T18:37:57-03:00" />
+<meta name="twitter:card" content="summary" />
+<meta name="twitter:title" content="Menor privilégio possível. Mas nem sempre." />
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"BlogPosting","dateModified":"2013-09-10T18:37:57-03:00","datePublished":"2013-09-10T18:37:57-03:00","description":"&lt;!DOCTYPE html PUBLIC &quot;-//W3C//DTD HTML 4.0 Transitional//EN&quot; &quot;http://www.w3.org/TR/REC-html40/loose.dtd&quot;&gt; &lt;/p&gt; Boa noite =) Hoje um amigo tinha uma dúvida, que também já tive, sobre visualizações de bases desnecessárias. Achei um bom assunto pra postar, pois gosto da temática segurança e apesar de parecer óbvio, nem sempre o SQL Server oferece um dos seus princípios básicos, o princípio do menor privilégio. Vamos conversar sobre isso? Bem, nada melhor do que um case pra passar a ideia... 1 - A demanda Você é o DBA de uma única instância SQL Server chamada NINJACORP. Existem várias bases confidenciais em tal instância, e você é um…","headline":"Menor privilégio possível. Mas nem sempre.","mainEntityOfPage":{"@type":"WebPage","@id":"http://localhost:4000/menor-privilegio-possivel-mas-nem-sempre/"},"url":"http://localhost:4000/menor-privilegio-possivel-mas-nem-sempre/"}</script>
+<!-- End Jekyll SEO tag -->
+<link rel="stylesheet" href="/assets/main.css"><link type="application/atom+xml" rel="alternate" href="http://localhost:4000/feed.xml" title="Renato Siqueira" /></head>
+<body><header class="site-header" role="banner">
+
+  <div class="wrapper"><a class="site-title" rel="author" href="/">Renato Siqueira</a><nav class="site-nav">
+        <input type="checkbox" id="nav-trigger" class="nav-trigger" />
+        <label for="nav-trigger">
+          <span class="menu-icon">
+            <svg viewBox="0 0 18 15" width="18px" height="15px">
+              <path d="M18,1.484c0,0.82-0.665,1.484-1.484,1.484H1.484C0.665,2.969,0,2.304,0,1.484l0,0C0,0.665,0.665,0,1.484,0 h15.032C17.335,0,18,0.665,18,1.484L18,1.484z M18,7.516C18,8.335,17.335,9,16.516,9H1.484C0.665,9,0,8.335,0,7.516l0,0 c0-0.82,0.665-1.484,1.484-1.484h15.032C17.335,6.031,18,6.696,18,7.516L18,7.516z M18,13.516C18,14.335,17.335,15,16.516,15H1.484 C0.665,15,0,14.335,0,13.516l0,0c0-0.82,0.665-1.483,1.484-1.483h15.032C17.335,12.031,18,12.695,18,13.516L18,13.516z"/>
+            </svg>
+          </span>
+        </label>
+
+        <div class="trigger"><a class="page-link" href="/about/">About</a></div>
+      </nav></div>
+</header>
+<main class="page-content" aria-label="Content">
+      <div class="wrapper">
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+
+  <header class="post-header">
+    <h1 class="post-title p-name" itemprop="name headline">Menor privilégio possível. Mas nem sempre.</h1>
+    <p class="post-meta">
+      <time class="dt-published" datetime="2013-09-10T18:37:57-03:00" itemprop="datePublished">Sep 10, 2013
+      </time>• <span itemprop="author" itemscope itemtype="http://schema.org/Person"><span class="p-author h-card" itemprop="name">{"login" => "Renato Siqueira", "email" => "", "display_name" => "Renato Siqueira", "first_name" => "", "last_name" => ""}</span></span></p>
+  </header>
+
+  <div class="post-content e-content" itemprop="articleBody">
+    <p><!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN" "http://www.w3.org/TR/REC-html40/loose.dtd"><br />
+<html><body><br />
+<a href="http://renatomsiqueira.com.br/wp-content/uploads/2013/09/casa1.png"><img class="alignnone size-full wp-image-905" src="/assets/2013/09/casa1.png" alt="Deixar o usuário ver apenas o que lhe interessa e nada mais" width="470" height="147"></a></p>
+<p>Boa noite =)<br />
+Hoje um amigo tinha uma dúvida, que também já tive, sobre visualizações de bases desnecessárias. Achei um bom assunto pra postar, pois gosto da temática segurança e apesar de parecer óbvio, nem sempre o SQL Server oferece um dos seus princípios básicos, o <a href="http://en.wikipedia.org/wiki/Principle_of_least_privilege">princípio do menor privilégio</a>. Vamos conversar sobre isso?</p>
+<p>Bem, nada melhor do que um case pra passar a ideia...</p>
+<p><strong>1 - A demanda</strong></p>
+<p>Você é o DBA de uma única instância SQL Server chamada NINJACORP.<br />
+Existem várias bases confidenciais em tal instância, e você é um DBA vigilante por default, pra combinar com o ambiente. Preza muito pela segurança. E essa é sua filosofia de vida.</p>
+<p>Segue a lei da segurança máxima e menor privilégio como se fosse uma rígida religião.</p>
+<p>Em um belo dia, com sol brilhando, umidade do ar agradável e pássaros cantando no céu, chega uma demanda pra inclusão de login de um desenvolvedor em produção. Seu coração pulsa de forma desequilibrada quando lê que, por A mais B, será necessário criar um sql login.</p>
+<p>O chamado em resumo:</p>
+<blockquote><p>"Solicito a inclusão de login sql chamado <strong>servidorPublico</strong>, senha p@ssw0rd134#@3_2 e que tenha acesso de leitura ao banco DbInformacoesSagradas"</p></blockquote>
+<p>O DBA, relutante, faz a criação do sql login (e queria mesmo usar o Windows Authentication, mas não teve jeito) e do usuário sem maiores problemas.</p>
+<blockquote><p>--&gt; Cria login do sujeito</p>
+<p>CREATE LOGIN servidorPublico WITH PASSWORD = 'p@ssw0rd134#@3_2' , CHECK_POLICY = OFF</p>
+<p>--&gt; Cria usuário para a base</p>
+<p>USE [DbInformacoesSagradas]<br />
+GO<br />
+CREATE USER usrServidorPublico FOR LOGIN [servidorPublico] WITH DEFAULT_SCHEMA = dbo</p>
+<p>--&gt; Adiciona o usuário para permissão de leitura (Role datareader)</p>
+<p>EXEC sp_addrolemember 'db_datareader','usrServidorPublico'</p></blockquote>
+<p>Passada a dor... Tá na hora do teste..</p>
+<p><strong>2 - A descoberta</strong></p>
+<p>Até que você, DBA terminou a tarefa e concluiu a demanda. Mas... curioso,pela primeira vez na vida, pois foi um DBA que sempre trabalhou com Windows Authentication (eu sei, muito difícil, mas vamos imaginar!), resolveu logar com o login recém criado, o ServidorPublico.</p>
+<p><a href="http://renatomsiqueira.com.br/wp-content/uploads/2013/09/isnotaccessible1.png"><img class="alignnone size-full wp-image-922" src="/assets/2013/09/isnotaccessible1.png" alt="isNotAccessible" width="470" height="219"></a></p>
+<p>Olha só! <strong>Apesar do usuário ter apenas uma base como leitura, ele consegue visualizar os demais banco</strong>s. Vale ressaltar: <strong>ele consegue visualizar os bancos mas não possui acesso aos mesmos</strong>, sendo que uma expansão de qualquer banco resulta em erro (vide imagem acima).</p>
+<p>Você precisa garantir de qualquer modo que o login consiga <strong>visualizar</strong> apenas o banco de dados que possui algum vínculo. Você quer manter o nome das bases em segredo. Quer seguir sua segurança instintiva. Mas como fazer? Bem, pausa pro café e vamos falar agora sobre a ponta do iceberg.</p>
+<p><strong>3 - Mínimo privilégio mas nem sempre</strong></p>
+<p>O que é mínimo privilégio possível? Bem, em suma, é oferecer o mínimo de permissão possível para que determinada conta/usuário consiga realizar, sem maiores problemas, sua atividade fim.</p>
+<blockquote><p>Você, pra matar uma barata, precisa de um chinelo ou de um fuzil?</p></blockquote>
+<p>Isso deveria ser sagrado em nosso trabalho, e não é só na área de Administração de Banco de Dados, mas em toda a nossa vida, em suas devidas proporções e sem radicalismos.  Tenho uma vontade enorme de falar sobre esse princípio e do "Security by default", mas vamos nos limitar à definição dada acima pra não esfriar o pão de queijo (no caso, o código).</p>
+<p>O SQL Server <strong>no geral</strong> segue tal princípio na parte de segurança, mas, curiosamente, no caso de visualizar bases de dados desnecessariamente, parece não ser uma preocupação tão crítica, observado que  <a href="http://connect.microsoft.com/SQLServer/feedback/details/273830/need-view-definition-permissions-per-database">isso já foi motivo de reclamação (antiga, inclusive) no Microsoft Connect e os caras não ligaram tanto assim</a>.</p>
+<p>Seguindo este mesmo princípio ainda, e lembrando do exemplo da barata:</p>
+<p><strong>Se o usuário deve ter disponível apenas o que é necessário, qual seria a razão de enxergar qualquer base que não tenha relação com ele</strong>?</p>
+<blockquote><p>Parando pra pensar, nenhuma.</p></blockquote>
+<p>Aqui existe uma óbvia contradição no princípio de mínimo privilégio. Pra quê visualizar bases que não são necessárias? Pode parecer bobo, mas isso abre brechas diversas que enfraquecem a segurança. Uma delas, é que, pra um desenvolvedor, realmente interessa saber que naquela instância existe um banco do RH? Bem, não vou entrar no campo ético da coisa, mas já imagina-se as possíveis situações em que algo aparentemente bobo pode se tornar... Basta um pouco de engenharia social, criatividade e um pouco de atitude...</p>
+<p>Existe uma forma  de contornar essa situação de ocultar a visualização das bases (que deveria ser default, na minha opinião, segundo motivos já explicados do menor privilégio). Não resolve 100%, mas quase. Infelizmente, a solução a seguir oculta todas as bases, inclusive as que se tem algum vínculo.</p>
+<p><strong>4 - A forma mais aproximada de se resolver o problema</strong></p>
+<p>Existe uma permissão à nível de servidor chamada <a href="http://technet.microsoft.com/pt-br/library/ms189077(v=sql.105).aspx">VIEW ANY DATABASE</a>, que possibilita o usuário ver metadados relacionados aos bancos de dados, o que inclui suas visualizações na:</p>
+<p>a) sys.databases</p>
+<p>b) sys.sysdatabases</p>
+<p>c) sp_helpdb</p>
+<p>E afeta também o modo visual do Management Studio (ssms), o que é extremamente importante.</p>
+<p>Em suma: mesmo o usuário servidorPublico tendo acesso a um só banco, ele consegue, utilizando esses três itens mencionados acima, enxergar alguns metadados de outros bancos.</p>
+<p>O legal dessa história é que essa permissão VIEW ANY DATABASE é automaticamente concedida ao <strong>Public, ou seja, todo usuário ou conta que se conecta no SQL Server automaticamente ganha as permissões adquiridas desta role. </strong>Tecnicamente, isso equivale a dizer que, a menos que você negue tal permissão pro public, todas as contas/usuários do banco podem enxergar metadados que não são de seu interesse (acredita-se) por padrão.</p>
+<p>Você também pode utilizar REVOKE ao invés de DENY nos exemplos abaixo, se pretende conceder essa permissão para outro securable.</p>
+<p>Mas como contornar o problema?</p>
+<p>Sabendo que todo login (inclusive o que acabamos de criar) pertence a uma role public (que é default), temos duas possibilidades:</p>
+<p><strong>1) Alterar o login desejado;</strong></p>
+<blockquote><p>USE MASTER<br />
+GO<br />
+DENY VIEW ANY DATABASE TO servidorPublico</p></blockquote>
+<p>É uma solução interessante. O usuário não enxerga banco nenhum no modo visual mas consegue acessar a base (que possui permissão) normalmente através de T-SQL. Aqui cabe uma observação minha... Seria extremamente desejável que ele pudesse enxergar as bases na qual possui vínculo. Ou seja, seria interessante aqui termos uma permissão a mais (no final do artigo eu chego nesse ponto).</p>
+<p><strong>2) Alterando a role <em>public</em></strong></p>
+<blockquote><p>USE MASTER<br />
+GO<br />
+DENY VIEW ANY DATABASE TO PUBLIC</p></blockquote>
+<p>É uma solução "broadcast", hehe . Lembre-se que TODOS os usuário criados são atribuidos ao public, e qualquer efeito sobre o mesmo pode afetar permissões de todo mundo que está interligado. Lembrando que poucas roles escapam da  restrição deste método, como por exemplo, os <em>sysadmins</em>.</p>
+<blockquote>
+<p style="text-align: left;"><strong>TRIVIA:</strong> de todas as server roles, PUBLIC é a única que pode sofrer operações de DCL. Tente dar DENY em outras server roles, como por exemplo, no securityadmin.</p>
+</blockquote>
+<p><strong>5 - O fim</strong></p>
+<p>Você, DBA grilado, implementa a primeira solução logado em sua conta de sysadmin, volta pro login criado e percebe que agora, apesar do login não conseguir nem ver a base descrita no client do ssms, consegue ler (intenção desejada) os dados e só consegue enxergar na tempdb e na master informações relacionadas às suas permissões. Independente do método utilizado acima, o resultado é:</p>
+<p>(Clique na imagem para ampliar)</p>
+<p><a href="http://renatomsiqueira.com.br/wp-content/uploads/2013/09/p22.png"><img class="alignnone size-full wp-image-923" src="/assets/2013/09/p22.png" alt="p2" width="470" height="320"></a></p>
+<p>Pra testar a sp_helpdb, você  resolve testar com nome de outro banco qualquer:</p>
+<blockquote><p>SP_HELPDB 'DbFinanceiro'</p></blockquote>
+<p>E recebe o seguinte erro (Totalmente justificável):</p>
+<blockquote><p>Msg 15010, Level 16, State 1, Procedure sp_helpdb, Line 45</p>
+<p>The database 'DbFinanceiro' does not exist. Supply a valid database name. To see available databases, use sys.databases.</p></blockquote>
+<p>Antigamente sem o DENY na ALTER VIEW ANY DATABASES, o usuário conseguiria enxergar alguns metadados relacionados aos bancos sem maiores dificuldades. Agora não mais.</p>
+<p>E lá vai você, o DBA ninja, tomar um café pra encerrar essa empreitada aqui narrada.</p>
+<p><strong>6 - Considerações finais</strong></p>
+<p>A parte ruim dessa história toda é que não existe essa permissão de visualizar por banco. Seria legal que pudéssemos setar um 'VIEW DATABASE' (Se existissse) pra apenas as bases que gostaria, porém, isso não seria possível. Ou seja, seria desejável que o SQL Server permitisse a visualização de bancos que fossem interessantes ao login/user em específico. Imagino esse recurso voltado para os desenvolvedores.</p>
+<p>Espero que tenha passado informações úteis.</p>
+<p>Se você tiver alguma crítica, sugestão, correção, adendo, proposta de emprego ou comentário, fique à vontade também. Esse blog é nosso ;)</body></html></p>
+
+  </div><a class="u-url" href="/menor-privilegio-possivel-mas-nem-sempre/" hidden></a>
+</article>
+
+      </div>
+    </main><footer class="site-footer h-card">
+  <data class="u-url" href="/"></data>
+
+  <div class="wrapper">
+
+    <h2 class="footer-heading">Renato Siqueira</h2>
+
+    <div class="footer-col-wrapper">
+      <div class="footer-col footer-col-1">
+        <ul class="contact-list">
+          <li class="p-name">Renato Siqueira</li><li><a class="u-email" href="mailto:rad_renato@hotmail.com">rad_renato@hotmail.com</a></li></ul>
+      </div>
+
+      <div class="footer-col footer-col-2"><ul class="social-media-list"><li><a href="https://github.com/renatomsq"><svg class="svg-icon"><use xlink:href="/assets/minima-social-icons.svg#github"></use></svg> <span class="username">renatomsq</span></a></li><li><a href="https://www.twitter.com/naotenhomais"><svg class="svg-icon"><use xlink:href="/assets/minima-social-icons.svg#twitter"></use></svg> <span class="username">naotenhomais</span></a></li></ul>
+</div>
+
+      <div class="footer-col footer-col-3">
+        <p>Meu blog de artigo técnico sobre banco de dados e carreira.</p>
+      </div>
+    </div>
+
+  </div>
+
+</footer>
+</body>
+
+</html>

@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1"><!-- Begin Jekyll SEO tag v2.9.0 -->
+<title>Reposta do Desafio #1 T-SQL, Ranking Functions (ROW_NUMBER, RANK E DENSE_RANK) | Renato Siqueira</title>
+<meta name="generator" content="Jekyll v4.4.1" />
+<meta property="og:title" content="Reposta do Desafio #1 T-SQL, Ranking Functions (ROW_NUMBER, RANK E DENSE_RANK)" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="&lt;!DOCTYPE html PUBLIC &quot;-//W3C//DTD HTML 4.0 Transitional//EN&quot; &quot;http://www.w3.org/TR/REC-html40/loose.dtd&quot;&gt; &lt;/p&gt; Bom dia pessoal :) Semana passada eu disse que postaria a resposta do desafio #1 T-SQL no começo da semana. Andei ocupado, só deu pra terminar agora. Pra relembrar, o desafio foi este: http://radialog.wordpress.com/2013/07/12/checkpoint-pessoal-desafio-1-t-sql/. Precisamos obter os segundos maiores salários de cada departamento. O desafio praticamente disse, com todas as letras (pelo menos a solução mais óbvia) foi que devemos particionar por departamentos e  rankear pelo segundo maior salário. A resolução mais óbvia se encontra no que chamados de Ranking Functions, informação que você encontra aqui nesse link do MSDN. De cara, a…" />
+<meta name="twitter:description" property="og:description" content="&lt;!DOCTYPE html PUBLIC &quot;-//W3C//DTD HTML 4.0 Transitional//EN&quot; &quot;http://www.w3.org/TR/REC-html40/loose.dtd&quot;&gt; &lt;/p&gt; Bom dia pessoal :) Semana passada eu disse que postaria a resposta do desafio #1 T-SQL no começo da semana. Andei ocupado, só deu pra terminar agora. Pra relembrar, o desafio foi este: http://radialog.wordpress.com/2013/07/12/checkpoint-pessoal-desafio-1-t-sql/. Precisamos obter os segundos maiores salários de cada departamento. O desafio praticamente disse, com todas as letras (pelo menos a solução mais óbvia) foi que devemos particionar por departamentos e  rankear pelo segundo maior salário. A resolução mais óbvia se encontra no que chamados de Ranking Functions, informação que você encontra aqui nesse link do MSDN. De cara, a…" />
+<link rel="canonical" href="http://localhost:4000/reposta-do-desafio-1-t-sql-ranking-functions-row_numberrank-e-rank-dense/" />
+<meta property="og:url" content="http://localhost:4000/reposta-do-desafio-1-t-sql-ranking-functions-row_numberrank-e-rank-dense/" />
+<meta property="og:site_name" content="Renato Siqueira" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2013-07-18T06:26:59-03:00" />
+<meta property="article:modified_time" content="2013-07-18T06:26:59-03:00" />
+<meta name="twitter:card" content="summary" />
+<meta name="twitter:title" content="Reposta do Desafio #1 T-SQL, Ranking Functions (ROW_NUMBER, RANK E DENSE_RANK)" />
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"BlogPosting","dateModified":"2013-07-18T06:26:59-03:00","datePublished":"2013-07-18T06:26:59-03:00","description":"&lt;!DOCTYPE html PUBLIC &quot;-//W3C//DTD HTML 4.0 Transitional//EN&quot; &quot;http://www.w3.org/TR/REC-html40/loose.dtd&quot;&gt; &lt;/p&gt; Bom dia pessoal :) Semana passada eu disse que postaria a resposta do desafio #1 T-SQL no começo da semana. Andei ocupado, só deu pra terminar agora. Pra relembrar, o desafio foi este: http://radialog.wordpress.com/2013/07/12/checkpoint-pessoal-desafio-1-t-sql/. Precisamos obter os segundos maiores salários de cada departamento. O desafio praticamente disse, com todas as letras (pelo menos a solução mais óbvia) foi que devemos particionar por departamentos e  rankear pelo segundo maior salário. A resolução mais óbvia se encontra no que chamados de Ranking Functions, informação que você encontra aqui nesse link do MSDN. De cara, a…","headline":"Reposta do Desafio #1 T-SQL, Ranking Functions (ROW_NUMBER, RANK E DENSE_RANK)","mainEntityOfPage":{"@type":"WebPage","@id":"http://localhost:4000/reposta-do-desafio-1-t-sql-ranking-functions-row_numberrank-e-rank-dense/"},"url":"http://localhost:4000/reposta-do-desafio-1-t-sql-ranking-functions-row_numberrank-e-rank-dense/"}</script>
+<!-- End Jekyll SEO tag -->
+<link rel="stylesheet" href="/assets/main.css"><link type="application/atom+xml" rel="alternate" href="http://localhost:4000/feed.xml" title="Renato Siqueira" /></head>
+<body><header class="site-header" role="banner">
+
+  <div class="wrapper"><a class="site-title" rel="author" href="/">Renato Siqueira</a><nav class="site-nav">
+        <input type="checkbox" id="nav-trigger" class="nav-trigger" />
+        <label for="nav-trigger">
+          <span class="menu-icon">
+            <svg viewBox="0 0 18 15" width="18px" height="15px">
+              <path d="M18,1.484c0,0.82-0.665,1.484-1.484,1.484H1.484C0.665,2.969,0,2.304,0,1.484l0,0C0,0.665,0.665,0,1.484,0 h15.032C17.335,0,18,0.665,18,1.484L18,1.484z M18,7.516C18,8.335,17.335,9,16.516,9H1.484C0.665,9,0,8.335,0,7.516l0,0 c0-0.82,0.665-1.484,1.484-1.484h15.032C17.335,6.031,18,6.696,18,7.516L18,7.516z M18,13.516C18,14.335,17.335,15,16.516,15H1.484 C0.665,15,0,14.335,0,13.516l0,0c0-0.82,0.665-1.483,1.484-1.483h15.032C17.335,12.031,18,12.695,18,13.516L18,13.516z"/>
+            </svg>
+          </span>
+        </label>
+
+        <div class="trigger"><a class="page-link" href="/about/">About</a></div>
+      </nav></div>
+</header>
+<main class="page-content" aria-label="Content">
+      <div class="wrapper">
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+
+  <header class="post-header">
+    <h1 class="post-title p-name" itemprop="name headline">Reposta do Desafio #1 T-SQL, Ranking Functions (ROW_NUMBER, RANK E DENSE_RANK)</h1>
+    <p class="post-meta">
+      <time class="dt-published" datetime="2013-07-18T06:26:59-03:00" itemprop="datePublished">Jul 18, 2013
+      </time>• <span itemprop="author" itemscope itemtype="http://schema.org/Person"><span class="p-author h-card" itemprop="name">{"login" => "Renato Siqueira", "email" => "", "display_name" => "Renato Siqueira", "first_name" => "", "last_name" => ""}</span></span></p>
+  </header>
+
+  <div class="post-content e-content" itemprop="articleBody">
+    <p><!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN" "http://www.w3.org/TR/REC-html40/loose.dtd"><br />
+<html><body><br />
+<a href="http://renatomsiqueira.com.br/wp-content/uploads/2013/09/s231.png"><img class="alignnone size-full wp-image-928" title="42" alt="Resposta do desafio" src="/assets/2013/07/s231.png" width="470" height="147"></a></p>
+<p>Bom dia pessoal :)</p>
+<p>Semana passada eu disse que postaria a resposta do desafio #1 T-SQL no começo da semana. Andei ocupado, só deu pra terminar agora.</p>
+<p>Pra relembrar, o desafio foi este: <a href="http://radialog.wordpress.com/2013/07/12/checkpoint-pessoal-desafio-1-t-sql/">http://radialog.wordpress.com/2013/07/12/checkpoint-pessoal-desafio-1-t-sql/</a>.</p>
+<p>Precisamos obter os segundos maiores salários de cada departamento. O desafio praticamente disse, com todas as letras (pelo menos a solução mais óbvia) foi que devemos <strong>particionar por departamentos e  rankear pelo segundo maior salário.</strong></p>
+<p>A resolução mais óbvia se encontra no que chamados de Ranking Functions, informação que você encontra <a title="referência msdn" href="http://msdn.microsoft.com/en-us/library/ms189798.aspx">aqui nesse link do MSDN</a>. De cara, a questão sugere que façamos uma classificação.... A minha solução (a mais intuitiva possível) foi utilizando CTE (Common Table Expression).</p>
+<p>A questão anterior trabalha com uma variável de tabela. Para fins de prática e para entendimento das funcionalidades, execute o script abaixo que é o mesmo código do desafio, porém, materializado para tabelas físicas, no tempdb.</p>
+<pre>/* Adaptando o script do desafio para tabela física armazenada no tempdb*/
+
+USE tempdb
+GO
+IF OBJECT_ID('dbo.Employees') IS NOT NULL
+DROP TABLE dbo.Employees
+
+GO
+
+/* Cria a tabela com no esquema dbo */
+
+CREATE TABLE dbo.Employees(
+EmployeeID INT IDENTITY,
+EmployeeName VARCHAR(15),
+Department VARCHAR(15),
+Salary NUMERIC(16,2)
+)
+
+GO
+
+/* Populando a tabela*/
+
+INSERT INTO dbo.Employees(EmployeeName, Department, Salary)
+VALUES('T Cook','Finance', 40000)
+INSERT INTO dbo.Employees(EmployeeName, Department, Salary)
+VALUES('D Michael','Finance', 25000)
+INSERT INTO dbo.Employees(EmployeeName, Department, Salary)
+VALUES('A Smith','Finance', 25000)
+INSERT INTO dbo.Employees(EmployeeName, Department, Salary)
+VALUES('D Adams','Finance', 15000)
+
+INSERT INTO dbo.Employees(EmployeeName, Department, Salary)
+VALUES('M Williams','IT', 80000)
+INSERT INTO dbo.Employees(EmployeeName, Department, Salary)
+VALUES('D Jones','IT', 40000)
+INSERT INTO dbo.Employees(EmployeeName, Department, Salary)
+VALUES('J Miller','IT', 50000)
+INSERT INTO dbo.Employees(EmployeeName, Department, Salary)
+VALUES('L Lewis','IT', 50000)
+
+INSERT INTO dbo.Employees(EmployeeName, Department, Salary)
+VALUES('A Anderson','Back-Office', 25000)
+INSERT INTO dbo.Employees(EmployeeName, Department, Salary)
+VALUES('S Martin','Back-Office', 15000)
+INSERT INTO dbo.Employees(EmployeeName, Department, Salary)
+VALUES('J Garcia','Back-Office', 15000)
+INSERT INTO dbo.Employees(EmployeeName, Department, Salary)
+VALUES('T Clerk','Back-Office', 10000)</pre>
+<p>Ok, temos a tabela populada. Note que em um SELECT simples, a tabela está ordernada por departamento, algo já pensando na inserção dos dados no início deste exercício. Como poderíamos tentar classificar as linhas? Vamos tentar um ROW_NUMBER() ?</p>
+<pre>SELECT
+	EmployeeID,
+	EmployeeName,
+	Department,
+	Salary,
+	ROW_NUMBER() OVER (PARTITION BY Department ORDER BY SALARY DESC) as "Row_Number"
+FROM dbo.Employees</pre>
+<p>Que trará o seguinte resultado:</p>
+<pre>EmployeeID	EmployeeName	Department	Salary	Row_Number
+-----------------------------------------------------------------
+9	         A Anderson	Back-Office	25000.00	1
+<strong>10	         S Martin	Back-Office	15000.00	2
+11	         J Garcia	Back-Office	15000.00	3</strong>
+12	         T Clerk	Back-Office	10000.00	4
+1	         T Cook		Finance	        40000.00	1
+<strong>2	         D Michael	Finance	        25000.00	2
+3	         A Smith	Finance	        25000.00	3</strong>
+4	         D Adams	Finance	        15000.00	4
+5	         M Williams	IT	        80000.00	1
+<strong>7	         J Miller	IT	        50000.00	2
+8	         L Lewis	IT	        50000.00	3</strong>
+6	        D Jones	        IT	        40000.00	4</pre>
+<p>Explicando o que a linha ROW_NUMBER() fez: Particionou por departamento e ordernou por salário. Falando de modo mais fácil,  ele vai numerar as linhas de acordo com o departamento, e não se baseando na tabela inteira (por isso a partição por departamento). Essa foi a forma MAIS PRÓXIMA que se dá pra chegar no desafio, claro, utilizando um r0w_number() sem maiores firulas. Porque mais próxima e não a correta? Bem, observe as linhas em negrito e lembre-se que<strong> se existirem dois maiores salários, os dois devem ser mostrados. Vejam que existe empate do que  questão pede, que é o "segundo maior salário" entre diversos empregados. </strong></p>
+<p>O row_number() não leva em consideração empate, então, não é a melhor função pra resolver o problema. Observe:</p>
+<pre>WITH CTE
+AS(
+SELECT
+EmployeeID,
+EmployeeName,
+Department,
+Salary,
+ROW_NUMBER() OVER (PARTITION BY Department ORDER BY SALARY DESC) as "Row_Number"
+FROM dbo.Employees
+)
+SELECT * FROM CTE where "Row_Number" = 2
+
+O</pre>
+<p>E o que o select traz pra gente?</p>
+<pre>EmployeeID     EmployeeName     Department     Salary    Row_Number
+--------------------------------------------------------------------
+10            S Martin          Back-Office   15000.00     2
+2             D Michael           Finance     25000.00     2
+7             J Miller            IT          50000.00     2</pre>
+<p>Ele trouxe corretamente o que foi proposto sintaticamente falando: as segundas linhas (já que existe ordernação do maior salário ao menor) de cada deparmento. Mas os nossos amigos negritados não apareceram por completo devido ao empate, logo, row_number (em tradução simples, número da linha) não atende o desafio proposto.</p>
+<p>NTILE() é uma cláusula que não serve também para resolver o desafio de forma simples. Não vou realizar o exemplo pro post não ficar muito grande.</p>
+<p>Agora sim, temos RANK e DENSE_RANK que fazem exatamente o que o exerício pede, porém com uma sutil diferença... Vamos utilizar a mesma lógica de particionamento por departamento e ordenação por salário...</p>
+<pre>SELECT
+	EmployeeID,
+	EmployeeName,
+	Department,
+	Salary,
+	RANK() OVER (PARTITION BY Department ORDER BY SALARY DESC) as "RANK",
+	DENSE_RANK() OVER (PARTITION BY Department ORDER BY SALARY DESC) as "RANK_DENSE"
+FROM dbo.Employees</pre>
+<p>Olha o resultado:</p>
+<pre>EmployeeID	EmployeeName	Department	Salary	      RANK	RANK_DENSE
+----------------------------------------------------------------------------------
+9	        A Anderson	Back-Office	25000.00	1	1
+<strong>10	        S Martin	Back-Office	15000.00	2	2
+11	        J Garcia	Back-Office	15000.00	2	2</strong>
+12	        T Clerk	        Back-Office	10000.00	4	3
+1	        T Cook	        Finance	        40000.00	1	1
+<strong>2	        D Michael	Finance	        25000.00	2	2
+3	        A Smith	        Finance	        25000.00	2	2</strong>
+4	        D Adams	        Finance	        15000.00	4	3
+5	        M Williams	IT	        80000.00	1	1
+<strong>7	        J Miller	IT	        50000.00	2	2
+8	        L Lewis	        IT	        50000.00	2	2</strong>
+6	        D Jones 	IT	        40000.00	4	3</pre>
+<p>É exatamente o que estamos precisando! Se formos realizar uma consulta filtrando as colunas "RANK" ou "RANK_DENSE" (usando uma CTE, foi a forma mais intuitiva que achei) <strong>ele trará o resultado correto da resposta.</strong> Porém, como disse antes, existe uma diferença sutil que faz a diferença entre "O certo" e o "O mais certo". Não fez muito sentido o que eu disse? É justamente a palavra DENSE do rank. Se tivesse ali entre os dados DOIS "primeiros lugares" (sim amigos, um empate em um departamento dos primeiros maiores salários) o resultado certamente sairia diferente! Isso considerando dois, imagina três ou quatro.... Pra ilustrar melhor o que eu disse, vamos aos scripts:</p>
+<pre>/* Inserindo no departamento Back-Office outro salário que possui o "primeiro lugar" diante da classificação */
+
+INSERT INTO dbo.Employees(EmployeeName, Department, Salary)
+VALUES('R Renato','Back-Office', 25000)</pre>
+<p>Fazendo o teste...</p>
+<pre>SELECT
+	EmployeeID,
+	EmployeeName,
+	Department,
+	Salary,
+	RANK() OVER (PARTITION BY Department ORDER BY SALARY DESC) as "RANK",
+	DENSE_RANK() OVER (PARTITION BY Department ORDER BY SALARY DESC) as "RANK_DENSE"
+FROM dbo.Employees</pre>
+<p>Olha só o resultado!</p>
+<pre>EmployeeID	EmployeeName	Department	Salary	      RANK	RANK_DENSE
+----------------------------------------------------------------------------------
+9	        A Anderson	Back-Office	25000.00	1	1
+13	        R Renato	Back-Office	25000.00	1	1
+10	        S Martin	Back-Office	15000.00	<strong>3</strong>	2
+11	        J Garcia	Back-Office	15000.00	<strong>3</strong>	2
+12	        T Clerk	        Back-Office	10000.00	5	3
+1	        T Cook	        Finance	        40000.00	1	1
+2	        D Michael	Finance 	25000.00	2	2
+3	        A Smith	        Finance 	25000.00	2	2
+4	        D Adams	        Finance 	15000.00	4	3
+5	        M Williams	IT 		80000.00	1	1
+7	        J Miller	IT		50000.00	2	2
+8	        L Lewis  	IT		50000.00	2	2
+6	        D Jones 	IT		40000.00	4	3</pre>
+<p>Observe os empregados "S Martin" e "J Garcia". Eles possuem os segundos maiores salários de seus departamentos, mas comparando os números de RANK() e DENSE_RANK() obtemos resultados diferentes entre si. A razão pra isso é muito simples: RANK() classificou em primeiro lugar dois itens. Como é natureza dessa função considerar os itens que estão agrupados em certa classificação, os teoricamente "segundo colocados" na verdade estão em terceiros, já que houve um empate entre os dois primeiros (então, como não foi dado nenhum outro critério de desempate, os dois ocupam o mesmo rank porém "tiram" a vaga dos próximos que virão).<br />
+DENSE_RANK() não faz isso. Ele considera uma classificação consecultiva, sem pular posições (por isso é "denso").<br />
+Logo, a resposta mais correta seria o código abaixo utilizando dense_rank():</p>
+<pre>WITH CTE
+AS(
+SELECT
+	EmployeeID,
+	EmployeeName,
+	Department,
+	Salary,
+	DENSE_RANK() OVER (PARTITION BY Department ORDER BY SALARY DESC) as "RANK_DENSE"
+FROM dbo.Employees
+)
+SELECT * FROM CTE <strong>WHERE "RANK_DENSE" = 2</strong></pre>
+<p>Resultado:</p>
+<pre>EmployeeID	EmployeeName	Department	Salary	   RANK_DENSE
+-------------------------------------------------------------------
+10	        S Martin	Back-Office	15000.00	2
+11		J Garcia	Back-Office	15000.00	2
+2		D Michael	Finance		25000.00	2
+3		A Smith		Finance		25000.00	2
+7		J Miller	IT		50000.00	2
+8		L Lewis		IT		50000.00	2</pre>
+<p>Pra ficar bonito o código sem esse rank_dense, você pode tirá-lo do SELECT pra ficar idêntico a resposta desejada. Deixei ele aqui só pra mostrar que era isso o que a questão queria: os segundos maiores salários de cada departamento, segundo que se houver empate entre os "segundo maior", que todos os envolvidos sejam listados.</p>
+<p>A resposta completa já estava no outro post neste <a title="resposta" href="http://sdrv.ms/1dG1LGw">link </a> aqui. Pra mim, a explicação daquele código já é suficiente para entender um pouco do problema, mas eu queria explorá-lo mais e pra isso, fiz o post.</p>
+<p>Você conseguiu encontrar a solução? Utilizou outra forma? Fique a vontade para comentar. Agora vou dormir porque o dia é longo :)</body></html></p>
+
+  </div><a class="u-url" href="/reposta-do-desafio-1-t-sql-ranking-functions-row_numberrank-e-rank-dense/" hidden></a>
+</article>
+
+      </div>
+    </main><footer class="site-footer h-card">
+  <data class="u-url" href="/"></data>
+
+  <div class="wrapper">
+
+    <h2 class="footer-heading">Renato Siqueira</h2>
+
+    <div class="footer-col-wrapper">
+      <div class="footer-col footer-col-1">
+        <ul class="contact-list">
+          <li class="p-name">Renato Siqueira</li><li><a class="u-email" href="mailto:rad_renato@hotmail.com">rad_renato@hotmail.com</a></li></ul>
+      </div>
+
+      <div class="footer-col footer-col-2"><ul class="social-media-list"><li><a href="https://github.com/renatomsq"><svg class="svg-icon"><use xlink:href="/assets/minima-social-icons.svg#github"></use></svg> <span class="username">renatomsq</span></a></li><li><a href="https://www.twitter.com/naotenhomais"><svg class="svg-icon"><use xlink:href="/assets/minima-social-icons.svg#twitter"></use></svg> <span class="username">naotenhomais</span></a></li></ul>
+</div>
+
+      <div class="footer-col footer-col-3">
+        <p>Meu blog de artigo técnico sobre banco de dados e carreira.</p>
+      </div>
+    </div>
+
+  </div>
+
+</footer>
+</body>
+
+</html>

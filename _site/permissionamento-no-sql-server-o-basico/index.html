@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1"><!-- Begin Jekyll SEO tag v2.9.0 -->
+<title>Permissionamento no SQL Server - O básico | Renato Siqueira</title>
+<meta name="generator" content="Jekyll v4.4.1" />
+<meta property="og:title" content="Permissionamento no SQL Server - O básico" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="&lt;!DOCTYPE html PUBLIC &quot;-//W3C//DTD HTML 4.0 Transitional//EN&quot; &quot;http://www.w3.org/TR/REC-html40/loose.dtd&quot;&gt; &lt;/p&gt; Olá, A ideia deste post é explicar de forma descomplicada alguns conceitos básicos sobre permissionamento no SQL Server (embora grande parte dos conceitos possa ser aplicada em outras tecnologias). Os tópicos tratados serão: 1. Conceito de permissão 2. Permissionamento mínimo 3. DCL 4. Concessão de permissões 5. Permission Chain 1. Conceito de permissão Para começar, vamos à definição de permissão (Fonte: Dicionário Michaelis): permissão per.mis.são sf (lat permissione) 1 Ato de permitir; consentimento, licença. 2 Ret Figura em que se deixa aos ouvintes ou adversários a decisão de alguma coisa. 3Inform Autorização concedida a um usuário específico para acessar um certo…" />
+<meta name="twitter:description" property="og:description" content="&lt;!DOCTYPE html PUBLIC &quot;-//W3C//DTD HTML 4.0 Transitional//EN&quot; &quot;http://www.w3.org/TR/REC-html40/loose.dtd&quot;&gt; &lt;/p&gt; Olá, A ideia deste post é explicar de forma descomplicada alguns conceitos básicos sobre permissionamento no SQL Server (embora grande parte dos conceitos possa ser aplicada em outras tecnologias). Os tópicos tratados serão: 1. Conceito de permissão 2. Permissionamento mínimo 3. DCL 4. Concessão de permissões 5. Permission Chain 1. Conceito de permissão Para começar, vamos à definição de permissão (Fonte: Dicionário Michaelis): permissão per.mis.são sf (lat permissione) 1 Ato de permitir; consentimento, licença. 2 Ret Figura em que se deixa aos ouvintes ou adversários a decisão de alguma coisa. 3Inform Autorização concedida a um usuário específico para acessar um certo…" />
+<link rel="canonical" href="http://localhost:4000/permissionamento-no-sql-server-o-basico/" />
+<meta property="og:url" content="http://localhost:4000/permissionamento-no-sql-server-o-basico/" />
+<meta property="og:site_name" content="Renato Siqueira" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2015-02-09T18:09:47-03:00" />
+<meta property="article:modified_time" content="2015-02-09T18:09:47-03:00" />
+<meta name="twitter:card" content="summary" />
+<meta name="twitter:title" content="Permissionamento no SQL Server - O básico" />
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"BlogPosting","dateModified":"2015-02-09T18:09:47-03:00","datePublished":"2015-02-09T18:09:47-03:00","description":"&lt;!DOCTYPE html PUBLIC &quot;-//W3C//DTD HTML 4.0 Transitional//EN&quot; &quot;http://www.w3.org/TR/REC-html40/loose.dtd&quot;&gt; &lt;/p&gt; Olá, A ideia deste post é explicar de forma descomplicada alguns conceitos básicos sobre permissionamento no SQL Server (embora grande parte dos conceitos possa ser aplicada em outras tecnologias). Os tópicos tratados serão: 1. Conceito de permissão 2. Permissionamento mínimo 3. DCL 4. Concessão de permissões 5. Permission Chain 1. Conceito de permissão Para começar, vamos à definição de permissão (Fonte: Dicionário Michaelis): permissão per.mis.são sf (lat permissione) 1 Ato de permitir; consentimento, licença. 2 Ret Figura em que se deixa aos ouvintes ou adversários a decisão de alguma coisa. 3Inform Autorização concedida a um usuário específico para acessar um certo…","headline":"Permissionamento no SQL Server - O básico","mainEntityOfPage":{"@type":"WebPage","@id":"http://localhost:4000/permissionamento-no-sql-server-o-basico/"},"url":"http://localhost:4000/permissionamento-no-sql-server-o-basico/"}</script>
+<!-- End Jekyll SEO tag -->
+<link rel="stylesheet" href="/assets/main.css"><link type="application/atom+xml" rel="alternate" href="http://localhost:4000/feed.xml" title="Renato Siqueira" /></head>
+<body><header class="site-header" role="banner">
+
+  <div class="wrapper"><a class="site-title" rel="author" href="/">Renato Siqueira</a><nav class="site-nav">
+        <input type="checkbox" id="nav-trigger" class="nav-trigger" />
+        <label for="nav-trigger">
+          <span class="menu-icon">
+            <svg viewBox="0 0 18 15" width="18px" height="15px">
+              <path d="M18,1.484c0,0.82-0.665,1.484-1.484,1.484H1.484C0.665,2.969,0,2.304,0,1.484l0,0C0,0.665,0.665,0,1.484,0 h15.032C17.335,0,18,0.665,18,1.484L18,1.484z M18,7.516C18,8.335,17.335,9,16.516,9H1.484C0.665,9,0,8.335,0,7.516l0,0 c0-0.82,0.665-1.484,1.484-1.484h15.032C17.335,6.031,18,6.696,18,7.516L18,7.516z M18,13.516C18,14.335,17.335,15,16.516,15H1.484 C0.665,15,0,14.335,0,13.516l0,0c0-0.82,0.665-1.483,1.484-1.483h15.032C17.335,12.031,18,12.695,18,13.516L18,13.516z"/>
+            </svg>
+          </span>
+        </label>
+
+        <div class="trigger"><a class="page-link" href="/about/">About</a></div>
+      </nav></div>
+</header>
+<main class="page-content" aria-label="Content">
+      <div class="wrapper">
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+
+  <header class="post-header">
+    <h1 class="post-title p-name" itemprop="name headline">Permissionamento no SQL Server - O básico</h1>
+    <p class="post-meta">
+      <time class="dt-published" datetime="2015-02-09T18:09:47-03:00" itemprop="datePublished">Feb 9, 2015
+      </time>• <span itemprop="author" itemscope itemtype="http://schema.org/Person"><span class="p-author h-card" itemprop="name">{"login" => "Renato Siqueira", "email" => "", "display_name" => "Renato Siqueira", "first_name" => "", "last_name" => ""}</span></span></p>
+  </header>
+
+  <div class="post-content e-content" itemprop="articleBody">
+    <p><!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN" "http://www.w3.org/TR/REC-html40/loose.dtd"><br />
+<html><body><br />
+<a href="http://renatomsiqueira.com/wp-content/uploads/2015/02/keep-calm-and-ask-permission-5.png"><img class="alignnone size-full wp-image-2390" src="/assets/2015/02/c3cdd-keep-calm-and-ask-permission-5.png" alt="keep-calm-and-ask-permission-5" width="700" height="700"></a></p>
+<p>Olá,</p>
+<p>A ideia deste post é explicar de forma descomplicada alguns conceitos básicos sobre permissionamento no SQL Server (embora grande parte dos conceitos possa ser aplicada em outras tecnologias).</p>
+<p>Os tópicos tratados serão:</p>
+<p>1. Conceito de permissão<br />
+2. Permissionamento mínimo<br />
+3. DCL<br />
+4. Concessão de permissões<br />
+5. Permission Chain</p>
+<p><!--more--></p>
+<hr>
+<p><strong>1. Conceito de permissão</strong></p>
+<p>Para começar, vamos à definição de permissão (Fonte: Dicionário <a href="http://michaelis.uol.com.br/moderno/portugues/index.php?lingua=portugues-portugues&amp;palavra=permiss%E3o">Michaelis</a>):</p>
+<blockquote><p>permissão<br />
+per.mis.são<br />
+sf (lat permissione) 1 Ato de permitir; consentimento, licença. 2 Ret Figura em que se deixa aos ouvintes ou adversários a decisão de alguma coisa. 3Inform Autorização concedida a um usuário específico para acessar um certo recurso compartilhado ou área de disco. P. de acesso, <strong>Inform: descrição de todos os direitos de acesso para um usuário específico</strong>. Antôn (acepção 1):proibição.</p></blockquote>
+<p>Podemos então, deduzir que permissionamento significa:</p>
+<blockquote><p>"Atribuir permissão para alguém realizar determinada ação"</p></blockquote>
+<p>Em outras palavras , deduzimos que alguém (possuindo poder pra isso) pode autorizar uma outra pessoa a executar ou não determinada ação.<br />
+Essa ideia de permissionamento  é mais velha que o <em>nostradamus, </em>bem atual e natural no nosso dia a dia e posso provar isto pra vocês com a série de frases abaixo:</p>
+<ul>
+<li>Pessoas não autorizadas não devem entrar no CPD;</li>
+<li>Para dirigir legalmente, é necessário ter habilitação (que é a autorização pra digirir determinado veículo);</li>
+<li>No restaurante do Erik Jacquin é proibido fumar.</li>
+</ul>
+<p><strong>2. Mínimo privilégio</strong></p>
+<p>Existe um conceito antigo e fundido com o SQL Server que permeia todo o conceito de permissionamento, que é a concessão apenas das permissões necessárias, o chamado <strong>menor privilégio</strong>. No SQL Server, por exemplo, se eu adiciono um usuário no banco, nenhuma permissão é concedida automaticamente para o mesmo de forma direta, sendo necessárias outras concessões de permissão.</p>
+<p>Criar um usuário no banco é criar e ponto. Nenhuma permissão é adicionada pelo simples fato da criação.</p>
+<p>Para facilitar o entendimento, este é o fluxo dos status possíveis de permissão, sendo a ausência de permissão (em amarelo) o ponto inicial.</p>
+<p><a href="http://renatomsiqueira.com/wp-content/uploads/2015/02/Alt.png"><img class="alignnone size-full wp-image-2389" src="/assets/2015/02/6bd9d-alt.png" alt="Alt" width="542" height="104"></a></p>
+<p>Significa que se eu inserir o usuário em determinada base de dados, ele NÃO terá permissão de leitura. Pra isso, preciso conceder a permissão à parte. Se eu não concedi para este usuário permissão para escrita, significa que ele simplesmente não tem permissão (entretanto, não tem permissão negada,<strong> o que é bem diferente</strong>) (ver bloco em amarelo) o que não impede que a concessão seja feita posteriormente.</p>
+<p>Em outras palavras sobre privilégio mínimo: "Concessão de permissões mas apenas o necessário"  é muito bom e obriga que a permissão seja específica e que não faça nada mais do que supostamente deveria fazer.</p>
+<p><strong>3-  DCL </strong></p>
+<p>Existem alguns comandos que são categorizados como DCL (Data Control Language), um termo formal e extremamente pop encontrado nos cursos de tecnologia em geral. Deixando a formalidade de lado, comandos DCL possuem o simples propósito de controlar o acesso aos dados e um dos principais comandos DCL são justamente os que envolvem permissionamento utilizando certos comandos (GRANT, DENY e REVOKE).</p>
+<p>Sendo simplista: são comandos que gerenciam (concedem, revogam ou negam) permissões.</p>
+<p>Observe as frases abaixo:</p>
+<blockquote><p>Maria pode entrar na casa<br />
+João não pode entrar na casa<br />
+Chaves pode usar o celular em sala de aula</p></blockquote>
+<p>Reescrevendo essas frases acima em algoritmo:</p>
+<p>Frase A: CONCEDER ENTRADA NA CASA PARA MARIA<br />
+Frase B: NEGAR ENTRADA NA CASA PARA JOÃO<br />
+Frase C : NEGAR USO DO CELULAR NA SALA DE AULA PARA CHAVES</p>
+<p>Traduzindo para a construção utilizada no DCL do SQL:</p>
+<p><em>&lt;AUTORIZAÇÃO&gt; &lt;PERMISSÃO&gt; ON &lt;SECURABLE&gt; TO &lt;PRINCIPAL&gt;</em></p>
+<p>No próximo item vamos analisar o que cada elemento significa.</p>
+<p><strong>4 - Concessão de permissões</strong></p>
+<p>Abaixo vamos entender todos os componentes de uma concessão de permissão, que são o principal, o securable, authorization e a permission. Vai fazer sentido mais pra frente, continue lendo por favor.</p>
+<p><strong>4.1.  PRINCIPAL (Principal)</strong></p>
+<p>Basicamente, são os logins, usuários, roles e relacionados do SQL Server que recebem permissão em algo (que nos exemplos anteriores eram pessoas, ou determinado alguém, que recebe alguma permissão). Sendo mais abstrato, tem também a definição publicada pelo <em>Mike Hotek </em>(publicada em livro sobre SQL Server 2008², vide referências) que define bem o termo:</p>
+<blockquote><p>"São os meios pelos quais você se autentica e é identificado dentro de uma instância ou de um banco de dados"</p></blockquote>
+<p>Na frase: "Brenta pode andar de bicicleta", Brenta é "o <strong>principal</strong>".</p>
+<p><strong>4.2. SECURABLE (Securable)</strong></p>
+<p>A tradução para o termo "securable" mais aceita é "Alcançavel", termo presente na tradução do Training Kit 70-432 SQL Server 2008² . Pessoalmente, não gosto desta tradução mas ao menos ela auxilia um pouco o entendimento do conceito.</p>
+<p>De acordo com o BOL¹ uma boa (e bem técnica) definição de <em>securable</em> é:</p>
+<blockquote><p>"Recursos no qual o sistema de autorização da Engine do SQL Server regulamenta o acesso."</p></blockquote>
+<p>O termo traduzido, "Alcançavel",  passa a ideia de "algo que pode ser alcançado por uma permissão". Ou seja, tudo que é recurso pode ter uma permissão atribuída a alguém. Para citar alguns exemplos: Uma tabela, uma view, um banco de dados, uma procedure, etc. Tudo isso que pode ser alvo de uma permissão é chamado de securable.</p>
+<p>Na frase: "Brenta pode andar de bicicleta", bicicleta é o "<strong>securable</strong>".</p>
+<p><strong>4.3. AUTORIZAÇÃO (Authorization)</strong></p>
+<p>São os comandos DCL propriamente ditos. Os três comandos para indicar qual autorização será concedida são:</p>
+<ul>
+<li>GRANT: Significa conceder. Simples assim. O GRANT autoriza a execução de determinada ação.</li>
+<li>DENY: Significa negar. O DENY <strong>proíbe</strong> a execução de determinada ação.</li>
+<li>REVOKE: Significa revogar. É retirar uma autorização previamente concedida em algo.</li>
+</ul>
+<p>Já tendo explicado o conceito de privilégio mínimo, reforço o conceito com a imagem abaixo:</p>
+<p><a href="http://renatomsiqueira.com/wp-content/uploads/2015/02/deny1.png"><img class="alignnone size-full wp-image-2388" src="/assets/2015/02/39714-deny1.png" alt="deny1" width="510" height="311"></a></p>
+<p>O <em>smiley</em> representa a "não permissão", que é o simples fato de não possui autorização concedida e/ou negada.</p>
+<p>O que o revoke faz não é negar permissão,<strong> ele simplesmente desfaz (revoga) a permissão atual.</strong> Isso é um dos pontos que mais causam confusão quando o assunto é permissionamento.</p>
+<p>Para exemplicar:</p>
+<ul>
+<li>Se eu tenho um GRANT de leitura em determinada tabela e a permissão é revogada, vou para a caixa amarela (sem permissão).</li>
+<li>Se eu tenho um DENY de leitura em determinada tabela e a permissão é revogada, vou novamente para a caixa amarela (sem permissão).</li>
+<li>Se eu não tenho permissão de leitura concedida e recebo DENY de leitura em determinada tabela, vou para a caixa vermelha.</li>
+<li>Se eu tenho permissão de GRANT e recebo um DENY e depois um REVOKE, volto novamente para a caixa amarela (sem permissão).</li>
+</ul>
+<p>A principal diferença entre não ter permissão e ter a permissão negada, é que um DENY restringe diretamente qualquer outra permissão em determinado objeto. Significa que, se você tiver GRANT de SELECT em determinada tabela mas receber um DENY no schema na qual aquela tabela faz parte, o DENY prevalece e o SELECT não poderá ser realizado.</p>
+<p>Na frase: "Brenta pode andar de bicicleta", "pode" (GRANT) assume o valor da autorização (poder é uma forma de dizer "privilégio concedido").</p>
+<p><strong>4.4. PERMISSÃO (Permission)</strong></p>
+<p>É o centro de todo o assunto. É  a ação que sofrerá permissionamento. Este elemento em específico é um assunto relativamente extenso e será abordada na parte 2 da série (Arquitetura). No post piloto eu indiquei o<em> Permission Posters</em> e será ele o material que utilizaremos para análise.</p>
+<p>Na frase: "Brenta pode andar de bicicleta", a permissão é  "andar".</p>
+<hr>
+<p><strong>4.5. Resumo</strong></p>
+<p>Tendo dito todos os conceitos acima, vamos mapear cada elemento com algoritmos de exemplo para facilitar o entendimento de toda a explicação:</p>
+<p>Frase A: CONCEDER ENTRADA NA CASA PARA MARIA<br />
+Frase B: NEGAR ENTRADA NA CASA PARA JOÃO<br />
+Frase C : NEGAR USO DO CELULAR NA SALA DE AULA PARA CHAVES</p>
+<p>Dividindo as frases em elementos:</p>
+<p><a href="http://renatomsiqueira.com/wp-content/uploads/2015/02/Tabelaar.png"><img class="alignnone size-full wp-image-2401" src="/assets/2015/02/d0be8-tabelaar.png" alt="Tabelaar" width="447" height="81"></a></p>
+<p>Apenas para fundir todo o conceito com a prática, segue alguns exemplos de comando DCL, com sintaxe característica do SQL Server (embora o comando seja praticamente o mesmo em outros SGBD's de renome):</p>
+<pre class="">GRANT SELECT ON tb_produto TO [AW\renato.sq]
+GRANT INSERT,DELETE,UPDATE ON tb_cheque to [UsrPerigo]</pre>
+<p><strong>5. Permission Chain</strong></p>
+<p>Traduzindo: Encadeamento de permissões. Imagine que você é dono de uma casa de cinco (5) cômodos e possui um hóspede que só tem acesso a um (1) cômodo. Pelo simples fato de  você ser o dono da casa, automaticamente tem total liberdade em acessar quaisquer cômodos da casa. Já a do hóspede não, pois ele só tem acesso a um cômodo. Observe que a permissão é propagada naturalmente neste caso. Isto é a definição de cadeia de permissões da forma mais simples. Existem outros detalhes a serem abordados, e que serão vistos nos próximos posts.</p>
+<p><strong>Conclusão</strong></p>
+<p>Na minha opinião, o conteúdo apresentado é o mínimo que deve ser entendido sobre permissionamento. Espero que tenha sido útil pra alguém e até a próxima!</p>
+<p>[]'s</p>
+<hr>
+<p><strong>Referências:</strong></p>
+<ul>
+<li>¹ <a href="https://msdn.microsoft.com/en-us/library/bb510589.aspx">Security and Protection (BOL)</a>
+</li>
+<li>² <a href="http://www.amazon.com/MCTS-Self-Paced-Training-Exam-70-432/dp/0735626057/ref=la_B001H6MVY4_1_1/184-8853933-9091728?s=books&amp;ie=UTF8&amp;qid=1423502832&amp;sr=1-1">MCTS Self-Paced Training Kit (Exam 70-432): Microsoft SQL Server 2008 Implementation and Maintenance (Mike Hotek)</a>
+</li>
+<li>³ <a href="http://social.technet.microsoft.com/wiki/contents/articles/11842.sql-server-database-engine-permission-posters.aspx">Permission Posters</a>
+</li>
+</ul>
+<p></body></html></p>
+
+  </div><a class="u-url" href="/permissionamento-no-sql-server-o-basico/" hidden></a>
+</article>
+
+      </div>
+    </main><footer class="site-footer h-card">
+  <data class="u-url" href="/"></data>
+
+  <div class="wrapper">
+
+    <h2 class="footer-heading">Renato Siqueira</h2>
+
+    <div class="footer-col-wrapper">
+      <div class="footer-col footer-col-1">
+        <ul class="contact-list">
+          <li class="p-name">Renato Siqueira</li><li><a class="u-email" href="mailto:rad_renato@hotmail.com">rad_renato@hotmail.com</a></li></ul>
+      </div>
+
+      <div class="footer-col footer-col-2"><ul class="social-media-list"><li><a href="https://github.com/renatomsq"><svg class="svg-icon"><use xlink:href="/assets/minima-social-icons.svg#github"></use></svg> <span class="username">renatomsq</span></a></li><li><a href="https://www.twitter.com/naotenhomais"><svg class="svg-icon"><use xlink:href="/assets/minima-social-icons.svg#twitter"></use></svg> <span class="username">naotenhomais</span></a></li></ul>
+</div>
+
+      <div class="footer-col footer-col-3">
+        <p>Meu blog de artigo técnico sobre banco de dados e carreira.</p>
+      </div>
+    </div>
+
+  </div>
+
+</footer>
+</body>
+
+</html>

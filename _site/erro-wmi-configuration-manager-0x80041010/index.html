@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1"><!-- Begin Jekyll SEO tag v2.9.0 -->
+<title>Erro: Não é possível conectar-se ao provedor WMI - 0x80041010 - SQL Server Configuration Manager | Renato Siqueira</title>
+<meta name="generator" content="Jekyll v4.4.1" />
+<meta property="og:title" content="Erro: Não é possível conectar-se ao provedor WMI - 0x80041010 - SQL Server Configuration Manager" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="Problema ao abrir SQL Server Configuration Manager - WMI provider - 0x80041010" />
+<meta name="twitter:description" property="og:description" content="Problema ao abrir SQL Server Configuration Manager - WMI provider - 0x80041010" />
+<link rel="canonical" href="http://localhost:4000/erro-wmi-configuration-manager-0x80041010/" />
+<meta property="og:url" content="http://localhost:4000/erro-wmi-configuration-manager-0x80041010/" />
+<meta property="og:site_name" content="Renato Siqueira" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2021-10-12T20:19:18-03:00" />
+<meta property="article:modified_time" content="2021-10-12T20:19:18-03:00" />
+<meta name="twitter:card" content="summary" />
+<meta name="twitter:title" content="Erro: Não é possível conectar-se ao provedor WMI - 0x80041010 - SQL Server Configuration Manager" />
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"BlogPosting","dateModified":"2021-10-12T20:19:18-03:00","datePublished":"2021-10-12T20:19:18-03:00","description":"Problema ao abrir SQL Server Configuration Manager - WMI provider - 0x80041010","headline":"Erro: Não é possível conectar-se ao provedor WMI - 0x80041010 - SQL Server Configuration Manager","mainEntityOfPage":{"@type":"WebPage","@id":"http://localhost:4000/erro-wmi-configuration-manager-0x80041010/"},"url":"http://localhost:4000/erro-wmi-configuration-manager-0x80041010/"}</script>
+<!-- End Jekyll SEO tag -->
+<link rel="stylesheet" href="/assets/main.css"><link type="application/atom+xml" rel="alternate" href="http://localhost:4000/feed.xml" title="Renato Siqueira" /></head>
+<body><header class="site-header" role="banner">
+
+  <div class="wrapper"><a class="site-title" rel="author" href="/">Renato Siqueira</a><nav class="site-nav">
+        <input type="checkbox" id="nav-trigger" class="nav-trigger" />
+        <label for="nav-trigger">
+          <span class="menu-icon">
+            <svg viewBox="0 0 18 15" width="18px" height="15px">
+              <path d="M18,1.484c0,0.82-0.665,1.484-1.484,1.484H1.484C0.665,2.969,0,2.304,0,1.484l0,0C0,0.665,0.665,0,1.484,0 h15.032C17.335,0,18,0.665,18,1.484L18,1.484z M18,7.516C18,8.335,17.335,9,16.516,9H1.484C0.665,9,0,8.335,0,7.516l0,0 c0-0.82,0.665-1.484,1.484-1.484h15.032C17.335,6.031,18,6.696,18,7.516L18,7.516z M18,13.516C18,14.335,17.335,15,16.516,15H1.484 C0.665,15,0,14.335,0,13.516l0,0c0-0.82,0.665-1.483,1.484-1.483h15.032C17.335,12.031,18,12.695,18,13.516L18,13.516z"/>
+            </svg>
+          </span>
+        </label>
+
+        <div class="trigger"><a class="page-link" href="/about/">About</a></div>
+      </nav></div>
+</header>
+<main class="page-content" aria-label="Content">
+      <div class="wrapper">
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+
+  <header class="post-header">
+    <h1 class="post-title p-name" itemprop="name headline">Erro: Não é possível conectar-se ao provedor WMI - 0x80041010 - SQL Server Configuration Manager</h1>
+    <p class="post-meta">
+      <time class="dt-published" datetime="2021-10-12T20:19:18-03:00" itemprop="datePublished">Oct 12, 2021
+      </time>• <span itemprop="author" itemscope itemtype="http://schema.org/Person"><span class="p-author h-card" itemprop="name">{"login" => "renatomsiq@gmail.com", "email" => "renatomsiq@gmail.com", "display_name" => "renatomsiq@gmail.com", "first_name" => "", "last_name" => ""}</span></span></p>
+  </header>
+
+  <div class="post-content e-content" itemprop="articleBody">
+    <p><!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN" "http://www.w3.org/TR/REC-html40/loose.dtd"><br />
+<!-- wp:image {"id":2946,"sizeSlug":"full","linkDestination":"none"} --><html><body></p>
+<figure class="wp-block-image size-full"><img src="/assets/2021/10/image-4.png" alt="" class="wp-image-2946"></figure>
+<p><!-- /wp:image --></p>
+<p><!-- wp:paragraph --></p>
+<p><strong>Problema</strong></p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --></p>
+<p>Erro ao abrir Configuration Manager (Classe inválida 0x80041010), a mensagem completa em texto é:</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:quote --></p>
+<blockquote class="wp-block-quote"><p>Não é possível conectar-se ao provedor WMI. Você não possui permissão ou o servidor não está acessível. Observe que você só pode gerenciar os servidores do SQL Server 2005 e posterior com o SQL Server Configuration Manager. Classe inválida [0x80041010]</p>
+</blockquote>
+<p><!-- /wp:quote --></p>
+<p><!-- wp:paragraph --></p>
+<p><strong>Causa raíz</strong></p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --></p>
+<p>Quando você desinstala uma instância do SQL Server (meu caso!) , o provedor WMI correspondente à versão vai pra vala (é removido).</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --></p>
+<p> <strong>Solução</strong> </p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --></p>
+<p>A solução é documentada pela própria Microsoft que é recompilar o provedor via linha de comando: <a href="https://docs.microsoft.com/pt-br/troubleshoot/sql/tools/error-message-when-you-open-configuration-manager" target="_blank" rel="noreferrer noopener">https://docs.microsoft.com/pt-br/troubleshoot/sql/tools/error-message-when-you-open-configuration-manager</a></p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --></p>
+<p>Em resumo, entre na pasta Shared de acordo com a versão do Configuration Manager na qual você está tendo problema (no meu caso é a 150, correspondente ao SQL Server 2019) via Prompt de Comando elevado e digite o comando abaixo:</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --></p>
+<p> <code>mofcomp "sqlmgmproviderxpsp2up.mof"</code></p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:image {"id":2949,"sizeSlug":"full","linkDestination":"none"} --></p>
+<figure class="wp-block-image size-full"><img src="/assets/2021/10/image-6.png" alt="" class="wp-image-2949"><br />
+<figcaption>Linha verde: Navegando para o diretório onde tem o WMI provider. Linha vermelha é execução do comando pra recompilar!</figcaption>
+</figure>
+<p><!-- /wp:image --></p>
+<p><!-- wp:paragraph --></p>
+<p>Depois disso só abrir o Configuration Manager, funfa que é uma beleza. Da série problemas do dia a dia que só falhas de WMI proporcionam pra gente.</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:image {"id":2950,"sizeSlug":"full","linkDestination":"none","className":"is-style-rounded"} --></p>
+<figure class="wp-block-image size-full is-style-rounded"><img src="/assets/2021/10/image-7.png" alt="" class="wp-image-2950"></figure>
+<p><!-- /wp:image --></p>
+<p><!-- wp:paragraph --></p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --></p>
+<p><!-- /wp:paragraph --><br />
+</body></html></p>
+
+  </div><a class="u-url" href="/erro-wmi-configuration-manager-0x80041010/" hidden></a>
+</article>
+
+      </div>
+    </main><footer class="site-footer h-card">
+  <data class="u-url" href="/"></data>
+
+  <div class="wrapper">
+
+    <h2 class="footer-heading">Renato Siqueira</h2>
+
+    <div class="footer-col-wrapper">
+      <div class="footer-col footer-col-1">
+        <ul class="contact-list">
+          <li class="p-name">Renato Siqueira</li><li><a class="u-email" href="mailto:rad_renato@hotmail.com">rad_renato@hotmail.com</a></li></ul>
+      </div>
+
+      <div class="footer-col footer-col-2"><ul class="social-media-list"><li><a href="https://github.com/renatomsq"><svg class="svg-icon"><use xlink:href="/assets/minima-social-icons.svg#github"></use></svg> <span class="username">renatomsq</span></a></li><li><a href="https://www.twitter.com/naotenhomais"><svg class="svg-icon"><use xlink:href="/assets/minima-social-icons.svg#twitter"></use></svg> <span class="username">naotenhomais</span></a></li></ul>
+</div>
+
+      <div class="footer-col footer-col-3">
+        <p>Meu blog de artigo técnico sobre banco de dados e carreira.</p>
+      </div>
+    </div>
+
+  </div>
+
+</footer>
+</body>
+
+</html>

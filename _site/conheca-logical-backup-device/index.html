@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1"><!-- Begin Jekyll SEO tag v2.9.0 -->
+<title>Conheça o Logical Backup Device | Renato Siqueira</title>
+<meta name="generator" content="Jekyll v4.4.1" />
+<meta property="og:title" content="Conheça o Logical Backup Device" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="&lt;!DOCTYPE html PUBLIC &quot;-//W3C//DTD HTML 4.0 Transitional//EN&quot; &quot;http://www.w3.org/TR/REC-html40/loose.dtd&quot;&gt; &lt;/p&gt; Olá, O assunto de hoje é Logical Backup Device. Para maiores informações sobre o termo &quot;Device&quot; (Dispositivo) de backup no SQL Server ou sobre o termo que intitula o post, dê uma olhada nas referências. Logical Backup Device (Dispositivo Lógico de Backup), que ao longo do post vou chamar de LBD, nada mais é do que um alias (ou abstração, para os mais teóricos) de um dispositivo físico (pode ser uma fita ou disco, geralmente este último). Significa que podemos referenciar um local físico passando apenas o nome do dispositivo lógico…" />
+<meta name="twitter:description" property="og:description" content="&lt;!DOCTYPE html PUBLIC &quot;-//W3C//DTD HTML 4.0 Transitional//EN&quot; &quot;http://www.w3.org/TR/REC-html40/loose.dtd&quot;&gt; &lt;/p&gt; Olá, O assunto de hoje é Logical Backup Device. Para maiores informações sobre o termo &quot;Device&quot; (Dispositivo) de backup no SQL Server ou sobre o termo que intitula o post, dê uma olhada nas referências. Logical Backup Device (Dispositivo Lógico de Backup), que ao longo do post vou chamar de LBD, nada mais é do que um alias (ou abstração, para os mais teóricos) de um dispositivo físico (pode ser uma fita ou disco, geralmente este último). Significa que podemos referenciar um local físico passando apenas o nome do dispositivo lógico…" />
+<link rel="canonical" href="http://localhost:4000/conheca-logical-backup-device/" />
+<meta property="og:url" content="http://localhost:4000/conheca-logical-backup-device/" />
+<meta property="og:site_name" content="Renato Siqueira" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2014-02-26T18:37:14-03:00" />
+<meta property="article:modified_time" content="2014-02-26T18:37:14-03:00" />
+<meta name="twitter:card" content="summary" />
+<meta name="twitter:title" content="Conheça o Logical Backup Device" />
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"BlogPosting","dateModified":"2014-02-26T18:37:14-03:00","datePublished":"2014-02-26T18:37:14-03:00","description":"&lt;!DOCTYPE html PUBLIC &quot;-//W3C//DTD HTML 4.0 Transitional//EN&quot; &quot;http://www.w3.org/TR/REC-html40/loose.dtd&quot;&gt; &lt;/p&gt; Olá, O assunto de hoje é Logical Backup Device. Para maiores informações sobre o termo &quot;Device&quot; (Dispositivo) de backup no SQL Server ou sobre o termo que intitula o post, dê uma olhada nas referências. Logical Backup Device (Dispositivo Lógico de Backup), que ao longo do post vou chamar de LBD, nada mais é do que um alias (ou abstração, para os mais teóricos) de um dispositivo físico (pode ser uma fita ou disco, geralmente este último). Significa que podemos referenciar um local físico passando apenas o nome do dispositivo lógico…","headline":"Conheça o Logical Backup Device","mainEntityOfPage":{"@type":"WebPage","@id":"http://localhost:4000/conheca-logical-backup-device/"},"url":"http://localhost:4000/conheca-logical-backup-device/"}</script>
+<!-- End Jekyll SEO tag -->
+<link rel="stylesheet" href="/assets/main.css"><link type="application/atom+xml" rel="alternate" href="http://localhost:4000/feed.xml" title="Renato Siqueira" /></head>
+<body><header class="site-header" role="banner">
+
+  <div class="wrapper"><a class="site-title" rel="author" href="/">Renato Siqueira</a><nav class="site-nav">
+        <input type="checkbox" id="nav-trigger" class="nav-trigger" />
+        <label for="nav-trigger">
+          <span class="menu-icon">
+            <svg viewBox="0 0 18 15" width="18px" height="15px">
+              <path d="M18,1.484c0,0.82-0.665,1.484-1.484,1.484H1.484C0.665,2.969,0,2.304,0,1.484l0,0C0,0.665,0.665,0,1.484,0 h15.032C17.335,0,18,0.665,18,1.484L18,1.484z M18,7.516C18,8.335,17.335,9,16.516,9H1.484C0.665,9,0,8.335,0,7.516l0,0 c0-0.82,0.665-1.484,1.484-1.484h15.032C17.335,6.031,18,6.696,18,7.516L18,7.516z M18,13.516C18,14.335,17.335,15,16.516,15H1.484 C0.665,15,0,14.335,0,13.516l0,0c0-0.82,0.665-1.483,1.484-1.483h15.032C17.335,12.031,18,12.695,18,13.516L18,13.516z"/>
+            </svg>
+          </span>
+        </label>
+
+        <div class="trigger"><a class="page-link" href="/about/">About</a></div>
+      </nav></div>
+</header>
+<main class="page-content" aria-label="Content">
+      <div class="wrapper">
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+
+  <header class="post-header">
+    <h1 class="post-title p-name" itemprop="name headline">Conheça o Logical Backup Device</h1>
+    <p class="post-meta">
+      <time class="dt-published" datetime="2014-02-26T18:37:14-03:00" itemprop="datePublished">Feb 26, 2014
+      </time>• <span itemprop="author" itemscope itemtype="http://schema.org/Person"><span class="p-author h-card" itemprop="name">{"login" => "Renato Siqueira", "email" => "", "display_name" => "Renato Siqueira", "first_name" => "", "last_name" => ""}</span></span></p>
+  </header>
+
+  <div class="post-content e-content" itemprop="articleBody">
+    <p><!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN" "http://www.w3.org/TR/REC-html40/loose.dtd"><br />
+<html><body><br />
+<a href="http://renatomsiqueira.com.br/wp-content/uploads/2014/04/abstract_flame_dome_by_tennsoccerdr1.jpg"><img class="aligncenter size-full wp-image-1442" src="/assets/2014/02/abstract_flame_dome_by_tennsoccerdr1.jpg" alt="Logical Device" width="600" height="440"></a></p>
+<p>Olá,</p>
+<p>O assunto de hoje é Logical Backup Device. Para maiores informações sobre o termo "Device" (Dispositivo) de backup no SQL Server ou sobre o termo que intitula o post, dê uma olhada nas referências.</p>
+<p>Logical Backup Device (Dispositivo Lógico de Backup), que ao longo do post vou chamar de LBD, nada mais é do que um alias (ou abstração, para os mais teóricos) de um dispositivo físico (pode ser uma fita ou disco, geralmente este último). Significa que podemos referenciar um local físico passando apenas o nome do dispositivo lógico como destino.</p>
+<p>Como seria um backup referenciando um LBD?</p>
+<pre>
+BACKUP DATABASE [AdventureWorks2008R2]
+TO BackupCactuar
+
+</pre>
+<p><strong>Observações:</strong></p>
+<p>- O nome do seu Logical Backup Device deve ser único (óbvio, lol)<br />
+- View de sistema: sys.backup_devices (consulte aqui todos os LBD's criados)<br />
+- Pra criar um logical device, é necessário pertencer à role diskadmin (ou sysadmin).</p>
+<p><strong>Como criar</strong></p>
+<p>Aquela beleza de poder escolher N formas para cumprir  determinado objetivo.</p>
+<p>Duas formas de criar o LBD (o modo hardcore, aka Powershell, não será abordado aqui);</p>
+<p><strong>a - Usando a GUI do Management Studio (Modo fácil);</strong></p>
+<p><em><a href="http://renatomsiqueira.com.br/wp-content/uploads/2014/04/modo-visual1.jpg"><img class="aligncenter size-full wp-image-1443" src="/assets/2014/02/modo-visual1.jpg" alt="Criando um LBD visualmente" width="600" height="400"></a></em></p>
+<p>Vale lembrar que o arquivo informado em File não é criado em tempo de execução. Você precisa criá-lo (lembre-se: é um arquivo binário).</p>
+<p><strong>b - Usando T-SQL (Modo normal)</strong></p>
+<p>Com as permissões necessárias, basta utilizar a procedure sp_addumpdevice.</p>
+<p>O nome não é intuitivo e pode causar um certo estranhamento, pois antigamente, o termo dump era bastante utilizado em alguns cenários de tecnologias (e ainda é, no MySQL) por ser sinônimo de backup e agora nem tanto (<em>sp_addbackupdevice</em> seria muito mais amigável não só de nome como também combinaria com a view e tal...)</p>
+<p>Confira as sintaxes úteis, que são a criação, a deleção e a consulta de informações em view de sistema relacionadas aos LBDs :</p>
+<p><a href="http://renatomsiqueira.com.br/wp-content/uploads/2014/04/retorno1.png"><img class="aligncenter size-full wp-image-1444" src="/assets/2014/02/retorno1.png" alt="Modo TSQL" width="600" height="231"></a></p>
+<p>- name: Nome do seu dispositivo. É o nome que vai ser apontado no destino de backup;</p>
+<p>- type: Tape = 1 e Disk = 2</p>
+<p>- type_desc = descrição dos tipos acima</p>
+<p>- physical_name = O caminho FÍSICO do dispositivo</p>
+<p>Vale lembrar (de novo) que o arquivo informado em File não é criado em tempo de execução. Você precisa criá-lo (lembre-se: é um arquivo binário).</p>
+<p><strong>Mas qual a utilidade disto?</strong></p>
+<p>O fato de  se ter uma abstração física te dá a vantagem de alterar o caminho de um dispositivo em determinado ponto (na configuração do próprio lbd), e não em scripts que o referenciem. Vamos supor que você tenha um job de backup, de uma base em específica. Se o script contiver apenas o nome do LBD e não um caminho de disco local ou SAN, se você precisar alterar o caminho físico, basta alterar o LBD.</p>
+<p>E como usar um LBD? Mais fácil enxergar na prática:</p>
+<p><a href="http://renatomsiqueira.com.br/wp-content/uploads/2014/04/comandos1.png"><img class="aligncenter size-full wp-image-1445" src="/assets/2014/02/comandos1.png" alt="BKP E RST" width="428" height="329"></a></p>
+<p>Apenas um exemplo (tirado da vida real)</p>
+<p>Uma aplicação X frequentemente fazia backup e restore da sua base e utilizava esse recurso do LBD. O fornecedor optou por utilizar apenas um arquivo pra fazer esse processo todo de backup e restore continuamente, sempre sobrescrevendo o mesmo em cada execução. A definição do (mais adequado possível) caminho físico fica por responsabilidade do DBA.</p>
+<p>Também é interessante utilizar esse método onde você desenvolva algum script que precise de uma localização física para realização de backup e restore e você não pode garantir um caminho definitivo (seja de rede ou local). Adivinha qual a solução? LBD é uma boa. Já vi também implementações  de LBD para estratégias de backup bem excepcionais (Backup dividido). Ou seja, é uma solução que não atende um cenário apenas, embora não sejam cenários comuns.</p>
+<p><strong>Qual a vantagem disto?</strong></p>
+<p>O comando de Backup e Restore recebem um alias, uma abstração de um caminho físico. Logo, por exemplo, se meu caminho real tiver no disco D, e eu precisar retirar esse disco, posso mapear o LBD para algum outro local, por exemplo disco E, sem prejuízo para a aplicação. Também é útil em manobras emergenciais.</p>
+<p>Por exemplo, manobras que envolvam diferentes discos (o que inclui troca de caminhos físicos com frequência) e/ou que sofram de falta de espaço podem fazer bom uso dessa abstração.</p>
+<p>É útil para rotinas de backup convencionais? Não considero e não recomendo de jeito nenhum. O nível de organização que se tem em realizar um backup de banco por arquivo, o que inclui também convenção de nome bem definida (20140226_AdventureWorks_Full.bak por exemplo) é muito mais interessante  para uma rotina diária do que manter mais de um backup por arquivo (e isso pode pesar MUITO quando você precisar usar um device que tenha mais de uma base, e pior, bases diferentes).</p>
+<p><strong>Observação importante </strong></p>
+<p>Uma recomendação da própria MS e que atualmente é uma boa prática (por razões óbvias): não deixe seus backups <strong>no mesmo array de disco</strong> que seus arquivos de dados e de log (note que eu disse <strong>array</strong> de disco e não <strong>discos e isso vale também para LBDs</strong>, pois, você pode ter duas letras/discos diferentes (D: e E: por exemplo) porém são partições/discos do mesmo disco/array. Quando se pensa em desastres, pense na pior hipótese sempre, algo como: o array todo pode falhar, e se seus arquivos de backup estiverem lá, você aprenderá da pior forma possível que backup no mesmo local físico onde seus dados estão não é backup. Isso é um ponto que irei sempre voltar ao longo das postagens.</p>
+<p> </p>
+<p>Qualquer dúvida ou comentário adicional, fique à vontade para comentar.</p>
+<p> </p>
+<p><strong>Referências</strong></p>
+<p>Backup Devices: http://technet.microsoft.com/en-us/library/ms179313.aspx</p>
+<p>Logical Backup Device  : http://technet.microsoft.com/en-us/library/ms189109.aspx</body></html></p>
+
+  </div><a class="u-url" href="/conheca-logical-backup-device/" hidden></a>
+</article>
+
+      </div>
+    </main><footer class="site-footer h-card">
+  <data class="u-url" href="/"></data>
+
+  <div class="wrapper">
+
+    <h2 class="footer-heading">Renato Siqueira</h2>
+
+    <div class="footer-col-wrapper">
+      <div class="footer-col footer-col-1">
+        <ul class="contact-list">
+          <li class="p-name">Renato Siqueira</li><li><a class="u-email" href="mailto:rad_renato@hotmail.com">rad_renato@hotmail.com</a></li></ul>
+      </div>
+
+      <div class="footer-col footer-col-2"><ul class="social-media-list"><li><a href="https://github.com/renatomsq"><svg class="svg-icon"><use xlink:href="/assets/minima-social-icons.svg#github"></use></svg> <span class="username">renatomsq</span></a></li><li><a href="https://www.twitter.com/naotenhomais"><svg class="svg-icon"><use xlink:href="/assets/minima-social-icons.svg#twitter"></use></svg> <span class="username">naotenhomais</span></a></li></ul>
+</div>
+
+      <div class="footer-col footer-col-3">
+        <p>Meu blog de artigo técnico sobre banco de dados e carreira.</p>
+      </div>
+    </div>
+
+  </div>
+
+</footer>
+</body>
+
+</html>
